@@ -14,3 +14,10 @@ Upload the contents of this ZIP to the root of the `ROK-Lagertha/kingdom3903-web
 - No changes to BattleTrack or FlagFiller applications.
 
 Note: The desktop card illustration contains decorative lettering as part of the artwork; the link has an accessible text label, and the mobile card uses HTML text for readability.
+
+
+## Version 2.4.1 — Frame refinement
+- Removed the extra CSS border, corner radius, card background and shadow.
+- Retained the original decorative gold border and glow embedded in the BattleTrack artwork.
+- On mobile the entire artwork is shown without cropping its ornate frame.
+- The whole card remains a responsive link to BattleTrack.
