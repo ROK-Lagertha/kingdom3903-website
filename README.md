@@ -1,18 +1,16 @@
-# 3903 | The Citadel
+# 3903 | The Citadel — v2.4.0
 
-Version 2.3.0 — First live tool card: ROK BattleTrack.
-
-## Included
-- `index.html` — responsive Citadel homepage with the existing official logo and one BattleTrack card.
-- `assets/citadel-logo.png` — existing royal crest with handwritten tagline, unchanged.
-- `assets/battletrack-card.png` — gold-framed royal navy BattleTrack card background.
-
-The card includes a live link to https://battletrack.kingdom3903.com/.
+Minimal homepage with official Citadel logo and a more compact ROK BattleTrack card featuring a royal capybara knight.
 
 ## Deployment
-Upload the complete package contents to the root of the `ROK-Lagertha/kingdom3903-website` GitHub repository, preserving the `assets/` directory. Keep any existing Cloudflare configuration files in the repository. The connected Cloudflare deployment should then publish the new homepage.
 
-This package changes **only the main website**. The BattleTrack and FlagFiller Workers are not modified.
+Upload the contents of this ZIP to the root of the `ROK-Lagertha/kingdom3903-website` GitHub repository, replacing the previous `index.html` and `assets` contents. Preserve any Cloudflare configuration files already in the repository. Cloudflare's connected deployment should then publish the updated homepage at https://kingdom3903.com.
 
-## Responsive design
-The logo scales to its container without cropping. The BattleTrack card uses a desktop horizontal layout and switches to a bottom-aligned text treatment on narrow mobile screens, keeping the title, description and button legible.
+## Features
+
+- Desktop: compact 850px-wide illustrated BattleTrack card, linking to the live app.
+- Mobile: cropped knight illustration with separately readable HTML title, description and action text.
+- Responsive logo and accessible keyboard-focus styling.
+- No changes to BattleTrack or FlagFiller applications.
+
+Note: The desktop card illustration contains decorative lettering as part of the artwork; the link has an accessible text label, and the mobile card uses HTML text for readability.
