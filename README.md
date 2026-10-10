@@ -1,24 +1,34 @@
-# Kingdom 3903 — Command Center
+# 3903 | The Citadel
 
-Static landing page for kingdom3903.com.
+**The Heart of the Kingdom.**
 
-## Deploy via Cloudflare Workers & Pages
+Official community tool portal for Rise of Kingdoms Kingdom 3903, hosted at https://kingdom3903.com.
 
-1. Unzip the archive.
-2. Create a new GitHub repository and upload `index.html` (and this README).
-3. In Cloudflare, open **Workers & Pages** and create a **Pages** project connected to the repository (if Pages Git integration is offered in your dashboard).
-4. Set the framework preset to **None**, build command empty, and output directory to `/` (repository root). Deploy.
-5. Under the project's **Custom domains**, add `kingdom3903.com`.
+## Features
 
-Alternatively use Cloudflare's static assets Workers deployment with an appropriate wrangler configuration. Do not overwrite the existing FlagFiller Worker.
+- Responsive, dark fantasy-inspired landing page
+- **The Armory**: kingdom utilities, including the live [FlagFiller Registry](https://flagfiller.kingdom3903.com/)
+- **The Archives**: trusted external Rise of Kingdoms resources
+- Community section (Discord invitation pending)
+- Accessible navigation and mobile layout
 
-## Before launch
+## Deployment
 
-- Replace the FlagFiller link if its URL changes.
-- Add verified HeroScrolls and King's Codex URLs.
-- Add your official Discord invite after approval.
-- Review copy and branding.
+This is a standalone static HTML website (`index.html`) deployed from GitHub to Cloudflare. No framework, package installation, or build step is required for the current deployment.
 
+The FlagFiller Registry is a **separate Cloudflare Worker**. Do not change its deployment when updating this website.
 
-## FlagFiller Registry
-The live registry is available at https://flagfiller.kingdom3903.com/. The main website links directly to this subdomain.
+## Branding
+
+- Name: **3903 | The Citadel**
+- Tagline: **The Heart of the Kingdom.**
+- Palette: Obsidian `#080e19`, Antique Gold `#e9bf77`, Parchment `#f5f1e8`, Steel Blue `#8dc9dc`
+
+## Status
+
+- FlagFiller Registry: live
+- ROK Deal Hunter: in development
+- Account Age Calculator: planned
+- HeroScrolls, The King's Codex, Discord: links pending confirmation
+
+Independent community project. Not affiliated with Lilith Games.
