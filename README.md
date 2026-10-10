@@ -16,8 +16,15 @@ Upload the contents of this ZIP to the root of the `ROK-Lagertha/kingdom3903-web
 Note: The desktop card illustration contains decorative lettering as part of the artwork; the link has an accessible text label, and the mobile card uses HTML text for readability.
 
 
-## Version 2.4.1 — Frame refinement
+## Version 2.5.0 — Frame refinement
 - Removed the extra CSS border, corner radius, card background and shadow.
 - Retained the original decorative gold border and glow embedded in the BattleTrack artwork.
 - On mobile the entire artwork is shown without cropping its ornate frame.
 - The whole card remains a responsive link to BattleTrack.
+
+## Version 2.5.0
+
+- Replaced the BattleTrack card artwork with the transparent-background edition.
+- Kept the original decorative gold frame, capybara and clickable BattleTrack link.
+- Preserved responsive scaling and existing Citadel logo.
+- No changes to the BattleTrack or FlagFiller Workers.
