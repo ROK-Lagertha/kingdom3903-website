@@ -18,3 +18,7 @@ Alternatively use Cloudflare's static assets Workers deployment with an appropri
 - Add verified HeroScrolls and King's Codex URLs.
 - Add your official Discord invite after approval.
 - Review copy and branding.
+
+
+## FlagFiller Registry
+The live registry is available at https://flagfiller.kingdom3903.com/. The main website links directly to this subdomain.
