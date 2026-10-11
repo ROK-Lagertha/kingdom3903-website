@@ -5,3 +5,7 @@ A stronger, soft-edged golden ambient glow is placed behind the Citadel logo via
 The existing Citadel logo, BattleTrack card artwork and link are unchanged.
 
 Deploy: replace the website repository contents with the contents of this ZIP, preserving any existing deployment configuration.
+
+## v2.6.2
+- Moderately increased warm golden ambient glow behind the Citadel crest on desktop and mobile.
+- Preserved smooth radial transparency, blur, artwork, and BattleTrack link.
