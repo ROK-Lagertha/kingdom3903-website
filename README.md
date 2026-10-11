@@ -1,5 +1,12 @@
-# 3903 | The Citadel — v2.5.1
+# 3903 | The Citadel — v2.6.0
 
-Mobile layout fix: removed the duplicate mobile BattleTrack text/button panel. The transparent BattleTrack image is the only visible card on all screen sizes. The whole image links to https://battletrack.kingdom3903.com/. Existing Citadel branding and assets are preserved.
+Minimal responsive landing page for kingdom3903.com.
 
-Deploy: Upload `index.html`, `README.md`, and `assets/` to the `kingdom3903-website` GitHub repository, retaining any existing Cloudflare configuration.
+## Update
+- Added a soft, warm golden glow behind the Citadel crest, inspired by BattleTrack and FlagFiller Registry.
+- The glow is CSS-only, feathered into the navy-black background without hard edges.
+- Adjusted the light position and spread for narrow mobile screens.
+- Preserved the original crest, transparent BattleTrack card, card dimensions, and link.
+
+## Deployment
+Replace the repository's `index.html`, `README.md`, and `assets/` with the contents of this ZIP. Cloudflare deploys from the connected GitHub repository.
