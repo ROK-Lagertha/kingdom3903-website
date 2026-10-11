@@ -15,10 +15,28 @@
 .secondary-card img{display:block;width:100%;height:auto;object-fit:contain}
 @media(max-width:600px){.secondary-grid{grid-template-columns:minmax(0,1fr);gap:clamp(8px,2vw,14px);margin-top:clamp(12px,3vw,20px);justify-items:center}.secondary-card{width:min(76vw,350px);max-width:100%;margin-inline:auto}.secondary-card img{width:100%;height:auto;object-fit:contain}}
 @media(prefers-reduced-motion:reduce){.secondary-card{transition:none}}
+
+/* Shared Kingdom 3903 footer */
+.citadel-footer{position:relative;isolation:isolate;max-width:1050px;margin:clamp(58px,8vw,110px) auto 0;min-height:245px;display:grid;grid-template-columns:minmax(0,1fr) minmax(230px,1.25fr) minmax(0,1fr);align-items:center;gap:0;text-align:center;color:#e8c47e}
+.citadel-footer::before{content:"";position:absolute;inset:15% 10%;z-index:-1;background:radial-gradient(ellipse at 50% 65%,rgba(24,38,59,.48),transparent 68%);pointer-events:none}
+.footer-cappy{width:100%;max-height:265px;object-fit:contain;display:block;filter:drop-shadow(0 0 8px rgba(159,100,29,.1))}
+.footer-center{min-width:0;padding:12px 4px 20px}
+.footer-divider{height:1px;max-width:260px;margin:0 auto 17px;background:linear-gradient(90deg,transparent,#92713b 30%,#d3a657 50%,#92713b 70%,transparent)}
+.footer-motto{font-family:Georgia,'Times New Roman',serif;font-size:clamp(14px,1.8vw,22px);font-weight:600;letter-spacing:.055em;line-height:1.5;color:#e6bc68;text-shadow:0 1px 10px rgba(190,117,28,.14);margin:0}
+.footer-heart{font-family:system-ui,sans-serif;font-size:.85em;white-space:nowrap}
+.footer-note{max-width:420px;margin:16px auto 0;color:#9ca5b4;font-size:clamp(10px,1.05vw,12px);line-height:1.65}
+.footer-bottom{height:1px;max-width:310px;margin:20px auto 0;background:linear-gradient(90deg,transparent,#765a2d,transparent)}
+@media(max-width:600px){main{padding-bottom:35px}.citadel-footer{margin-top:55px;grid-template-columns:minmax(0,1fr) minmax(175px,1.7fr) minmax(0,1fr);min-height:170px}.footer-cappy{max-height:175px}.footer-center{padding:8px 0}.footer-motto{font-size:clamp(12px,3.25vw,16px);letter-spacing:0;line-height:1.5}.footer-note{font-size:10px;line-height:1.5;margin-top:12px}.footer-divider{margin-bottom:10px}.footer-bottom{margin-top:12px}}
+@media(max-width:380px){.citadel-footer{grid-template-columns:1fr 2.3fr 1fr}.footer-cappy{max-height:135px}.footer-motto{font-size:12px}}
 </style>
 </head>
 <body><main><header class="brand"><img class="logo" src="./assets/citadel-logo.png" alt="3903 The Citadel — The Heart of the Kingdom. More Than a Kingdom." width="1946" height="808" fetchpriority="high"></header><div class="tool-grid"><a class="battletrack" href="https://battletrack.kingdom3903.com/" aria-label="Open ROK BattleTrack — Track KP, KPR, stats and kingdom performance"><img class="battletrack-art" src="./assets/battletrack-cappy-card.png" alt="ROK BattleTrack, royal gold and navy card featuring an armored capybara knight and a citadel" width="1978" height="795"></a></div><nav class="secondary-grid" aria-label="Kingdom services">
 <a class="secondary-card" href="https://discord.gg/MJ5bgWDVP3" target="_blank" rel="noopener noreferrer" aria-label="Recruitment Center — join our recruiter Discord (opens in new tab)"><img src="./assets/recruitment-cappy-card.png" alt="Recruitment Center — Find your place in Kingdom 3903. Join our Discord." width="995" height="647" loading="lazy"></a>
 <a class="secondary-card" href="https://flagfiller.kingdom3903.com/" aria-label="Open FlagFiller Registry"><img src="./assets/flagfiller-cappy-card.png" alt="FlagFiller Registry — Register and manage your Flag Filler. Open Registry." width="1035" height="647" loading="lazy"></a>
-</nav></main></body>
+</nav>
+<footer class="citadel-footer" aria-label="Kingdom 3903 community footer">
+<img class="footer-cappy" src="./assets/footer-cappy-strategy.png" alt="Royal capybara with strategy books and a globe" loading="lazy" width="675" height="580">
+<div class="footer-center"><div class="footer-divider" aria-hidden="true"></div><p class="footer-motto">Strategy. People.<br>Progress. <span class="footer-heart">❤️</span></p><p class="footer-note">Independent fan-made community website for Kingdom 3903. Not affiliated with, endorsed by, or sponsored by Lilith Games.</p><div class="footer-bottom" aria-hidden="true"></div></div>
+<img class="footer-cappy" src="./assets/footer-cappy-progress.png" alt="Royal capybara resting on maps and scrolls" loading="lazy" width="662" height="580">
+</footer></main></body>
 </html>
