@@ -159,3 +159,12 @@ main{width:min(calc(100% - 48px),1640px);padding-top:clamp(18px,2vw,34px)}
 <img class="footer-cappy" src="./assets/footer-cappy-progress.png" alt="Royal capybara resting on maps and scrolls" loading="lazy" width="662" height="580">
 </footer></main></body>
 </html>
+<style>
+/* V3.8.2: keep panorama strictly inside header and fade into royal navy */
+.hero-layout{overflow:hidden!important;background:#050a12!important}
+.hero-layout .kingdom-visual{inset:0!important;overflow:hidden!important}
+.hero-layout .kingdom-visual img{height:100%!important;-webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 55%,rgba(0,0,0,.75) 73%,transparent 100%)!important;mask-image:linear-gradient(to bottom,#000 0%,#000 55%,rgba(0,0,0,.75) 73%,transparent 100%)!important}
+.hero-layout .kingdom-visual::after{background:linear-gradient(90deg,rgba(5,10,18,.56),rgba(5,10,18,.07) 75%),linear-gradient(to bottom,transparent 38%,rgba(5,10,18,.12) 58%,#050a12 100%)!important}
+.royal-nav{position:relative;z-index:3;background:#050a12!important}
+@media(max-width:650px){.hero-layout .kingdom-visual{inset:0!important;height:100%!important}.hero-layout .kingdom-visual::after{background:linear-gradient(90deg,rgba(5,10,18,.3),rgba(5,10,18,.12)),linear-gradient(to bottom,transparent 38%,#050a12 100%)!important}}
+</style>

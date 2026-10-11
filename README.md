@@ -1,5 +1,5 @@
-3903 | The Citadel v3.8.1
+# 3903 | The Citadel — V3.8.2
 
-Fix: Removed the composite header image that contained a baked-in navigation bar and logo. Restored the clean kingdom panorama as a separate background image. The transparent Citadel crest and interactive icon navigation remain independent HTML elements. Existing soft fade, responsive cards, links and footer are preserved.
+Header transition correction based on V3.8.1. Panorama stays strictly inside the hero, with a smooth fade into the royal navy background. Navigation has its own solid navy background, with no landscape behind it. Logo, links, cards and footer remain unchanged.
 
-Deploy: Upload the full contents of this archive to the existing GitHub repository root.
+Upload the complete contents to the GitHub repository and deploy via Cloudflare.
