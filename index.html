@@ -77,6 +77,16 @@ main{width:min(calc(100% - 48px),1640px);padding-top:clamp(18px,2vw,34px)}
 .royal-nav a:hover::before,.royal-nav a:hover::after,.royal-nav a:focus-visible::before,.royal-nav a:focus-visible::after{border-color:rgba(239,183,86,.85)}
 /* V3.4: new original BattleTrack art with full frame visible, no fading of ornaments */
 .royal-cards .battletrack-art{-webkit-mask-image:none!important;mask-image:none!important;object-fit:contain}
+
+/* V3.5: align the VISIBLE BattleTrack ornament frame with its siblings.
+   Original art has more top/bottom padding than the other two images. */
+.royal-cards .battletrack-art{
+  transform:translateY(3.7%) scale(.96,1.10);
+  transform-origin:center center;
+}
+@media(max-width:650px){
+  .royal-cards .battletrack-art{transform:translateY(3.7%) scale(.96,1.10)}
+}
 </style>
 </head>
 <body><main id="home">
