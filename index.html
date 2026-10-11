@@ -28,13 +28,42 @@
 .footer-bottom{height:1px;max-width:310px;margin:20px auto 0;background:linear-gradient(90deg,transparent,#765a2d,transparent)}
 @media(max-width:600px){main{padding-bottom:35px}.citadel-footer{margin-top:55px;grid-template-columns:minmax(0,1fr) minmax(175px,1.7fr) minmax(0,1fr);min-height:170px}.footer-cappy{max-height:175px}.footer-center{padding:8px 0}.footer-motto{font-size:clamp(12px,3.25vw,16px);letter-spacing:0;line-height:1.5}.footer-note{font-size:10px;line-height:1.5;margin-top:12px}.footer-divider{margin-bottom:10px}.footer-bottom{margin-top:12px}}
 @media(max-width:380px){.citadel-footer{grid-template-columns:1fr 2.3fr 1fr}.footer-cappy{max-height:135px}.footer-motto{font-size:12px}}
+
+/* V3.0 Royal desktop dashboard */
+html{scroll-behavior:smooth}body{overflow-x:hidden}
+main{width:min(calc(100% - 48px),1640px);padding-top:clamp(18px,2vw,34px)}
+.hero-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:clamp(14px,2vw,28px);align-items:center;min-height:clamp(250px,24vw,400px)}
+.hero-layout .brand{margin:0;min-width:0;align-items:center}.hero-layout .logo{width:100%;max-width:760px}
+.kingdom-visual{min-width:0;position:relative;align-self:stretch;display:flex;align-items:center;isolation:isolate;overflow:hidden;min-height:260px}
+.kingdom-visual:after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,#070e19 0%,transparent 20%,transparent 84%,#070e19 100%),linear-gradient(0deg,#070e19 0%,transparent 21%,transparent 81%,#070e19 100%)}
+.kingdom-visual img{display:block;width:100%;height:100%;max-height:400px;object-fit:cover;object-position:54% 50%;mask-image:radial-gradient(ellipse 77% 76% at 51% 50%,#000 53%,transparent 100%)}
+.royal-nav{display:flex;justify-content:center;align-items:center;gap:clamp(8px,2.2vw,38px);flex-wrap:wrap;padding:13px 16px;margin:12px 0 clamp(18px,2.8vw,34px);border-top:1px solid rgba(220,162,69,.65);border-bottom:1px solid rgba(220,162,69,.65);background:linear-gradient(90deg,transparent,rgba(10,18,30,.9) 18%,rgba(10,18,30,.9) 82%,transparent)}
+.royal-nav a{font:600 clamp(11px,1.05vw,15px) Georgia,serif;letter-spacing:.07em;color:#e9c57a;text-decoration:none;padding:9px 12px;border:1px solid transparent;border-radius:5px;white-space:nowrap}
+.royal-nav a:hover,.royal-nav a:focus-visible{border-color:#a67936;background:rgba(200,140,38,.11);outline:none}
+.royal-nav .nav-crown{color:#d5a34c;font-size:21px}
+.royal-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:center;gap:clamp(8px,1.2vw,22px);width:100%;max-width:1600px;margin:0 auto}
+.royal-cards .battletrack,.royal-cards .secondary-card{display:block;width:100%;max-width:none;margin:0}
+.royal-cards .battletrack-art,.royal-cards .secondary-card img{width:100%;height:auto;display:block;object-fit:contain}
+.royal-cards .secondary-grid{display:contents}
+.citadel-footer{margin-top:clamp(40px,6vw,80px)}
+@media(max-width:1000px){.hero-layout{grid-template-columns:1fr 1fr;min-height:220px}.kingdom-visual{min-height:210px}.royal-cards{grid-template-columns:1fr 1fr;max-width:850px}.royal-cards .battletrack{grid-column:1/-1;width:min(100%,650px);justify-self:center}.royal-cards .secondary-grid{display:contents}}
+@media(max-width:650px){main{width:min(calc(100% - 24px),480px);padding-top:20px}.hero-layout{display:block;min-height:0}.hero-layout .brand{margin:0 auto 12px}.kingdom-visual{height:130px;min-height:130px;margin:0 auto 8px}.kingdom-visual img{height:100%;object-position:center 48%}.royal-nav{gap:0 4px;padding:7px 2px;margin:8px 0 16px}.royal-nav a{font-size:10px;letter-spacing:0;padding:8px 7px}.royal-nav .nav-crown{display:none}.royal-cards{display:flex;flex-direction:column;gap:clamp(14px,4vw,22px);width:100%}.royal-cards .battletrack{width:100%;max-width:440px}.royal-cards .secondary-grid{display:flex;flex-direction:column;align-items:center;width:100%;margin:0;gap:clamp(12px,3vw,18px)}.royal-cards .secondary-card{width:min(100%,440px);max-width:100%}.citadel-footer{margin-top:50px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
 </head>
-<body><main><header class="brand"><img class="logo" src="./assets/citadel-logo.png" alt="3903 The Citadel — The Heart of the Kingdom. More Than a Kingdom." width="1946" height="808" fetchpriority="high"></header><div class="tool-grid"><a class="battletrack" href="https://battletrack.kingdom3903.com/" aria-label="Open ROK BattleTrack — Track KP, KPR, stats and kingdom performance"><img class="battletrack-art" src="./assets/battletrack-cappy-card.png" alt="ROK BattleTrack, royal gold and navy card featuring an armored capybara knight and a citadel" width="1978" height="795"></a></div><nav class="secondary-grid" aria-label="Kingdom services">
-<a class="secondary-card" href="https://discord.gg/MJ5bgWDVP3" target="_blank" rel="noopener noreferrer" aria-label="Recruitment Center — join our recruiter Discord (opens in new tab)"><img src="./assets/recruitment-cappy-card.png" alt="Recruitment Center — Find your place in Kingdom 3903. Join our Discord." width="995" height="647" loading="lazy"></a>
-<a class="secondary-card" href="https://flagfiller.kingdom3903.com/" aria-label="Open FlagFiller Registry"><img src="./assets/flagfiller-cappy-card.png" alt="FlagFiller Registry — Register and manage your Flag Filler. Open Registry." width="1035" height="647" loading="lazy"></a>
-</nav>
-<footer class="citadel-footer" aria-label="Kingdom 3903 community footer">
+<body><main id="home">
+<section class="hero-layout" aria-label="The Citadel and Kingdom 3903">
+<header class="brand"><img class="logo" src="./assets/citadel-logo.png" alt="3903 The Citadel — The Heart of the Kingdom. More Than a Kingdom." width="1946" height="808" fetchpriority="high"></header>
+<div class="kingdom-visual"><img src="./assets/kingdom-panorama.webp" alt="Moonlit Kingdom 3903 fortress with royal blue banners and golden lights" width="975" height="373"></div>
+</section>
+<nav class="royal-nav" aria-label="Main navigation"><span class="nav-crown" aria-hidden="true">⚜</span><a href="#home">HOME</a><a href="#tools">TOOLS</a><a href="https://discord.gg/MJ5bgWDVP3" target="_blank" rel="noopener noreferrer">RECRUITMENT ↗</a><a href="#kingdom">KINGDOM</a><a href="https://flagfiller.kingdom3903.com/">REGISTRY ↗</a><span class="nav-crown" aria-hidden="true">⚜</span></nav>
+<section class="royal-cards" id="tools" aria-label="Kingdom tools and services">
+<a class="battletrack" href="https://battletrack.kingdom3903.com/" aria-label="Open ROK BattleTrack"><img class="battletrack-art" src="./assets/battletrack-cappy-card.png" alt="ROK BattleTrack, royal capybara knight, track KP, KPR and kingdom performance" width="1978" height="795"></a>
+<div class="secondary-grid">
+<a class="secondary-card" href="https://discord.gg/MJ5bgWDVP3" target="_blank" rel="noopener noreferrer" aria-label="Recruitment Center — join our recruiter Discord"><img src="./assets/recruitment-cappy-card.png" alt="Recruitment Center — Find your place in Kingdom 3903. Join our Discord." width="995" height="647" loading="lazy"></a>
+<a class="secondary-card" href="https://flagfiller.kingdom3903.com/" aria-label="Open FlagFiller Registry"><img src="./assets/flagfiller-cappy-card.png" alt="FlagFiller Registry — Register and manage your Flag Filler." width="1035" height="647" loading="lazy"></a>
+</div></section>
+<footer id="kingdom" class="citadel-footer" aria-label="Kingdom 3903 community footer">
 <img class="footer-cappy" src="./assets/footer-cappy-strategy.png" alt="Royal capybara with strategy books and a globe" loading="lazy" width="675" height="580">
 <div class="footer-center"><div class="footer-divider" aria-hidden="true"></div><p class="footer-motto">Strategy. People.<br>Progress. <span class="footer-heart">❤️</span></p><p class="footer-note">Independent fan-made community website for Kingdom 3903. Not affiliated with, endorsed by, or sponsored by Lilith Games.</p><div class="footer-bottom" aria-hidden="true"></div></div>
 <img class="footer-cappy" src="./assets/footer-cappy-progress.png" alt="Royal capybara resting on maps and scrolls" loading="lazy" width="662" height="580">

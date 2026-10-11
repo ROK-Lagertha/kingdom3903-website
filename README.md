@@ -1,12 +1,15 @@
-# 3903 | The Citadel — v2.9.0
+# 3903 | The Citadel — V3.0 Royal Dashboard
 
-Full static site for kingdom3903.com.
+Static website for Cloudflare Workers Static Assets / Pages.
 
-## Changes
-- Added understated royal footer with two distinct capybaras, soft feathered artwork edges and responsive layout.
-- Shared motto: **Strategy. People. Progress. ❤️**
-- Clear independent fan community disclaimer for Lilith Games.
-- Existing logo, glow, BattleTrack and secondary navigation cards remain unchanged.
+## What's new
+- Desktop split hero: existing Citadel crest plus moonlit Kingdom panorama
+- Functional navigation (Home, Tools, Recruitment, Kingdom, Registry)
+- Three royal Cappy cards displayed side by side on large desktops
+- Responsive tablet and mobile layouts; all existing artwork and links retained
+- Existing footer and fan-community disclaimer preserved
 
-## Deployment
-Upload all files and the `assets` folder to the existing GitHub repository root. Cloudflare Workers Builds deploys from the connected branch. No new dependencies or Wrangler configuration required for the existing setup.
+## Deploy
+Upload the contents of this ZIP to the root of the existing `kingdom3903-website` GitHub repository, replacing existing files. Cloudflare's connected build will deploy automatically.
+
+No Wrangler file is needed if the existing Cloudflare project is already configured to deploy these static assets.
