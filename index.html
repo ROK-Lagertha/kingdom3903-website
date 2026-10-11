@@ -67,6 +67,14 @@ main{width:min(calc(100% - 48px),1640px);padding-top:clamp(18px,2vw,34px)}
 .royal-cards .battletrack-art,.royal-cards .secondary-card img{width:100%;height:100%;object-fit:contain}
 @media(max-width:1000px){.royal-cards .battletrack{width:100%;max-width:none;grid-column:auto}.royal-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.royal-cards .battletrack{grid-column:1/-1;max-width:calc((100% - clamp(10px,1.2vw,22px))/2)}}
 @media(max-width:650px){.royal-cards .battletrack,.royal-cards .secondary-card{width:100%;max-width:440px;aspect-ratio:1035/647}.royal-cards .secondary-grid{display:flex}}
+
+/* V3.3 refined royal polish */
+.royal-cards .battletrack-art{-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent),linear-gradient(0deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent),linear-gradient(0deg,transparent,#000 8%,#000 92%,transparent);-webkit-mask-composite:source-in;mask-composite:intersect}
+.royal-nav a{position:relative;border:1px solid transparent;border-radius:0;transition:color .2s,background .2s}
+.royal-nav a:hover,.royal-nav a:focus-visible{border-color:transparent;background:linear-gradient(90deg,transparent,rgba(202,143,49,.10) 24%,rgba(202,143,49,.10) 76%,transparent);color:#ffe0a0;outline:none}
+.royal-nav a::before,.royal-nav a::after{content:"";position:absolute;width:12px;height:9px;border-color:transparent;border-style:solid;pointer-events:none;transition:border-color .2s}
+.royal-nav a::before{top:1px;left:1px;border-width:1px 0 0 1px}.royal-nav a::after{bottom:1px;right:1px;border-width:0 1px 1px 0}
+.royal-nav a:hover::before,.royal-nav a:hover::after,.royal-nav a:focus-visible::before,.royal-nav a:focus-visible::after{border-color:rgba(239,183,86,.85)}
 </style>
 </head>
 <body><main id="home">
