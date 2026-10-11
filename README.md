@@ -1,11 +1,15 @@
-# 3903 | The Citadel — V2.6.1
+# 3903 | The Citadel — v2.7.0
 
-A stronger, soft-edged golden ambient glow is placed behind the Citadel logo via a radial gradient and blur. The glow fades continuously to transparency, with no rectangular cut-off. Responsive for mobile and desktop.
+Minimal responsive landing page for Kingdom 3903.
 
-The existing Citadel logo, BattleTrack card artwork and link are unchanged.
+## What's new
+- Added two compact, responsive cards below the BattleTrack artwork: Recruitment Center and FlagFiller Registry.
+- Recruitment Center opens https://discord.gg/MJ5bgWDVP3 in a new tab.
+- FlagFiller Registry opens https://flagfiller.kingdom3903.com/.
+- Kept the original Citadel logo, balanced golden glow, BattleTrack artwork and link unchanged.
+- On mobile the new cards stack vertically; on desktop they sit side by side.
 
-Deploy: replace the website repository contents with the contents of this ZIP, preserving any existing deployment configuration.
+## Deployment
+Upload the contents of this folder to the `ROK-Lagertha/kingdom3903-website` GitHub repository, preserving the `assets` folder. Cloudflare should redeploy on push if the existing Git integration is enabled.
 
-## v2.6.2
-- Moderately increased warm golden ambient glow behind the Citadel crest on desktop and mobile.
-- Preserved smooth radial transparency, blur, artwork, and BattleTrack link.
+No changes to the BattleTrack or FlagFiller services themselves.
