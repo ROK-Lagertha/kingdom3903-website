@@ -75,6 +75,8 @@ main{width:min(calc(100% - 48px),1640px);padding-top:clamp(18px,2vw,34px)}
 .royal-nav a::before,.royal-nav a::after{content:"";position:absolute;width:12px;height:9px;border-color:transparent;border-style:solid;pointer-events:none;transition:border-color .2s}
 .royal-nav a::before{top:1px;left:1px;border-width:1px 0 0 1px}.royal-nav a::after{bottom:1px;right:1px;border-width:0 1px 1px 0}
 .royal-nav a:hover::before,.royal-nav a:hover::after,.royal-nav a:focus-visible::before,.royal-nav a:focus-visible::after{border-color:rgba(239,183,86,.85)}
+/* V3.4: new original BattleTrack art with full frame visible, no fading of ornaments */
+.royal-cards .battletrack-art{-webkit-mask-image:none!important;mask-image:none!important;object-fit:contain}
 </style>
 </head>
 <body><main id="home">
@@ -84,7 +86,7 @@ main{width:min(calc(100% - 48px),1640px);padding-top:clamp(18px,2vw,34px)}
 </section>
 <nav class="royal-nav" aria-label="Main navigation"><span class="nav-crown" aria-hidden="true">⚜</span><a href="#home">HOME</a><a href="#tools">TOOLS</a><a href="https://discord.gg/MJ5bgWDVP3" target="_blank" rel="noopener noreferrer">RECRUITMENT ↗</a><a href="#kingdom">KINGDOM</a><a href="https://flagfiller.kingdom3903.com/">REGISTRY ↗</a><span class="nav-crown" aria-hidden="true">⚜</span></nav>
 <section class="royal-cards" id="tools" aria-label="Kingdom tools and services">
-<a class="battletrack" href="https://battletrack.kingdom3903.com/" aria-label="Open ROK BattleTrack"><img class="battletrack-art" src="./assets/battletrack-cappy-card-v3.2.webp" alt="ROK BattleTrack, royal capybara knight, track KP, KPR and kingdom performance" width="1035" height="647"></a>
+<a class="battletrack" href="https://battletrack.kingdom3903.com/" aria-label="Open ROK BattleTrack"><img class="battletrack-art" src="./assets/battletrack-royal-strategist-v3.4.png" alt="ROK BattleTrack, royal capybara strategist with battle map, track KP, KPR and kingdom performance" width="1035" height="647"></a>
 <div class="secondary-grid">
 <a class="secondary-card" href="https://discord.gg/MJ5bgWDVP3" target="_blank" rel="noopener noreferrer" aria-label="Recruitment Center — join our recruiter Discord"><img src="./assets/recruitment-cappy-card.png" alt="Recruitment Center — Find your place in Kingdom 3903. Join our Discord." width="995" height="647" loading="lazy"></a>
 <a class="secondary-card" href="https://flagfiller.kingdom3903.com/" aria-label="Open FlagFiller Registry"><img src="./assets/flagfiller-cappy-card.png" alt="FlagFiller Registry — Register and manage your Flag Filler." width="1035" height="647" loading="lazy"></a>

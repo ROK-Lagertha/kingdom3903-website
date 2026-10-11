@@ -1,3 +1,5 @@
-# 3903 | The Citadel — V3.3
+# 3903 | The Citadel V3.4
 
-Soft BattleTrack image edge fades; refined royal gold menu corners on hover and focus. Existing content and links unchanged.
+Replaced the BattleTrack card with the newly approved strategist capybara artwork. The complete golden frame is preserved and the old fade mask is removed. Recruitment Center, FlagFiller Registry, panorama, navigation, links and footer are unchanged.
+
+Upload the entire contents of this ZIP to the root of the GitHub repository.
