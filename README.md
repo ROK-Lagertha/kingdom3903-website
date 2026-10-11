@@ -1,7 +1,5 @@
-# The Citadel V3.6 — Royal Icon Navigation
+3903 | The Citadel — V3.8 Seamless Royal Header
 
-Replaced the five text-only navigation links with gold line icons and labels. Hover and keyboard focus use a subtle gold glow and underline. Mobile uses a compact five-column icon layout. All original URLs, images, cards, hero and footer remain intact.
+Full static website. Upload all files to the existing GitHub repository (keeping folder structure); Cloudflare deploys from the connected repository.
 
-Deploy all files in this ZIP to the root of the GitHub repository.
-
-V3.7: Transparent BattleTrack artwork, uniform responsive 1035:647 card boxes, removed legacy BattleTrack stretch.
+Changes: replaced panorama with the new cinematic header artwork, kept the Citadel logo as an independent responsive image, added gentle top/bottom navy blending to the panorama, and preserved the navigation, three royal cards, links, and footer.
