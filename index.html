@@ -60,6 +60,13 @@ main{width:min(calc(100% - 48px),1640px);padding-top:clamp(18px,2vw,34px)}
 .hero-layout .logo{width:100%;max-width:none;height:auto}
 @media(max-width:1000px){.hero-layout{min-height:clamp(270px,38vw,410px)}.hero-layout .brand{width:min(58%,650px)}}
 @media(max-width:650px){.hero-layout{display:flex;min-height:clamp(235px,68vw,340px);padding:16px 8px;align-items:center;justify-content:center}.hero-layout .brand{width:min(94%,470px);margin:0;align-items:center}.hero-layout .kingdom-visual{height:100%;min-height:0;margin:0}.hero-layout .kingdom-visual img{height:100%;object-position:58% center}.hero-layout .kingdom-visual::after{background:linear-gradient(90deg,rgba(5,10,18,.35),rgba(5,10,18,.23)),linear-gradient(0deg,#050a12 0%,rgba(5,10,18,.05) 28%,rgba(5,10,18,.05) 75%,#050a12 100%)}.hero-layout .brand::before{opacity:.42}}
+
+/* V3.2 uniform royal cards: consistent artwork ratios and baseline */
+.royal-cards{align-items:stretch;gap:clamp(10px,1.2vw,22px)}
+.royal-cards .battletrack,.royal-cards .secondary-card{align-self:stretch;aspect-ratio:1035/647;display:flex;align-items:center;justify-content:center}
+.royal-cards .battletrack-art,.royal-cards .secondary-card img{width:100%;height:100%;object-fit:contain}
+@media(max-width:1000px){.royal-cards .battletrack{width:100%;max-width:none;grid-column:auto}.royal-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.royal-cards .battletrack{grid-column:1/-1;max-width:calc((100% - clamp(10px,1.2vw,22px))/2)}}
+@media(max-width:650px){.royal-cards .battletrack,.royal-cards .secondary-card{width:100%;max-width:440px;aspect-ratio:1035/647}.royal-cards .secondary-grid{display:flex}}
 </style>
 </head>
 <body><main id="home">
@@ -69,7 +76,7 @@ main{width:min(calc(100% - 48px),1640px);padding-top:clamp(18px,2vw,34px)}
 </section>
 <nav class="royal-nav" aria-label="Main navigation"><span class="nav-crown" aria-hidden="true">⚜</span><a href="#home">HOME</a><a href="#tools">TOOLS</a><a href="https://discord.gg/MJ5bgWDVP3" target="_blank" rel="noopener noreferrer">RECRUITMENT ↗</a><a href="#kingdom">KINGDOM</a><a href="https://flagfiller.kingdom3903.com/">REGISTRY ↗</a><span class="nav-crown" aria-hidden="true">⚜</span></nav>
 <section class="royal-cards" id="tools" aria-label="Kingdom tools and services">
-<a class="battletrack" href="https://battletrack.kingdom3903.com/" aria-label="Open ROK BattleTrack"><img class="battletrack-art" src="./assets/battletrack-cappy-card.png" alt="ROK BattleTrack, royal capybara knight, track KP, KPR and kingdom performance" width="1978" height="795"></a>
+<a class="battletrack" href="https://battletrack.kingdom3903.com/" aria-label="Open ROK BattleTrack"><img class="battletrack-art" src="./assets/battletrack-cappy-card-v3.2.webp" alt="ROK BattleTrack, royal capybara knight, track KP, KPR and kingdom performance" width="1035" height="647"></a>
 <div class="secondary-grid">
 <a class="secondary-card" href="https://discord.gg/MJ5bgWDVP3" target="_blank" rel="noopener noreferrer" aria-label="Recruitment Center — join our recruiter Discord"><img src="./assets/recruitment-cappy-card.png" alt="Recruitment Center — Find your place in Kingdom 3903. Join our Discord." width="995" height="647" loading="lazy"></a>
 <a class="secondary-card" href="https://flagfiller.kingdom3903.com/" aria-label="Open FlagFiller Registry"><img src="./assets/flagfiller-cappy-card.png" alt="FlagFiller Registry — Register and manage your Flag Filler." width="1035" height="647" loading="lazy"></a>
