@@ -1,5 +1,5 @@
-3903 | The Citadel — V3.8 Seamless Royal Header
+3903 | The Citadel v3.8.1
 
-Full static website. Upload all files to the existing GitHub repository (keeping folder structure); Cloudflare deploys from the connected repository.
+Fix: Removed the composite header image that contained a baked-in navigation bar and logo. Restored the clean kingdom panorama as a separate background image. The transparent Citadel crest and interactive icon navigation remain independent HTML elements. Existing soft fade, responsive cards, links and footer are preserved.
 
-Changes: replaced panorama with the new cinematic header artwork, kept the Citadel logo as an independent responsive image, added gentle top/bottom navy blending to the panorama, and preserved the navigation, three royal cards, links, and footer.
+Deploy: Upload the full contents of this archive to the existing GitHub repository root.
