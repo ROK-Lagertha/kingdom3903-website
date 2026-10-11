@@ -1,12 +1,7 @@
-# 3903 | The Citadel — v2.6.0
+# 3903 | The Citadel — V2.6.1
 
-Minimal responsive landing page for kingdom3903.com.
+A stronger, soft-edged golden ambient glow is placed behind the Citadel logo via a radial gradient and blur. The glow fades continuously to transparency, with no rectangular cut-off. Responsive for mobile and desktop.
 
-## Update
-- Added a soft, warm golden glow behind the Citadel crest, inspired by BattleTrack and FlagFiller Registry.
-- The glow is CSS-only, feathered into the navy-black background without hard edges.
-- Adjusted the light position and spread for narrow mobile screens.
-- Preserved the original crest, transparent BattleTrack card, card dimensions, and link.
+The existing Citadel logo, BattleTrack card artwork and link are unchanged.
 
-## Deployment
-Replace the repository's `index.html`, `README.md`, and `assets/` with the contents of this ZIP. Cloudflare deploys from the connected GitHub repository.
+Deploy: replace the website repository contents with the contents of this ZIP, preserving any existing deployment configuration.
