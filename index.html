@@ -87,6 +87,46 @@ main{width:min(calc(100% - 48px),1640px);padding-top:clamp(18px,2vw,34px)}
 @media(max-width:650px){
   .royal-cards .battletrack-art{transform:translateY(3.7%) scale(.96,1.10)}
 }
+
+/* V3.6 Royal icon navigation: desktop + mobile */
+.royal-nav{
+  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;
+  max-width:1500px;width:100%;margin:12px auto clamp(18px,2.8vw,34px);
+  padding:0 12px;border-top:1px solid rgba(220,162,69,.55);
+  border-bottom:1px solid rgba(220,162,69,.55);
+  background:linear-gradient(90deg,transparent,rgba(10,18,30,.9) 12%,rgba(10,18,30,.9) 88%,transparent);
+}
+.royal-nav .royal-nav-item{
+  min-width:0;min-height:76px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:7px;padding:11px 5px 12px;position:relative;border:0!important;border-radius:0!important;
+  background:none;color:#dfbd78;text-decoration:none;font:600 clamp(10px,1vw,14px) Georgia,serif;
+  letter-spacing:.065em;white-space:normal;text-align:center;transition:color .2s ease,background .2s ease;
+}
+.royal-nav .royal-nav-item + .royal-nav-item{border-left:1px solid rgba(205,149,59,.11)!important}
+.royal-nav .royal-nav-item::before{content:none!important}
+.royal-nav .royal-nav-item::after{
+  content:""!important;position:absolute!important;left:14%!important;right:14%!important;bottom:-1px!important;
+  top:auto!important;width:auto!important;height:2px!important;border:0!important;
+  background:linear-gradient(90deg,transparent,#ffdf88 50%,transparent);
+  opacity:0;transform:scaleX(.65);transition:opacity .2s,transform .2s;
+}
+.royal-nav .nav-icon{width:25px;height:25px;flex:none;color:#d5a44e;filter:drop-shadow(0 0 3px rgba(207,144,44,.12));transition:filter .2s,color .2s}
+.royal-nav .royal-nav-item:hover,.royal-nav .royal-nav-item:focus-visible{
+  background:radial-gradient(ellipse at 50% 90%,rgba(197,127,31,.18),transparent 75%)!important;
+  color:#ffe3a2;outline:2px solid transparent;
+}
+.royal-nav .royal-nav-item:hover::after,.royal-nav .royal-nav-item:focus-visible::after,
+.royal-nav .royal-nav-item[aria-current="page"]::after{opacity:1;transform:scaleX(1)}
+.royal-nav .royal-nav-item:hover .nav-icon,.royal-nav .royal-nav-item:focus-visible .nav-icon,
+.royal-nav .royal-nav-item[aria-current="page"] .nav-icon{color:#ffdc82;filter:drop-shadow(0 0 6px rgba(244,179,55,.6))}
+.royal-nav .royal-nav-item[aria-current="page"]{color:#ffdf98}
+@media(max-width:650px){
+ .royal-nav{padding:0 2px;gap:0;margin:8px 0 16px}
+ .royal-nav .royal-nav-item{min-height:62px;padding:8px 1px 9px;gap:6px;font-size:clamp(8px,2.1vw,11px);letter-spacing:0}
+ .royal-nav .nav-icon{width:19px;height:19px}
+ .royal-nav .royal-nav-item::after{left:10%!important;right:10%!important}
+}
+@media(prefers-reduced-motion:reduce){.royal-nav .royal-nav-item,.royal-nav .nav-icon,.royal-nav .royal-nav-item::after{transition:none}}
 </style>
 </head>
 <body><main id="home">
@@ -94,7 +134,7 @@ main{width:min(calc(100% - 48px),1640px);padding-top:clamp(18px,2vw,34px)}
 <header class="brand"><img class="logo" src="./assets/citadel-logo.png" alt="3903 The Citadel — The Heart of the Kingdom. More Than a Kingdom." width="1946" height="808" fetchpriority="high"></header>
 <div class="kingdom-visual"><img src="./assets/kingdom-panorama.webp" alt="Moonlit Kingdom 3903 fortress with royal blue banners and golden lights" width="975" height="373"></div>
 </section>
-<nav class="royal-nav" aria-label="Main navigation"><span class="nav-crown" aria-hidden="true">⚜</span><a href="#home">HOME</a><a href="#tools">TOOLS</a><a href="https://discord.gg/MJ5bgWDVP3" target="_blank" rel="noopener noreferrer">RECRUITMENT ↗</a><a href="#kingdom">KINGDOM</a><a href="https://flagfiller.kingdom3903.com/">REGISTRY ↗</a><span class="nav-crown" aria-hidden="true">⚜</span></nav>
+<nav class="royal-nav" aria-label="Main navigation"><a class="royal-nav-item" href="#home" aria-current="page"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7"/><path d="M5 9v11h14V9"/><path d="M9 20v-7h6v7"/></svg><span class="nav-label">HOME</span></a><a class="royal-nav-item" href="#tools"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 17.5 3-3L6 3 3 6l11.5 11.5Z"/><path d="m13 19 6-6"/><path d="m16 16 4 4"/><path d="m19 21 2-2"/><path d="m3 21 6-6"/><path d="m5 19-2 2"/><path d="M14 3 3 14"/></svg><span class="nav-label">TOOLS</span></a><a class="royal-nav-item" href="https://discord.gg/MJ5bgWDVP3" target="_blank" rel="noopener noreferrer"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span class="nav-label">RECRUITMENT</span></a><a class="royal-nav-item" href="#kingdom"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m2 8 5 4 5-7 5 7 5-4-2 12H4L2 8Z"/><path d="M4 20h16"/></svg><span class="nav-label">KINGDOM</span></a><a class="royal-nav-item" href="https://flagfiller.kingdom3903.com/"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 22V4"/><path d="M4 5c5-3 9 3 16 0v12c-7 3-11-3-16 0"/></svg><span class="nav-label">REGISTRY</span></a></nav>
 <section class="royal-cards" id="tools" aria-label="Kingdom tools and services">
 <a class="battletrack" href="https://battletrack.kingdom3903.com/" aria-label="Open ROK BattleTrack"><img class="battletrack-art" src="./assets/battletrack-royal-strategist-v3.4.png" alt="ROK BattleTrack, royal capybara strategist with battle map, track KP, KPR and kingdom performance" width="1035" height="647"></a>
 <div class="secondary-grid">

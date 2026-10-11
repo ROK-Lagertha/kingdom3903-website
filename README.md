@@ -1,5 +1,5 @@
-# 3903 | The Citadel — V3.5
+# The Citadel V3.6 — Royal Icon Navigation
 
-Corrects visible BattleTrack ornamental frame dimensions to match Recruitment Center and FlagFiller Registry. Adjusts the BattleTrack image within the same responsive card container; other cards and website sections unchanged.
+Replaced the five text-only navigation links with gold line icons and labels. Hover and keyboard focus use a subtle gold glow and underline. Mobile uses a compact five-column icon layout. All original URLs, images, cards, hero and footer remain intact.
 
-Deploy all contents to the repository root.
+Deploy all files in this ZIP to the root of the GitHub repository.
