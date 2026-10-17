@@ -1,5 +1,3 @@
-# 3903 | The Citadel — V3.8.2
+# The Citadel v3.9 — The Royal Herald
 
-Header transition correction based on V3.8.1. Panorama stays strictly inside the hero, with a smooth fade into the royal navy background. Navigation has its own solid navy background, with no landscape behind it. Logo, links, cards and footer remain unchanged.
-
-Upload the complete contents to the GitHub repository and deploy via Cloudflare.
+Full website based on v3.8.2. Added a responsive accessible Royal Herald ticker beneath navigation. The four announcements are editable in the `heraldNews` array near the end of `index.html`. No named recipients are claimed until verified. Existing cards, images, and links retained. Deploy all files to the GitHub repository.

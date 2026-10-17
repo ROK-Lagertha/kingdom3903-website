@@ -140,6 +140,26 @@ main{width:min(calc(100% - 48px),1640px);padding-top:clamp(18px,2vw,34px)}
 .hero-layout .brand{z-index:2}
 @media(max-width:650px){.hero-layout .kingdom-visual{inset:-2px -2px -26px;height:auto;min-height:0;margin:0}.hero-layout .kingdom-visual img{height:100%;object-position:58% center}.hero-layout .kingdom-visual::after{background:linear-gradient(90deg,rgba(5,10,18,.37),rgba(5,10,18,.16)),linear-gradient(to bottom,#050a12 0%,transparent 17%,transparent 43%,rgba(5,10,18,.58) 73%,#050a12 100%)}}
 </style>
+<style>
+/* V3.8.2: keep panorama strictly inside header and fade into royal navy */
+.hero-layout{overflow:hidden!important;background:#050a12!important}
+.hero-layout .kingdom-visual{inset:0!important;overflow:hidden!important}
+.hero-layout .kingdom-visual img{height:100%!important;-webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 55%,rgba(0,0,0,.75) 73%,transparent 100%)!important;mask-image:linear-gradient(to bottom,#000 0%,#000 55%,rgba(0,0,0,.75) 73%,transparent 100%)!important}
+.hero-layout .kingdom-visual::after{background:linear-gradient(90deg,rgba(5,10,18,.56),rgba(5,10,18,.07) 75%),linear-gradient(to bottom,transparent 38%,rgba(5,10,18,.12) 58%,#050a12 100%)!important}
+.royal-nav{position:relative;z-index:3;background:#050a12!important}
+@media(max-width:650px){.hero-layout .kingdom-visual{inset:0!important;height:100%!important}.hero-layout .kingdom-visual::after{background:linear-gradient(90deg,rgba(5,10,18,.3),rgba(5,10,18,.12)),linear-gradient(to bottom,transparent 38%,#050a12 100%)!important}}
+</style>
+<style>
+/* Royal Herald v3.9: real, accessible HTML rather than baked-in artwork */
+.herald{max-width:1600px;margin:0 auto clamp(22px,3vw,40px);padding:0 12px;color:#e9c783}
+.herald-shell{position:relative;display:grid;grid-template-columns:minmax(175px,25%) 1fr auto;align-items:center;gap:16px;padding:18px 22px;background:radial-gradient(ellipse at 10% 50%,rgba(25,60,105,.24),transparent 55%),linear-gradient(110deg,#081422,#050b15);border:1px solid #9c692d;box-shadow:inset 0 0 0 1px rgba(255,199,94,.12),0 0 25px rgba(199,127,30,.09);border-radius:8px}
+.herald-shell:before,.herald-shell:after{content:'✦';position:absolute;color:#ffce6e;font-size:20px;text-shadow:0 0 10px #a66b20;top:-14px}.herald-shell:before{left:12px}.herald-shell:after{right:12px}
+.herald-heading{border-right:1px solid rgba(218,162,71,.3);padding-right:15px}.herald-heading strong{display:block;font:700 clamp(17px,1.6vw,24px) Georgia,serif;letter-spacing:.055em;color:#f3cf83}.herald-heading small{display:block;font:11px system-ui,sans-serif;letter-spacing:.13em;color:#b9a077;margin-top:6px}
+.herald-story{display:flex;gap:15px;align-items:center;min-width:0;transition:opacity .25s}.herald-symbol{font-size:36px;flex:none;filter:drop-shadow(0 0 7px rgba(245,175,65,.25))}.herald-copy{min-width:0}.herald-copy strong{display:block;color:#ffdb91;font:700 clamp(15px,1.35vw,20px) Georgia,serif}.herald-copy p{margin:5px 0;color:#c9d6e6;font:clamp(12px,1vw,15px)/1.4 system-ui,sans-serif}.herald-copy time{font:11px system-ui,sans-serif;color:#a8b3c2}
+.herald-controls{display:flex;gap:7px;align-items:center}.herald-controls button{cursor:pointer;color:#e7bc69;background:#0c1828;border:1px solid #77582d;border-radius:50%;width:34px;height:34px;font-size:21px}.herald-controls button:hover,.herald-controls button:focus-visible{background:#28334a;outline:2px solid #d8a44f;outline-offset:2px}.herald-counter{font:12px system-ui,sans-serif;color:#b7a078;min-width:28px;text-align:center}
+@media(max-width:700px){.herald{padding:0 4px;margin-bottom:22px}.herald-shell{grid-template-columns:1fr auto;gap:12px;padding:14px}.herald-heading{grid-column:1/-1;border-right:0;border-bottom:1px solid rgba(218,162,71,.3);padding:0 0 9px}.herald-symbol{font-size:30px}.herald-controls button{width:32px;height:32px}}
+@media(prefers-reduced-motion:reduce){.herald-story{transition:none}}
+</style>
 </head>
 <body><main id="home">
 <section class="hero-layout" aria-label="The Citadel and Kingdom 3903">
@@ -147,6 +167,11 @@ main{width:min(calc(100% - 48px),1640px);padding-top:clamp(18px,2vw,34px)}
 <div class="kingdom-visual"><img src="./assets/kingdom-panorama.webp" alt="Moonlit Kingdom 3903 fortress with royal blue banners and golden lights" width="975" height="373"></div>
 </section>
 <nav class="royal-nav" aria-label="Main navigation"><a class="royal-nav-item" href="#home" aria-current="page"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7"/><path d="M5 9v11h14V9"/><path d="M9 20v-7h6v7"/></svg><span class="nav-label">HOME</span></a><a class="royal-nav-item" href="#tools"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 17.5 3-3L6 3 3 6l11.5 11.5Z"/><path d="m13 19 6-6"/><path d="m16 16 4 4"/><path d="m19 21 2-2"/><path d="m3 21 6-6"/><path d="m5 19-2 2"/><path d="M14 3 3 14"/></svg><span class="nav-label">TOOLS</span></a><a class="royal-nav-item" href="https://discord.gg/MJ5bgWDVP3" target="_blank" rel="noopener noreferrer"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span class="nav-label">RECRUITMENT</span></a><a class="royal-nav-item" href="#kingdom"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m2 8 5 4 5-7 5 7 5-4-2 12H4L2 8Z"/><path d="M4 20h16"/></svg><span class="nav-label">KINGDOM</span></a><a class="royal-nav-item" href="https://flagfiller.kingdom3903.com/"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 22V4"/><path d="M4 5c5-3 9 3 16 0v12c-7 3-11-3-16 0"/></svg><span class="nav-label">REGISTRY</span></a></nav>
+<section class="herald" aria-label="Kingdom News" id="news"><div class="herald-shell">
+<div class="herald-heading"><strong>⚜ KINGDOM NEWS</strong><small>THE ROYAL HERALD · 3903</small></div>
+<div class="herald-story" aria-live="polite" aria-atomic="true"><span class="herald-symbol" id="herald-icon" aria-hidden="true">👑</span><div class="herald-copy"><strong id="herald-title">Royal Honors</strong><p id="herald-text">This week's Royal Chest recipients have been announced. Thank you for your contributions!</p><time id="herald-date" datetime="2026-10-16">16 October 2026</time></div></div>
+<div class="herald-controls"><button type="button" id="herald-prev" aria-label="Previous news">‹</button><span class="herald-counter" id="herald-counter">1 / 4</span><button type="button" id="herald-next" aria-label="Next news">›</button></div>
+</div></section>
 <section class="royal-cards" id="tools" aria-label="Kingdom tools and services">
 <a class="battletrack" href="https://battletrack.kingdom3903.com/" aria-label="Open ROK BattleTrack"><img class="battletrack-art" src="./assets/battletrack-royal-strategist-transparent-v3.7.png" alt="ROK BattleTrack, royal capybara strategist with battle map, track KP, KPR and kingdom performance" width="1035" height="647"></a>
 <div class="secondary-grid">
@@ -157,14 +182,18 @@ main{width:min(calc(100% - 48px),1640px);padding-top:clamp(18px,2vw,34px)}
 <img class="footer-cappy" src="./assets/footer-cappy-strategy.png" alt="Royal capybara with strategy books and a globe" loading="lazy" width="675" height="580">
 <div class="footer-center"><div class="footer-divider" aria-hidden="true"></div><p class="footer-motto">Strategy. People.<br>Progress. <span class="footer-heart">❤️</span></p><p class="footer-note">Independent fan-made community website for Kingdom 3903. Not affiliated with, endorsed by, or sponsored by Lilith Games.</p><div class="footer-bottom" aria-hidden="true"></div></div>
 <img class="footer-cappy" src="./assets/footer-cappy-progress.png" alt="Royal capybara resting on maps and scrolls" loading="lazy" width="662" height="580">
-</footer></main></body>
+</footer></main><script>
+// Edit this array to publish the next Kingdom announcements. No backend required.
+const heraldNews=[
+ {icon:'👑',title:'Royal Honors',text:"This week's Royal Chest recipients have been announced. Thank you for your contributions!",date:'16 October 2026',iso:'2026-10-16'},
+ {icon:'🏆',title:'Top Fort Launches',text:'A big thank-you to our dedicated Fort Launchers for their activity over the last seven days.',date:'16 October 2026',iso:'2026-10-16'},
+ {icon:'⚔️',title:'Top Fort Joins',text:'Great teamwork from our Fort Joiners. Every contribution strengthens Kingdom 3903!',date:'16 October 2026',iso:'2026-10-16'},
+ {icon:'💙',title:'Community Appreciation',text:'Special thanks to the Cleanup and Event Management teams for their ongoing commitment.',date:'16 October 2026',iso:'2026-10-16'}
+];
+(()=>{const el=document.querySelector('.herald');if(!el)return;let index=0,timer;const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const show=(i)=>{index=(i+heraldNews.length)%heraldNews.length;const n=heraldNews[index];document.getElementById('herald-icon').textContent=n.icon;document.getElementById('herald-title').textContent=n.title;document.getElementById('herald-text').textContent=n.text;const date=document.getElementById('herald-date');date.textContent=n.date;date.dateTime=n.iso;document.getElementById('herald-counter').textContent=`${index+1} / ${heraldNews.length}`};
+const stop=()=>clearInterval(timer);const start=()=>{stop();if(!reduced)timer=setInterval(()=>show(index+1),8000)};
+document.getElementById('herald-prev').addEventListener('click',()=>{show(index-1);start()});document.getElementById('herald-next').addEventListener('click',()=>{show(index+1);start()});el.addEventListener('mouseenter',stop);el.addEventListener('mouseleave',start);el.addEventListener('focusin',stop);el.addEventListener('focusout',e=>{if(!el.contains(e.relatedTarget))start()});document.addEventListener('visibilitychange',()=>document.hidden?stop():start());start()})();
+</script>
+</body>
 </html>
-<style>
-/* V3.8.2: keep panorama strictly inside header and fade into royal navy */
-.hero-layout{overflow:hidden!important;background:#050a12!important}
-.hero-layout .kingdom-visual{inset:0!important;overflow:hidden!important}
-.hero-layout .kingdom-visual img{height:100%!important;-webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 55%,rgba(0,0,0,.75) 73%,transparent 100%)!important;mask-image:linear-gradient(to bottom,#000 0%,#000 55%,rgba(0,0,0,.75) 73%,transparent 100%)!important}
-.hero-layout .kingdom-visual::after{background:linear-gradient(90deg,rgba(5,10,18,.56),rgba(5,10,18,.07) 75%),linear-gradient(to bottom,transparent 38%,rgba(5,10,18,.12) 58%,#050a12 100%)!important}
-.royal-nav{position:relative;z-index:3;background:#050a12!important}
-@media(max-width:650px){.hero-layout .kingdom-visual{inset:0!important;height:100%!important}.hero-layout .kingdom-visual::after{background:linear-gradient(90deg,rgba(5,10,18,.3),rgba(5,10,18,.12)),linear-gradient(to bottom,transparent 38%,#050a12 100%)!important}}
-</style>
