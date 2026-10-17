@@ -1,17 +1,14 @@
-# The Citadel V3.12.1 — Royal Herald Admin Routing
+# V3.12.3 — Discord authorization diagnostics
 
-- Successful Discord OAuth2 login now redirects to `/news/admin/`.
-- The public `/news/` page remains available to all visitors.
-- The admin dashboard is separate from the public news page.
-- **Server-side protection:** Worker checks the encrypted session and live Discord Reporter role `1561084418246844477` before returning admin HTML.
-- Wrangler assets `run_worker_first` now includes `/news/admin` and `/news/admin/*` to prevent direct static asset bypass.
-- The dashboard includes a logout, placeholder article editor and Kingdom Pulse checkbox.
-- Publishing is deliberately disabled until D1 storage, server-side authorization, CSRF and HTML sanitization are implemented.
-- No new Cloudflare secrets or Discord redirect URLs are needed. Existing OAuth callback remains `/api/herald/callback`.
+No changes to Discord credentials, role ID or callback.
 
-Deploy with existing `npx wrangler deploy` setup. Do not remove the `run_worker_first` rules.
+The OAuth callback now distinguishes three failure classes without exposing tokens, usernames, or role lists:
+- `discord_identity_unavailable`: Discord identity request failed
+- `discord_membership_unavailable`: membership endpoint failed; displays HTTP status
+- `reporter_role_not_present`: Discord returned membership but not Reporter role
 
-## V3.12.2
-- Switched the Royal Herald access role to Reporter (`1561084418246844477`).
-- Discord login, guild ID, callback URL and session handling remain unchanged.
-- A fresh Discord login is required to test the role. If access still fails, investigate HTTP 401 vs 403 and OAuth membership response rather than changing more role IDs.
+Cloudflare logs also record the failure class and HTTP status (no credentials).
+
+This is a diagnostic release, not a claim that the role issue has been fixed. If membership is HTTP 403, check whether Discord OAuth2 `guilds.members.read` is granted and whether Discord application membership access is permitted. If HTTP 404, verify guild membership and endpoint authorization. If role not present, confirm the Reporter role is assigned to the account authorizing the application.
+
+Do not paste cookies, authorization codes, tokens or secrets into chat.

@@ -16,8 +16,21 @@ const rand=()=>b64(crypto.getRandomValues(new Uint8Array(32)));
 async function key(env){if(!env.HERALD_SESSION_SECRET||env.HERALD_SESSION_SECRET.length<32)throw Error('Missing session secret');const digest=await crypto.subtle.digest('SHA-256',enc.encode(env.HERALD_SESSION_SECRET));return crypto.subtle.importKey('raw',digest,'AES-GCM',false,['encrypt','decrypt'])}
 async function seal(env,value){const iv=crypto.getRandomValues(new Uint8Array(12));const cipher=await crypto.subtle.encrypt({name:'AES-GCM',iv},await key(env),enc.encode(JSON.stringify(value)));return b64(iv)+'.'+b64(new Uint8Array(cipher))}
 async function open(env,value){try{const [iv,c]=value.split('.');return JSON.parse(dec.decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:un64(iv)},await key(env),un64(c))))}catch{return null}}
-async function discord(path,token){try{const r=await fetch('https://discord.com/api/v10'+path,{headers:{authorization:'Bearer '+token,accept:'application/json'}});return r.ok?await r.json():null}catch{return null}}
-async function check(token){const user=await discord('/users/@me',token);if(!user?.id)return null;const member=await discord('/users/@me/guilds/'+GUILD+'/member',token);return {user,admin:Array.isArray(member?.roles)&&member.roles.includes(ADMIN)}}
+async function discord(path,token){
+ try{
+  const r=await fetch('https://discord.com/api/v10'+path,{headers:{authorization:'Bearer '+token,accept:'application/json'}});
+  if(!r.ok)return {ok:false,status:r.status};
+  return {ok:true,data:await r.json()};
+ }catch{return {ok:false,status:0}}
+}
+async function check(token){
+ const user=await discord('/users/@me',token);
+ if(!user.ok||!user.data?.id)return {admin:false,reason:'discord_identity_unavailable',discordStatus:user.status};
+ const member=await discord('/users/@me/guilds/'+GUILD+'/member',token);
+ if(!member.ok)return {user:user.data,admin:false,reason:'discord_membership_unavailable',discordStatus:member.status};
+ if(!Array.isArray(member.data?.roles))return {user:user.data,admin:false,reason:'discord_roles_missing'};
+ return {user:user.data,admin:member.data.roles.includes(ADMIN),reason:member.data.roles.includes(ADMIN)?'ok':'reporter_role_not_present'};
+}
 function callbackUrl(req,env){return env.HERALD_CALLBACK_URL||new URL('/api/herald/callback',req.url).toString()}
 function addCookies(response,values){const h=new Headers(response.headers);for(const c of values)h.append('set-cookie',c);return new Response(response.body,{status:response.status,headers:h})}
 const fail=(msg)=>new Response(`<!doctype html><html lang="en"><meta charset="utf-8"><title>Royal Herald Login</title><body style="background:#071322;color:#e8c47b;font:18px Arial;text-align:center;padding:10vh 20px"><h1>Royal Herald</h1><p>${msg}</p><a style="color:#e8c47b" href="/news/">Back to the Herald</a></body></html>`,{status:403,headers:{'content-type':'text/html; charset=utf-8','cache-control':'no-store',"content-security-policy":"default-src 'none'; style-src 'unsafe-inline'"}})
@@ -51,7 +64,7 @@ export default {async fetch(req,env){
   if(!tokenRes.ok)return fail('Discord token exchange failed.');
   const token=await tokenRes.json();if(!token.access_token)return fail('No access token returned.');
   const member=await check(token.access_token);
-  if(!member?.admin)return addCookies(fail('Reporter role is required.'),[cookie(STATE,'',0),cookie(SESS,'',0)]);
+  if(!member?.admin){console.warn('Herald OAuth authorization rejected',member?.reason||'unknown',member?.discordStatus||'');return addCookies(fail(member?.reason==='discord_membership_unavailable'?'Discord membership could not be verified (HTTP '+member.discordStatus+'). Please contact an administrator.':member?.reason==='reporter_role_not_present'?'Reporter role is not present in the Discord membership response.':'Discord identity could not be verified.'),[cookie(STATE,'',0),cookie(SESS,'',0)]);}
   const ttl=Math.max(60,Math.min(3600,(token.expires_in||3600)-60));
   const session=await seal(env,{id:member.user.id,token:token.access_token,exp:Date.now()+ttl*1000});
   return addCookies(redirect('/news/admin/'),[cookie(SESS,session,ttl),cookie(STATE,'',0)]);
