@@ -90,7 +90,7 @@ main{width:min(calc(100% - 48px),1640px);padding-top:clamp(18px,2vw,34px)}
 
 /* V3.6 Royal icon navigation: desktop + mobile */
 .royal-nav{
-  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;
+  display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:0;
   max-width:1500px;width:100%;margin:12px auto clamp(18px,2.8vw,34px);
   padding:0 12px;border-top:1px solid rgba(220,162,69,.55);
   border-bottom:1px solid rgba(220,162,69,.55);
@@ -240,9 +240,9 @@ main{width:min(calc(100% - 48px),1640px);padding-top:clamp(18px,2vw,34px)}
 }
 
 
-/* V3.9.8: six responsive royal navigation entries */
-.royal-nav .royal-nav-item{min-width:0}
-@media(max-width:650px){.royal-nav .royal-nav-item{flex:1 1 16%;padding-inline:1px;font-size:clamp(7px,1.85vw,10px)}.royal-nav .nav-icon{width:18px;height:18px}}
+/* V3.9.9: six equal grid columns across desktop and mobile */
+.royal-nav{grid-template-columns:repeat(6,minmax(0,1fr))!important}.royal-nav .royal-nav-item{min-width:0}
+@media(max-width:650px){.royal-nav .royal-nav-item{padding-inline:1px;font-size:clamp(7px,1.85vw,10px)}.royal-nav .nav-icon{width:18px;height:18px}}
 </style>
 <style>
 /* V3.8.2: keep panorama strictly inside header and fade into royal navy */
