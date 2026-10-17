@@ -1,3 +1,5 @@
-3903 | The Citadel v3.9.1
-Royal Herald redesign: ornate gold frame, royal banner, decorative chest, responsive news layout and indicators. Dynamic news and navigation preserved.
-Deploy the full contents to the existing Cloudflare website.
+3903 | The Citadel V3.9.2
+
+Compact Royal Herald: max 1124px outer width, slimmer desktop layout, streamlined mobile layout, retained royal gold border and functional news rotation. All other sections and assets unchanged.
+
+Deploy the contents of this archive to the existing website repository.
