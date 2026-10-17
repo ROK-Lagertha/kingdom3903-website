@@ -22,3 +22,7 @@ Removed public Royal Desk sidebar and public homepage ticker checkbox. Expanded 
 - Prevent adjacent top and bottom gems from visually touching.
 - Increased separation between featured headline and Latest Dispatches.
 - Preserved crown positioning, jewels, OAuth, and Worker configuration.
+
+
+## V3.12.9 — Kingdom Pulse matching frames
+The homepage ticker uses the same royal gold double frame, center-top and center-bottom blue diamonds, and tilted crown on the upper-left border as Royal Herald article cards. Previous corner gems and center crest are removed. Compact sizing, controls, and authentication unchanged.

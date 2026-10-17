@@ -260,6 +260,57 @@ main{width:min(calc(100% - 48px),1640px);padding-top:clamp(18px,2vw,34px)}
 @keyframes pulse-sapphire{0%,100%{filter:brightness(1)}50%{filter:brightness(1.25)}}
 @media(max-width:650px){.pulse-gem{width:10px;height:10px}.pulse-gem-tl{top:-5px;left:-5px}.pulse-gem-tr{top:-5px;right:-5px}.pulse-gem-bl{bottom:-5px;left:-5px}.pulse-gem-br{bottom:-5px;right:-5px}.pulse-crest{min-width:74px;height:15px;top:-7px;gap:5px}.pulse-crest-wing{font-size:16px}.pulse-crest-stone{width:8px;height:8px}}
 @media(prefers-reduced-motion:reduce){.pulse-gem{animation:none!important}}
+
+/* V3.12.9 — Match Royal Herald's Kingdom Jewel Frames exactly on Kingdom Pulse.
+   Preserve the compact news ticker and all carousel interactions. */
+.pulse-panel{
+  overflow:visible!important;
+  isolation:isolate;
+  position:relative;
+  border:1px solid #c18b39!important;
+  border-radius:11px!important;
+  background:linear-gradient(137deg,#142a44 0%,#0c1c30 58%,#081421 100%)!important;
+  box-shadow:inset 0 0 0 1px rgba(246,202,111,.12),inset 0 1px 0 rgba(255,235,179,.23),0 12px 30px #0006,0 0 15px rgba(201,128,36,.12)!important;
+  transition:box-shadow .24s ease,border-color .24s ease!important;
+}
+.pulse-panel::before{
+  content:''!important;position:absolute!important;inset:4px!important;
+  height:auto!important;width:auto!important;
+  border:1px solid rgba(225,170,74,.34)!important;
+  border-radius:7px!important;background:none!important;
+  opacity:1!important;pointer-events:none!important;z-index:0!important;
+}
+.pulse-panel::after{
+  content:''!important;position:absolute!important;top:0!important;
+  left:18px!important;right:18px!important;bottom:auto!important;
+  height:1px!important;border:0!important;border-radius:0!important;
+  background:linear-gradient(90deg,transparent,#f6d48d 27%,#fff1bf 50%,#f6d48d 73%,transparent)!important;
+  box-shadow:none!important;animation:none!important;opacity:1!important;
+  pointer-events:none!important;z-index:1!important;
+}
+.pulse-panel .pulse-main::before{display:none!important;animation:none!important}
+.pulse-frame-crown{
+  position:absolute;top:-21px;left:-15px;z-index:5;display:block;
+  font:normal 34px/1 Georgia,serif;transform:rotate(-24deg);
+  transform-origin:70% 80%;filter:drop-shadow(0 2px 1px #3a210a) drop-shadow(0 0 6px rgba(250,189,73,.5));pointer-events:none;
+}
+.pulse-frame-crown::after{
+  content:'';position:absolute;left:22%;right:18%;bottom:3px;height:3px;
+  border-radius:100%;background:linear-gradient(90deg,transparent,#fff6cb,transparent);
+  transform:rotate(-7deg);opacity:.8;
+}
+.pulse-jewel{
+  position:absolute;left:50%;width:14px;height:14px;
+  transform:translateX(-50%) rotate(45deg);
+  border:1px solid #ffe7a3;border-radius:2px;
+  background:radial-gradient(circle at 30% 26%,#d2f7ff 0%,#67c7ff 17%,#2061d8 47%,#071d67 78%);
+  box-shadow:0 0 0 2px #70441a,0 0 0 3px rgba(251,196,88,.75),0 0 11px #377cff,0 0 18px rgba(35,117,250,.4);
+  z-index:4;pointer-events:none;
+}
+.pulse-jewel-top{top:-7px}.pulse-jewel-bottom{bottom:-7px}
+.pulse-panel.pulse-news-change{border-color:#f5ce79!important;box-shadow:inset 0 0 0 1px rgba(255,214,137,.19),0 14px 33px #0008,0 0 22px rgba(224,156,57,.28)!important}
+@media(max-width:650px){.pulse-frame-crown{font-size:30px;top:-19px;left:-12px}}
+@media(prefers-reduced-motion:reduce){.pulse-panel{transition:none!important}}
 </style>
 <style>
 /* V3.8.2: keep panorama strictly inside header and fade into royal navy */
@@ -471,7 +522,7 @@ main{width:min(calc(100% - 48px),1640px);padding-top:clamp(18px,2vw,34px)}
 <section class="pulse" aria-label="Kingdom Pulse — latest news" id="news">
   <div class="pulse-heading"><span class="pulse-heading-mark" aria-hidden="true">⚡</span><div><h2>KINGDOM PULSE</h2><p>THE LATEST FROM 3903</p></div><span class="pulse-heading-mark" aria-hidden="true">⚡</span></div>
   <div class="pulse-panel" aria-roledescription="carousel" aria-label="Latest kingdom headlines">
-    <div class="pulse-ornaments" aria-hidden="true"><span class="pulse-gem pulse-gem-tl"></span><span class="pulse-gem pulse-gem-tr"></span><span class="pulse-gem pulse-gem-bl"></span><span class="pulse-gem pulse-gem-br"></span><span class="pulse-crest"><span class="pulse-crest-wing">❧</span><span class="pulse-crest-stone"></span><span class="pulse-crest-wing">❧</span></span></div>
+    <span class="pulse-frame-crown" aria-hidden="true">👑</span><span class="pulse-jewel pulse-jewel-top" aria-hidden="true"></span><span class="pulse-jewel pulse-jewel-bottom" aria-hidden="true"></span>
     <div class="pulse-main"><div class="pulse-meta"><span class="pulse-badge"><span class="pulse-light"></span>LATEST</span><time id="herald-date" datetime="2026-10-16">16 OCT 2026</time></div>
       <a id="pulse-story-link" class="pulse-story-link" href="./news/" aria-label="Read Royal Honors on The Royal Herald"><span class="pulse-icon" id="herald-icon" aria-hidden="true">👑</span><span class="pulse-story-body"><strong id="herald-title">Royal Honors</strong><span id="herald-text">This week's Royal Chest recipients have been announced. Thank you for your contributions!</span></span><span class="pulse-open" aria-hidden="true">↗</span></a>
     </div>
