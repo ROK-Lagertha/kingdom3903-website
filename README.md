@@ -15,3 +15,10 @@ Removed public Royal Desk sidebar and public homepage ticker checkbox. Expanded 
 - Blue diamond jewels centered on top and bottom borders.
 - Removed previous crown glyphs placed inside card content.
 - Refined gold filigree borders; all auth and worker code unchanged.
+
+
+## V3.12.8 – Royal Herald card spacing
+- Wider horizontal and vertical gutters for the jewel-framed news cards.
+- Prevent adjacent top and bottom gems from visually touching.
+- Increased separation between featured headline and Latest Dispatches.
+- Preserved crown positioning, jewels, OAuth, and Worker configuration.

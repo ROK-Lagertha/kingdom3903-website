@@ -39,6 +39,17 @@ footer{text-align:center;border-top:1px solid #72562c;padding:25px;color:#a99b86
 .article .category{font-size:10px;line-height:1.4}.article h3{line-height:1.2}
 @media(max-width:760px){.feature-card{padding:29px 25px}.article{padding:24px 20px}.frame-crown{font-size:30px;top:-19px;left:-12px}.feature-card .frame-crown{font-size:35px;top:-22px;left:-14px}}
 @media(prefers-reduced-motion:reduce){.feature-card,.article{transition:none}.feature-card:hover,.article:hover{transform:none}}
+
+/* V3.12.8 — give crowns and jewels their own breathing room between cards */
+.articles{column-gap:26px;row-gap:48px}
+.section-head{margin-top:58px;margin-bottom:26px}
+.feature{margin-bottom:10px}
+.article{padding:28px 24px 25px}
+@media(max-width:760px){
+  .articles{grid-template-columns:1fr;row-gap:43px}
+  .section-head{margin-top:52px;margin-bottom:26px}
+  .article{padding:27px 22px 24px}
+}
 </style></head>
 <body>
 <header><nav aria-label="Site navigation"><a class="citadel-brand" href="../" aria-label="The Citadel — Home"><img src="../assets/citadel-logo.png" alt="The Citadel 3903"></a><div class="right"><a href="../">HOME</a><button class="login" id="login" type="button">LOGIN WITH DISCORD</button></div></nav></header>
