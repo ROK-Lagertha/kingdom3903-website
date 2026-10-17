@@ -8,3 +8,10 @@ Fix Cloudflare asset canonical redirect loop: protected admin route fetches dash
 
 ## V3.12.6 — Royal Herald Visual Refresh
 Removed public Royal Desk sidebar and public homepage ticker checkbox. Expanded featured headline. Refined feature and dispatch card borders with soft golden illumination and reflective crown accents. Removed placeholder ticker checkbox from admin editor; article-to-Pulse selection is planned as a dedicated admin article list. No authentication or publishing changes.
+
+
+## V3.12.7 – Kingdom Jewel Frames
+- Crown ornaments are tilted and hang over upper-left card borders.
+- Blue diamond jewels centered on top and bottom borders.
+- Removed previous crown glyphs placed inside card content.
+- Refined gold filigree borders; all auth and worker code unchanged.

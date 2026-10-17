@@ -20,30 +20,36 @@ footer{text-align:center;border-top:1px solid #72562c;padding:25px;color:#a99b86
 .hero .herald-logo-img{display:block;width:100%;height:auto;max-height:310px;object-fit:contain;filter:drop-shadow(0 8px 14px rgba(0,0,0,.34))}
 @media(max-width:760px){.hero .herald-logo-wrap{width:100%;margin-bottom:12px}.hero .herald-logo-img{max-height:none}}
 
-/* V3.12.6 — Royal Herald refined editorial cards */
+/* V3.12.7 — Kingdom jewel frames, with a crown resting on the upper-left border */
 .feature{grid-template-columns:minmax(0,1fr)}
-.feature-card{padding:34px 42px 34px 72px;min-height:235px}
-.feature-card,.article{isolation:isolate;border:1px solid rgba(228,174,75,.78);background:linear-gradient(132deg,#152b45 0%,#0c1b2f 56%,#071321 100%);box-shadow:inset 0 1px 0 rgba(255,230,164,.22),0 0 0 1px rgba(113,74,23,.19),0 8px 27px rgba(0,0,0,.33),0 0 20px rgba(218,145,36,.12);transition:border-color .25s ease,box-shadow .25s ease,transform .25s ease}
-.feature-card:hover,.article:hover{border-color:#f7d58d;box-shadow:inset 0 1px 0 rgba(255,230,164,.34),0 10px 33px rgba(0,0,0,.38),0 0 26px rgba(232,166,54,.3);transform:translateY(-2px)}
-.feature-card:after,.article:before{content:'♛';position:absolute;top:14px;left:17px;font-family:Georgia,serif;font-size:25px;line-height:1;color:#f5ce7a;text-shadow:0 0 5px rgba(255,230,168,.85),0 0 16px rgba(248,173,58,.42);background:linear-gradient(110deg,#9a5c20 4%,#ffeab2 31%,#b97927 53%,#fff2ce 65%,#b97b30 88%);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 5px rgba(238,163,47,.38));pointer-events:none}
-.feature-card:after{top:24px;left:24px;font-size:30px}
-.article{position:relative;padding:25px 22px 23px 55px;overflow:hidden}
-.article:after{content:'';position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,216,139,.75),transparent);pointer-events:none}
-.article:before{top:23px;left:17px;font-size:23px}
+.feature-card,.article{position:relative;isolation:isolate;overflow:visible;border:1px solid #c18b39;border-radius:11px;background:linear-gradient(137deg,#142a44 0%,#0c1c30 58%,#081421 100%);box-shadow:inset 0 0 0 1px rgba(246,202,111,.12),inset 0 1px 0 rgba(255,235,179,.23),0 12px 30px #0006,0 0 15px rgba(201,128,36,.12);transition:box-shadow .24s ease,border-color .24s ease,transform .24s ease}
+.feature-card{padding:35px 40px;min-height:235px}
+.article{padding:25px 22px 23px;display:flex;flex-direction:column;gap:10px;min-height:220px}
+.feature-card:hover,.article:hover{border-color:#f5ce79;box-shadow:inset 0 0 0 1px rgba(255,214,137,.19),0 14px 33px #0008,0 0 22px rgba(224,156,57,.28);transform:translateY(-2px)}
+/* An illuminated gold filigree stroke just inside the frame. */
+.feature-card::before,.article::before{content:'';position:absolute;inset:4px;border:1px solid rgba(225,170,74,.34);border-radius:7px;pointer-events:none;z-index:0;background:none}
+.feature-card::after,.article::after{content:'';position:absolute;top:0;left:18px;right:18px;height:1px;background:linear-gradient(90deg,transparent,#f6d48d 27%,#fff1bf 50%,#f6d48d 73%,transparent);pointer-events:none;z-index:1}
+/* The blue jewels sit ON the upper and lower gold borders. */
+.jewel{position:absolute;left:50%;width:14px;height:14px;transform:translateX(-50%) rotate(45deg);border:1px solid #ffe7a3;border-radius:2px;background:radial-gradient(circle at 30% 26%,#d2f7ff 0%,#67c7ff 17%,#2061d8 47%,#071d67 78%);box-shadow:0 0 0 2px #70441a,0 0 0 3px rgba(251,196,88,.75),0 0 11px #377cff,0 0 18px rgba(35,117,250,.4);z-index:4;pointer-events:none}
+.jewel-top{top:-7px}.jewel-bottom{bottom:-7px}
+/* A tilted crown hangs from the upper-left frame corner, never inside the copy. */
+.frame-crown{position:absolute;top:-21px;left:-15px;z-index:5;display:block;font:normal 34px/1 Georgia,serif;transform:rotate(-24deg);transform-origin:70% 80%;filter:drop-shadow(0 2px 1px #3a210a) drop-shadow(0 0 6px rgba(250,189,73,.5));pointer-events:none}
+.frame-crown::after{content:'';position:absolute;left:22%;right:18%;bottom:3px;height:3px;border-radius:100%;background:linear-gradient(90deg,transparent,#fff6cb,transparent);transform:rotate(-7deg);opacity:.8}
+.feature-card .frame-crown{font-size:40px;top:-24px;left:-18px}
 .article .category{font-size:10px;line-height:1.4}.article h3{line-height:1.2}
-@media(max-width:760px){.feature-card{padding:27px 24px 27px 58px}.feature-card:after{top:22px;left:17px;font-size:25px}.article{padding-left:55px}}
+@media(max-width:760px){.feature-card{padding:29px 25px}.article{padding:24px 20px}.frame-crown{font-size:30px;top:-19px;left:-12px}.feature-card .frame-crown{font-size:35px;top:-22px;left:-14px}}
 @media(prefers-reduced-motion:reduce){.feature-card,.article{transition:none}.feature-card:hover,.article:hover{transform:none}}
 </style></head>
 <body>
 <header><nav aria-label="Site navigation"><a class="citadel-brand" href="../" aria-label="The Citadel — Home"><img src="../assets/citadel-logo.png" alt="The Citadel 3903"></a><div class="right"><a href="../">HOME</a><button class="login" id="login" type="button">LOGIN WITH DISCORD</button></div></nav></header>
 <main><div class="hero"><div class="herald-logo-wrap"><h1 class="herald-logo-title"><img class="herald-logo-img" src="../assets/royal-herald-logo.png" alt="The Royal Herald — Kingdom 3903" width="2127" height="739" decoding="async"></h1></div><p>The official news room of The Citadel. Kingdom achievements, community updates, events and the stories that bring 3903 together.</p></div><div class="rule"></div>
-<section class="feature" aria-label="Featured story"><article class="feature-card"><div class="feature-toolbar"><span class="tag">LATEST HEADLINE</span></div><div class="date">16 OCTOBER 2026 · KINGDOM HONORS</div><h2>Royal Honors</h2><p>This week's Royal Chest recipients have been announced. Thank you to everyone who keeps our kingdom moving forward.</p><a class="cta" href="#royal-honors">READ THE STORY ↓</a></article></section>
+<section class="feature" aria-label="Featured story"><article class="feature-card"><span class="frame-crown" aria-hidden="true">👑</span><span class="jewel jewel-top" aria-hidden="true"></span><span class="jewel jewel-bottom" aria-hidden="true"></span><div class="feature-toolbar"><span class="tag">LATEST HEADLINE</span></div><div class="date">16 OCTOBER 2026 · KINGDOM HONORS</div><h2>Royal Honors</h2><p>This week's Royal Chest recipients have been announced. Thank you to everyone who keeps our kingdom moving forward.</p><a class="cta" href="#royal-honors">READ THE STORY ↓</a></article></section>
 <div class="section-head"><h2>Latest Dispatches</h2><span class="pill">KINGDOM NEWS</span></div>
 <section class="articles" aria-label="Latest articles">
-<article class="article" id="royal-honors"><span class="category">👑 Royal Honors</span><time datetime="2026-10-16">16 October 2026</time><h3>Royal Honors</h3><p>Our latest Royal Chest recipients have been announced. Thank you for your contributions!</p><a href="#royal-honors">ROYAL HONORS ↗</a></article>
-<article class="article" id="fort-launches"><span class="category">🏆 Kingdom Activity</span><time datetime="2026-10-16">16 October 2026</time><h3>Top Fort Launches</h3><p>A big thank-you to our dedicated Fort Launchers for their activity over the last seven days.</p><a href="#fort-launches">FORT LAUNCHES ↗</a></article>
-<article class="article" id="fort-joins"><span class="category">⚔ Kingdom Activity</span><time datetime="2026-10-16">16 October 2026</time><h3>Top Fort Joins</h3><p>Recognizing the governors who supported our kingdom's fort activity this week.</p><a href="#fort-joins">FORT JOINS ↗</a></article>
-<article class="article" id="community-appreciation"><span class="category">💙 Community</span><time datetime="2026-10-16">16 October 2026</time><h3>Community Appreciation</h3><p>Special thanks to the Cleanup and Event Management teams for their ongoing commitment.</p><a href="#community-appreciation">COMMUNITY ↗</a></article>
+<article class="article" id="royal-honors"><span class="frame-crown" aria-hidden="true">👑</span><span class="jewel jewel-top" aria-hidden="true"></span><span class="jewel jewel-bottom" aria-hidden="true"></span><span class="category">👑 Royal Honors</span><time datetime="2026-10-16">16 October 2026</time><h3>Royal Honors</h3><p>Our latest Royal Chest recipients have been announced. Thank you for your contributions!</p><a href="#royal-honors">ROYAL HONORS ↗</a></article>
+<article class="article" id="fort-launches"><span class="frame-crown" aria-hidden="true">👑</span><span class="jewel jewel-top" aria-hidden="true"></span><span class="jewel jewel-bottom" aria-hidden="true"></span><span class="category">🏆 Kingdom Activity</span><time datetime="2026-10-16">16 October 2026</time><h3>Top Fort Launches</h3><p>A big thank-you to our dedicated Fort Launchers for their activity over the last seven days.</p><a href="#fort-launches">FORT LAUNCHES ↗</a></article>
+<article class="article" id="fort-joins"><span class="frame-crown" aria-hidden="true">👑</span><span class="jewel jewel-top" aria-hidden="true"></span><span class="jewel jewel-bottom" aria-hidden="true"></span><span class="category">⚔ Kingdom Activity</span><time datetime="2026-10-16">16 October 2026</time><h3>Top Fort Joins</h3><p>Recognizing the governors who supported our kingdom's fort activity this week.</p><a href="#fort-joins">FORT JOINS ↗</a></article>
+<article class="article" id="community-appreciation"><span class="frame-crown" aria-hidden="true">👑</span><span class="jewel jewel-top" aria-hidden="true"></span><span class="jewel jewel-bottom" aria-hidden="true"></span><span class="category">💙 Community</span><time datetime="2026-10-16">16 October 2026</time><h3>Community Appreciation</h3><p>Special thanks to the Cleanup and Event Management teams for their ongoing commitment.</p><a href="#community-appreciation">COMMUNITY ↗</a></article>
 </section>
 
 </main><footer>THE CITADEL · KINGDOM 3903 &nbsp; ⚜ &nbsp; Strategy. People. Progress. ❤️<br><small>Rise of Kingdoms is a trademark of Lilith Games. This is a community fan site.</small></footer>
