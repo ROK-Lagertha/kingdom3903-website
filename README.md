@@ -5,3 +5,6 @@ Discord returned HTTP 429 while the OAuth callback was checking the Reporter rol
 
 ## V3.12.5
 Fix Cloudflare asset canonical redirect loop: protected admin route fetches dashboard.html instead of index.html. Keep /news/admin/ server-side authorization.
+
+## V3.12.6 — Royal Herald Visual Refresh
+Removed public Royal Desk sidebar and public homepage ticker checkbox. Expanded featured headline. Refined feature and dispatch card borders with soft golden illumination and reflective crown accents. Removed placeholder ticker checkbox from admin editor; article-to-Pulse selection is planned as a dedicated admin article list. No authentication or publishing changes.
