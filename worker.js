@@ -1,7 +1,7 @@
 // The Citadel / Royal Herald — Cloudflare Worker OAuth2
 // Requires env.ASSETS and three Cloudflare secrets. Never commit credentials.
 const GUILD='1462581217722368074';
-const ADMIN='1462585046329200700';
+const ADMIN='1561084418246844477';
 const CLIENT='1557797621832360027';
 const SESS='__Host-herald_session',STATE='__Host-herald_state';
 const enc=new TextEncoder(),dec=new TextDecoder();
@@ -51,7 +51,7 @@ export default {async fetch(req,env){
   if(!tokenRes.ok)return fail('Discord token exchange failed.');
   const token=await tokenRes.json();if(!token.access_token)return fail('No access token returned.');
   const member=await check(token.access_token);
-  if(!member?.admin)return addCookies(fail('Administrator role is required.'),[cookie(STATE,'',0),cookie(SESS,'',0)]);
+  if(!member?.admin)return addCookies(fail('Reporter role is required.'),[cookie(STATE,'',0),cookie(SESS,'',0)]);
   const ttl=Math.max(60,Math.min(3600,(token.expires_in||3600)-60));
   const session=await seal(env,{id:member.user.id,token:token.access_token,exp:Date.now()+ttl*1000});
   return addCookies(redirect('/news/admin/'),[cookie(SESS,session,ttl),cookie(STATE,'',0)]);
