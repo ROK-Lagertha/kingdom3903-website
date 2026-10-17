@@ -58,7 +58,7 @@ export default {async fetch(req,env){
   if(!env.HERALD_SESSION_SECRET)return redirect('/news/');
   const session=await open(env,getCookie(req,SESS));
   if(!validSession(session))return redirect('/news/');
-  const assetUrl=new URL('/news/admin/index.html',url.origin);
+  const assetUrl=new URL('/news/admin/dashboard.html',url.origin);
   const asset=await env.ASSETS.fetch(new Request(assetUrl,req));
   const h=new Headers(asset.headers);h.set('cache-control','private, no-store');h.set('x-robots-tag','noindex, nofollow');
   return new Response(asset.body,{status:asset.status,headers:h});
