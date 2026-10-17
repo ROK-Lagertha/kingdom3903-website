@@ -23,6 +23,18 @@ function addCookies(response,values){const h=new Headers(response.headers);for(c
 const fail=(msg)=>new Response(`<!doctype html><html lang="en"><meta charset="utf-8"><title>Royal Herald Login</title><body style="background:#071322;color:#e8c47b;font:18px Arial;text-align:center;padding:10vh 20px"><h1>Royal Herald</h1><p>${msg}</p><a style="color:#e8c47b" href="/news/">Back to the Herald</a></body></html>`,{status:403,headers:{'content-type':'text/html; charset=utf-8','cache-control':'no-store',"content-security-policy":"default-src 'none'; style-src 'unsafe-inline'"}})
 export default {async fetch(req,env){
  const url=new URL(req.url),p=url.pathname;
+ if(p==='/news/admin'||p==='/news/admin/'||p==='/news/admin/index.html'){
+  if(req.method!=='GET'&&req.method!=='HEAD')return json({error:'Method not allowed'},405);
+  if(!env.HERALD_SESSION_SECRET)return redirect('/news/');
+  const session=await open(env,getCookie(req,SESS));
+  if(!session||session.exp<Date.now())return redirect('/news/');
+  const member=await check(session.token);
+  if(!member?.admin||member.user.id!==session.id)return redirect('/news/');
+  const assetUrl=new URL('/news/admin/index.html',url.origin);
+  const asset=await env.ASSETS.fetch(new Request(assetUrl,req));
+  const h=new Headers(asset.headers);h.set('cache-control','private, no-store');h.set('x-robots-tag','noindex, nofollow');
+  return new Response(asset.body,{status:asset.status,headers:h});
+ }
  if(!p.startsWith('/api/herald/'))return env.ASSETS.fetch(req);
  if(!env.DISCORD_CLIENT_SECRET||!env.HERALD_SESSION_SECRET)return json({error:'Authentication is not configured'},503);
  if(p==='/api/herald/login'&&req.method==='GET'){
@@ -42,7 +54,7 @@ export default {async fetch(req,env){
   if(!member?.admin)return addCookies(fail('Administrator role is required.'),[cookie(STATE,'',0),cookie(SESS,'',0)]);
   const ttl=Math.max(60,Math.min(3600,(token.expires_in||3600)-60));
   const session=await seal(env,{id:member.user.id,token:token.access_token,exp:Date.now()+ttl*1000});
-  return addCookies(redirect('/news/'),[cookie(SESS,session,ttl),cookie(STATE,'',0)]);
+  return addCookies(redirect('/news/admin/'),[cookie(SESS,session,ttl),cookie(STATE,'',0)]);
  }
  if(p==='/api/herald/logout'&&req.method==='POST'){
   const origin=req.headers.get('origin');if(origin&&origin!==url.origin)return json({error:'Invalid origin'},403);
