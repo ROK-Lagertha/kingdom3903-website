@@ -1,7 +1,10 @@
-# The Citadel V3.10.0 — Kingdom Pulse
+# The Citadel V3.10.1 — Golden Pulse
 
-- Replaces oversized ornamental Royal Herald homepage ticker with compact modern Kingdom Pulse.
-- Keeps existing four rotating headlines, 8-second auto rotation, arrows, counter and indicators.
-- Each headline and the ALL NEWS link lead to `/news/` until article-specific URLs exist.
-- No Discord login or CMS functionality in this release.
-- Preserves the six-column navigation and all other site sections.
+## Changes
+- Golden Pulse visual refinement for the Kingdom Pulse frame: warm corner glows, a soft traveling golden glint across the top edge, and a brief subtle highlight on headline changes.
+- Preserves the exact compact panel dimensions and responsive layout of V3.10.0.
+- Supports `prefers-reduced-motion` by disabling decorative animations.
+- Preserves existing navigation, news rotation, links, artwork and all other sections.
+
+## Deploy
+Unzip into the website repository root and deploy through the existing GitHub/Cloudflare workflow. No new secrets or configuration needed.
