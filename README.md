@@ -1,9 +1,10 @@
-# The Citadel V3.11.0 — Royal Herald news page
+# The Citadel V3.11.1 — Royal Herald Branding
 
-- Replaces `/news/` placeholder with responsive Royal Herald landing page.
-- Displays four current homepage headlines as an initial news archive.
-- Adds a Discord login entry point at `/api/herald/login`.
-- Includes a hidden administrator HTML editor; it is revealed only after `/api/herald/me` confirms `authenticated=true` AND `isAdmin=true`.
-- Publishing is wired to `/api/herald/articles`, but **these server endpoints are not implemented in this release**. The login/editor will not work until the secure backend, Discord OAuth callback, role validation, HTML sanitization and D1 storage are deployed.
-- Never add a frontend-only role bypass. Server must enforce role `1462585046329200700` on every write.
-- Existing homepage, Kingdom Pulse, cards, and navigation are unchanged.
+- Added existing Citadel logo to the news-page navigation.
+- Removed redundant NEWS link from news-page header.
+- Introduced custom typographic Royal Herald emblem.
+- Added a homepage ticker checkbox for featured articles, **visible only after server-verified admin login**.
+- Added homepage ticker preference to editor UI, but no backend persistence yet.
+- Removed the public publishing-access message; it appears only when the backend authenticates an administrator.
+- Existing login API endpoints are still placeholders: `/api/herald/login`, `/api/herald/me`, `/api/herald/articles`.
+- **Security:** Never trust checkbox state or editor visibility for access control. Implement Discord OAuth2 role `1462585046329200700`, CSRF protection, HTML sanitization, and server-side D1 writes before activating.
