@@ -207,6 +207,38 @@ main{width:min(calc(100% - 48px),1640px);padding-top:clamp(18px,2vw,34px)}
 .herald-story,.herald-copy{min-width:0!important}.herald-copy p{overflow-wrap:break-word}
 @media(max-width:750px){.herald-shell{grid-template-columns:minmax(0,1fr)!important;padding:42px 48px!important;gap:12px!important;min-height:280px!important}.herald-heading,.herald-story,.herald-controls{grid-column:1!important}.herald-heading{grid-row:1!important}.herald-story{grid-row:2!important}.herald-controls{grid-row:3!important}}
 @media(max-width:420px){.herald-shell{padding:35px 32px!important;min-height:275px!important;gap:9px!important}.herald-copy strong{font-size:17px!important}.herald-copy p{font-size:12px!important}}
+
+/* V3.9.7: keep ALL ticker content safely inside the ornamental frame. */
+.herald-shell{
+  box-sizing:border-box!important;
+  min-height:238px!important;
+  height:auto!important;
+  padding:58px 86px!important;
+  grid-template-columns:minmax(0,1fr) 126px!important;
+  grid-template-rows:auto!important;
+  align-items:center!important;
+  gap:24px!important;
+}
+.herald-story{align-self:center!important;min-height:0!important;max-width:100%!important}
+.herald-copy strong{line-height:1.2!important;margin:0!important}
+.herald-copy p{line-height:1.45!important;margin:7px 0!important}
+.herald-copy time{display:block!important;line-height:1.5!important;margin-top:6px!important}
+.herald-controls{min-height:90px!important;align-self:center!important;justify-content:space-between!important}
+.herald-dots,.herald-actions{position:relative!important;inset:auto!important;transform:none!important}
+@media(max-width:750px){
+ .herald-shell{min-height:270px!important;padding:54px 55px!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto auto!important;gap:17px!important}
+ .herald-story{grid-column:1!important;grid-row:1!important;align-self:stretch!important}
+ .herald-controls{grid-column:1!important;grid-row:2!important;min-height:36px!important;align-self:center!important;flex-direction:row!important;justify-content:space-between!important;padding:0!important}
+}
+@media(max-width:420px){
+ .herald-shell{min-height:272px!important;padding:51px 39px!important;gap:12px!important}
+ .herald-story{gap:8px!important}
+ .herald-symbol{font-size:19px!important}
+ .herald-copy strong{font-size:18px!important}
+ .herald-copy p{font-size:12px!important}
+ .herald-controls{gap:6px!important}
+}
+
 </style>
 <style>
 /* V3.8.2: keep panorama strictly inside header and fade into royal navy */

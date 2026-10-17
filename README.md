@@ -1,5 +1,4 @@
-3903 | The Citadel — V3.9.6
+3903 The Citadel V3.9.7 - Royal Herald content fit
 
-Royal Herald: fixed centered heading above the ornamental news frame. Inside frame: rotating stories and navigation only. All other page sections retained.
-
-Deploy the contents of this ZIP to the existing Cloudflare site.
+All news content, dates and controls remain inside the ornate frame on desktop and mobile.
+No changes to other sections.
