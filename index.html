@@ -369,6 +369,41 @@ main{width:min(calc(100% - 48px),1640px);padding-top:clamp(18px,2vw,34px)}
 .herald-shell{padding:34px 34px!important;min-height:220px!important}
 .herald-copy strong{font-size:18px!important}.herald-copy p{font-size:12px!important}
 }
+
+/* V3.10.0 — Kingdom Pulse: compact modern homepage news preview */
+.pulse{max-width:1100px;width:calc(100% - 36px);margin:0 auto 32px;color:#f4e4c4;font-family:Georgia,serif}
+.pulse *{box-sizing:border-box}
+.pulse-heading{display:flex;align-items:center;justify-content:center;gap:22px;text-align:center;margin:4px 0 17px}
+.pulse-heading h2{margin:0;color:#f4c66b;font-size:clamp(23px,3.3vw,37px);letter-spacing:.09em;line-height:1.2;text-shadow:0 2px 12px #b4783033}
+.pulse-heading p{margin:5px 0 0;font:700 clamp(9px,1.1vw,12px) Arial,sans-serif;letter-spacing:.32em;color:#c6a16b}
+.pulse-heading-mark{color:#e3ac48;font-size:23px;filter:drop-shadow(0 0 7px #ce8d4d55)}
+.pulse-panel{position:relative;overflow:hidden;border:1px solid #88632d;border-radius:12px;background:linear-gradient(115deg,#12243b 0%,#0a1525 65%,#08101e 100%);box-shadow:0 10px 35px #0005,inset 0 1px 0 #e7bc6733;padding:18px 23px 12px}
+.pulse-panel::before{content:'';position:absolute;inset:0 0 auto;height:2px;background:linear-gradient(90deg,transparent,#e9bb61 42%,#f9da8d 50%,#e9bb61 58%,transparent);opacity:.8}
+.pulse-meta{display:flex;align-items:center;gap:13px;flex-wrap:wrap;margin-bottom:9px;font:700 10px Arial,sans-serif;letter-spacing:.12em}
+.pulse-badge{display:inline-flex;align-items:center;gap:7px;color:#fce8c4;background:#7d2630;border:1px solid #ad5557;border-radius:4px;padding:5px 8px}
+.pulse-light{width:6px;height:6px;background:#ffce8b;border-radius:50%;box-shadow:0 0 8px #ffce8b}
+.pulse-meta time{color:#b9a486}
+.pulse-story-link{display:flex;align-items:center;gap:15px;text-decoration:none!important;color:inherit!important;padding:3px 0 12px;min-width:0}
+.pulse-story-link:hover .pulse-story-body strong,.pulse-story-link:focus-visible .pulse-story-body strong{color:#ffe4a2;text-decoration:underline;text-underline-offset:4px}
+.pulse-story-link:focus-visible{outline:2px solid #e7bb67;outline-offset:3px}
+.pulse-icon{flex:none;font-size:26px}
+.pulse-story-body{display:flex;flex-direction:column;gap:5px;min-width:0}
+.pulse-story-body strong{font:700 clamp(18px,2.1vw,24px) Georgia,serif;color:#f2ca79;line-height:1.15}
+.pulse-story-body #herald-text{font:400 clamp(12px,1.25vw,14px)/1.4 Arial,sans-serif;color:#e4d8c8}
+.pulse-open{font:26px Arial,sans-serif;color:#d8aa58;margin-left:auto;padding-left:8px}
+.pulse-bottom{border-top:1px solid #ad854233;display:flex;justify-content:space-between;align-items:center;gap:12px;padding-top:10px}
+.pulse-all{font:700 10px Arial,sans-serif;letter-spacing:.14em;color:#e7b862!important;text-decoration:none!important;white-space:nowrap}
+.pulse-all:hover{text-decoration:underline!important}
+.pulse-controls{display:flex;align-items:center;gap:16px}
+.pulse .herald-dots{display:flex!important;position:static!important;transform:none!important;gap:7px;align-items:center}
+.pulse .herald-dots i{display:block!important;width:6px!important;height:6px!important;border-radius:50%;background:#6e6b65!important;border:0!important;box-shadow:none!important;opacity:1!important}
+.pulse .herald-dots i.active{background:#e9bb61!important;box-shadow:0 0 6px #e9bb6177!important}
+.pulse .herald-actions{display:flex!important;position:static!important;transform:none!important;align-items:center;gap:9px}
+.pulse .herald-actions button{position:static!important;transform:none!important;display:grid!important;place-items:center;width:27px!important;height:27px!important;border:1px solid #856332!important;border-radius:50%;background:transparent!important;color:#eec676!important;font:22px/1 Arial,sans-serif;cursor:pointer;padding:0!important}
+.pulse .herald-actions button:hover{background:#d9a84b22!important}
+.pulse .herald-counter{font:11px Arial,sans-serif;color:#cfb17e;white-space:nowrap}
+@media(max-width:650px){.pulse{width:calc(100% - 24px);margin-bottom:26px}.pulse-heading{gap:12px;margin-bottom:14px}.pulse-heading h2{font-size:clamp(21px,6vw,29px)}.pulse-heading p{font-size:9px;letter-spacing:.19em}.pulse-heading-mark{font-size:17px}.pulse-panel{padding:14px 15px 11px}.pulse-story-link{gap:9px}.pulse-icon{font-size:21px}.pulse-story-body strong{font-size:18px}.pulse-story-body #herald-text{font-size:12px;line-height:1.4}.pulse-open{font-size:20px}.pulse-controls{gap:9px}.pulse .herald-actions{gap:6px}.pulse .herald-actions button{width:25px!important;height:25px!important}.pulse .herald-dots{gap:5px}}
+@media(max-width:365px){.pulse-bottom{gap:5px}.pulse-controls{gap:5px}.pulse .herald-counter{font-size:10px}}
 </style>
 </head>
 <body><main id="home">
@@ -377,12 +412,15 @@ main{width:min(calc(100% - 48px),1640px);padding-top:clamp(18px,2vw,34px)}
 <div class="kingdom-visual"><img src="./assets/kingdom-panorama.webp" alt="Moonlit Kingdom 3903 fortress with royal blue banners and golden lights" width="975" height="373"></div>
 </section>
 <nav class="royal-nav" aria-label="Main navigation"><a class="royal-nav-item" href="#home" aria-current="page"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7"/><path d="M5 9v11h14V9"/><path d="M9 20v-7h6v7"/></svg><span class="nav-label">HOME</span></a><a class="royal-nav-item" href="#tools"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 17.5 3-3L6 3 3 6l11.5 11.5Z"/><path d="m13 19 6-6"/><path d="m16 16 4 4"/><path d="m19 21 2-2"/><path d="m3 21 6-6"/><path d="m5 19-2 2"/><path d="M14 3 3 14"/></svg><span class="nav-label">TOOLS</span></a><a class="royal-nav-item" href="https://discord.gg/MJ5bgWDVP3" target="_blank" rel="noopener noreferrer"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span class="nav-label">RECRUITMENT</span></a><a class="royal-nav-item" href="./news/" aria-label="News — The Royal Herald"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M7 8h5v5H7zM15 8h3M15 11h3M7 16h11"/></svg><span class="nav-label">NEWS</span></a><a class="royal-nav-item" href="#kingdom"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m2 8 5 4 5-7 5 7 5-4-2 12H4L2 8Z"/><path d="M4 20h16"/></svg><span class="nav-label">KINGDOM</span></a><a class="royal-nav-item" href="https://flagfiller.kingdom3903.com/"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 22V4"/><path d="M4 5c5-3 9 3 16 0v12c-7 3-11-3-16 0"/></svg><span class="nav-label">REGISTRY</span></a></nav>
-<section class="herald" aria-label="Kingdom News" id="news">
-<header class="herald-outside-title"><h2><span aria-hidden="true">⚜</span> KINGDOM NEWS <span aria-hidden="true">⚜</span></h2><p>THE ROYAL HERALD 3903</p></header>
-<div class="herald-shell">
-<div class="herald-story" aria-live="polite" aria-atomic="true"><span class="herald-symbol" id="herald-icon" aria-hidden="true">👑</span><div class="herald-copy"><strong id="herald-title">Royal Honors</strong><p id="herald-text">This week's Royal Chest recipients have been announced. Thank you for your contributions!</p><time id="herald-date" datetime="2026-10-16">16 October 2026</time></div></div>
-<div class="herald-controls"><div class="herald-dots" aria-hidden="true"><i class="active"></i><i></i><i></i><i></i></div><div class="herald-actions"><button type="button" id="herald-prev" aria-label="Previous news">‹</button><span class="herald-counter" id="herald-counter">1 / 4</span><button type="button" id="herald-next" aria-label="Next news">›</button></div></div>
-</div></section>
+<section class="pulse" aria-label="Kingdom Pulse — latest news" id="news">
+  <div class="pulse-heading"><span class="pulse-heading-mark" aria-hidden="true">⚡</span><div><h2>KINGDOM PULSE</h2><p>THE LATEST FROM 3903</p></div><span class="pulse-heading-mark" aria-hidden="true">⚡</span></div>
+  <div class="pulse-panel" aria-roledescription="carousel" aria-label="Latest kingdom headlines">
+    <div class="pulse-main"><div class="pulse-meta"><span class="pulse-badge"><span class="pulse-light"></span>LATEST</span><time id="herald-date" datetime="2026-10-16">16 OCT 2026</time></div>
+      <a id="pulse-story-link" class="pulse-story-link" href="./news/" aria-label="Read Royal Honors on The Royal Herald"><span class="pulse-icon" id="herald-icon" aria-hidden="true">👑</span><span class="pulse-story-body"><strong id="herald-title">Royal Honors</strong><span id="herald-text">This week's Royal Chest recipients have been announced. Thank you for your contributions!</span></span><span class="pulse-open" aria-hidden="true">↗</span></a>
+    </div>
+    <div class="pulse-bottom"><a class="pulse-all" href="./news/">ALL NEWS <span aria-hidden="true">→</span></a><div class="pulse-controls"><div class="herald-dots" aria-label="Headline position"><i class="active"></i><i></i><i></i><i></i></div><div class="herald-actions"><button type="button" id="herald-prev" aria-label="Previous news">‹</button><span class="herald-counter" id="herald-counter">1 / 4</span><button type="button" id="herald-next" aria-label="Next news">›</button></div></div></div>
+  </div>
+</section>
 <section class="royal-cards" id="tools" aria-label="Kingdom tools and services">
 <a class="battletrack" href="https://battletrack.kingdom3903.com/" aria-label="Open ROK BattleTrack"><img class="battletrack-art" src="./assets/battletrack-royal-strategist-transparent-v3.7.png" alt="ROK BattleTrack, royal capybara strategist with battle map, track KP, KPR and kingdom performance" width="1035" height="647"></a>
 <div class="secondary-grid">
@@ -402,7 +440,7 @@ const heraldNews=[
  {icon:'💙',title:'Community Appreciation',text:'Special thanks to the Cleanup and Event Management teams for their ongoing commitment.',date:'16 October 2026',iso:'2026-10-16'}
 ];
 (()=>{const el=document.querySelector('.herald');if(!el)return;let index=0,timer;const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const show=(i)=>{index=(i+heraldNews.length)%heraldNews.length;const n=heraldNews[index];document.getElementById('herald-icon').textContent=n.icon;document.getElementById('herald-title').textContent=n.title;document.getElementById('herald-text').textContent=n.text;const date=document.getElementById('herald-date');date.textContent=n.date;date.dateTime=n.iso;document.getElementById('herald-counter').textContent=`${index+1} / ${heraldNews.length}`;document.querySelectorAll('.herald-dots i').forEach((dot,j)=>dot.classList.toggle('active',j===index))};
+const show=(i)=>{index=(i+heraldNews.length)%heraldNews.length;const n=heraldNews[index];document.getElementById('herald-icon').textContent=n.icon;document.getElementById('herald-title').textContent=n.title;document.getElementById('herald-text').textContent=n.text;const date=document.getElementById('herald-date');date.textContent=n.date;date.dateTime=n.iso;document.getElementById('pulse-story-link').setAttribute('aria-label','Read '+n.title+' on The Royal Herald');document.getElementById('herald-counter').textContent=`${index+1} / ${heraldNews.length}`;document.querySelectorAll('.herald-dots i').forEach((dot,j)=>dot.classList.toggle('active',j===index))};
 const stop=()=>clearInterval(timer);const start=()=>{stop();if(!reduced)timer=setInterval(()=>show(index+1),8000)};
 document.getElementById('herald-prev').addEventListener('click',()=>{show(index-1);start()});document.getElementById('herald-next').addEventListener('click',()=>{show(index+1);start()});el.addEventListener('mouseenter',stop);el.addEventListener('mouseleave',start);el.addEventListener('focusin',stop);el.addEventListener('focusout',e=>{if(!el.contains(e.relatedTarget))start()});document.addEventListener('visibilitychange',()=>document.hidden?stop():start());start()})();
 </script>

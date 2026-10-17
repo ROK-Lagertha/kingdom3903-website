@@ -1,5 +1,7 @@
-# The Citadel V3.9.9 — Six-column navigation fix
+# The Citadel V3.10.0 — Kingdom Pulse
 
-- Fixed the original five-column CSS grid causing the sixth navigation item to wrap.
-- All six menu entries now display in one row on desktop and mobile.
-- Preserves the News landing page and existing site sections.
+- Replaces oversized ornamental Royal Herald homepage ticker with compact modern Kingdom Pulse.
+- Keeps existing four rotating headlines, 8-second auto rotation, arrows, counter and indicators.
+- Each headline and the ALL NEWS link lead to `/news/` until article-specific URLs exist.
+- No Discord login or CMS functionality in this release.
+- Preserves the six-column navigation and all other site sections.
