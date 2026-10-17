@@ -243,6 +243,23 @@ main{width:min(calc(100% - 48px),1640px);padding-top:clamp(18px,2vw,34px)}
 /* V3.9.9: six equal grid columns across desktop and mobile */
 .royal-nav{grid-template-columns:repeat(6,minmax(0,1fr))!important}.royal-nav .royal-nav-item{min-width:0}
 @media(max-width:650px){.royal-nav .royal-nav-item{padding-inline:1px;font-size:clamp(7px,1.85vw,10px)}.royal-nav .nav-icon{width:18px;height:18px}}
+
+/* V3.10.2 — Sapphire-gem Royal Edition; overlays do not change panel dimensions. */
+.pulse-panel{isolation:isolate;border-color:#b88b45;box-shadow:0 10px 35px #0006,0 0 14px #bd813017,inset 0 0 0 1px #e2b56825,inset 0 1px 0 #ffde9440}
+.pulse-panel::before{z-index:1!important}
+.pulse-ornaments{position:absolute;inset:0;pointer-events:none;z-index:3;border:1px solid #f2ce7c36;border-radius:9px;margin:4px;box-shadow:inset 0 0 0 1px #81582322}
+.pulse-ornaments::before,.pulse-ornaments::after{content:'';position:absolute;left:12px;right:12px;height:1px;background:linear-gradient(90deg,transparent,#eac27777 12%,transparent 30%,transparent 70%,#eac27777 88%,transparent);pointer-events:none}
+.pulse-ornaments::before{top:3px}.pulse-ornaments::after{bottom:3px}
+.pulse-gem{position:absolute;width:14px;height:14px;transform:rotate(45deg);border:1px solid #ffd887;background:radial-gradient(circle at 28% 26%,#b9e6ff 0%,#4e91dc 22%,#153e8b 58%,#061a44 85%);box-shadow:0 0 0 2px #805320,0 0 9px #327ad477,0 0 13px #e3a74844;animation:pulse-sapphire 6s ease-in-out infinite}
+.pulse-gem::after{content:'';position:absolute;inset:3px;border-top:1px solid #b9e6ff88;border-left:1px solid #b9e6ff66}
+.pulse-gem-tl{top:-7px;left:-7px}.pulse-gem-tr{top:-7px;right:-7px}.pulse-gem-bl{bottom:-7px;left:-7px}.pulse-gem-br{bottom:-7px;right:-7px}
+.pulse-crest{position:absolute;top:-9px;left:50%;transform:translateX(-50%);height:19px;min-width:96px;display:flex;align-items:center;justify-content:center;gap:9px;background:#0d1a2c;border-left:1px solid #a77d38;border-right:1px solid #a77d38;clip-path:polygon(8% 0,92% 0,100% 50%,92% 100%,8% 100%,0 50%);filter:drop-shadow(0 1px 3px #0009)}
+.pulse-crest-wing{font:20px/1 Georgia,serif;color:#d3a65a}.pulse-crest-wing:last-child{transform:scaleX(-1)}
+.pulse-crest-stone{display:block;width:11px;height:11px;transform:rotate(45deg);background:linear-gradient(135deg,#9cd7ff,#2360ae 55%,#0b285e);border:1px solid #f6d17d;box-shadow:0 0 9px #3e8bdb88}
+.pulse-panel.pulse-news-change .pulse-gem{box-shadow:0 0 0 2px #ad7a34,0 0 14px #64b6ff,0 0 18px #f6d17d88}
+@keyframes pulse-sapphire{0%,100%{filter:brightness(1)}50%{filter:brightness(1.25)}}
+@media(max-width:650px){.pulse-gem{width:10px;height:10px}.pulse-gem-tl{top:-5px;left:-5px}.pulse-gem-tr{top:-5px;right:-5px}.pulse-gem-bl{bottom:-5px;left:-5px}.pulse-gem-br{bottom:-5px;right:-5px}.pulse-crest{min-width:74px;height:15px;top:-7px;gap:5px}.pulse-crest-wing{font-size:16px}.pulse-crest-stone{width:8px;height:8px}}
+@media(prefers-reduced-motion:reduce){.pulse-gem{animation:none!important}}
 </style>
 <style>
 /* V3.8.2: keep panorama strictly inside header and fade into royal navy */
@@ -454,6 +471,7 @@ main{width:min(calc(100% - 48px),1640px);padding-top:clamp(18px,2vw,34px)}
 <section class="pulse" aria-label="Kingdom Pulse — latest news" id="news">
   <div class="pulse-heading"><span class="pulse-heading-mark" aria-hidden="true">⚡</span><div><h2>KINGDOM PULSE</h2><p>THE LATEST FROM 3903</p></div><span class="pulse-heading-mark" aria-hidden="true">⚡</span></div>
   <div class="pulse-panel" aria-roledescription="carousel" aria-label="Latest kingdom headlines">
+    <div class="pulse-ornaments" aria-hidden="true"><span class="pulse-gem pulse-gem-tl"></span><span class="pulse-gem pulse-gem-tr"></span><span class="pulse-gem pulse-gem-bl"></span><span class="pulse-gem pulse-gem-br"></span><span class="pulse-crest"><span class="pulse-crest-wing">❧</span><span class="pulse-crest-stone"></span><span class="pulse-crest-wing">❧</span></span></div>
     <div class="pulse-main"><div class="pulse-meta"><span class="pulse-badge"><span class="pulse-light"></span>LATEST</span><time id="herald-date" datetime="2026-10-16">16 OCT 2026</time></div>
       <a id="pulse-story-link" class="pulse-story-link" href="./news/" aria-label="Read Royal Honors on The Royal Herald"><span class="pulse-icon" id="herald-icon" aria-hidden="true">👑</span><span class="pulse-story-body"><strong id="herald-title">Royal Honors</strong><span id="herald-text">This week's Royal Chest recipients have been announced. Thank you for your contributions!</span></span><span class="pulse-open" aria-hidden="true">↗</span></a>
     </div>
