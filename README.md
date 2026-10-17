@@ -1,14 +1,3 @@
-# V3.12.3 — Discord authorization diagnostics
+# V3.12.4 — Discord Rate Limit Fix
 
-No changes to Discord credentials, role ID or callback.
-
-The OAuth callback now distinguishes three failure classes without exposing tokens, usernames, or role lists:
-- `discord_identity_unavailable`: Discord identity request failed
-- `discord_membership_unavailable`: membership endpoint failed; displays HTTP status
-- `reporter_role_not_present`: Discord returned membership but not Reporter role
-
-Cloudflare logs also record the failure class and HTTP status (no credentials).
-
-This is a diagnostic release, not a claim that the role issue has been fixed. If membership is HTTP 403, check whether Discord OAuth2 `guilds.members.read` is granted and whether Discord application membership access is permitted. If HTTP 404, verify guild membership and endpoint authorization. If role not present, confirm the Reporter role is assigned to the account authorizing the application.
-
-Do not paste cookies, authorization codes, tokens or secrets into chat.
+Discord returned HTTP 429 while the OAuth callback was checking the Reporter role. This release reduces Discord calls to one membership lookup per login, retries a short 429 once when Retry-After permits, and stores a verified role snapshot in an encrypted HttpOnly cookie for up to 15 minutes. `/api/herald/me` and `/news/admin/` verify the signed, expiring snapshot without calling Discord repeatedly. Once expired, users must log in again, so role revocations can take up to 15 minutes to take effect. Failed membership checks never grant access. No changes to secrets, client ID, guild ID, Reporter role ID, or callback URLs. Publishing remains disabled.

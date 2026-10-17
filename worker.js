@@ -16,21 +16,38 @@ const rand=()=>b64(crypto.getRandomValues(new Uint8Array(32)));
 async function key(env){if(!env.HERALD_SESSION_SECRET||env.HERALD_SESSION_SECRET.length<32)throw Error('Missing session secret');const digest=await crypto.subtle.digest('SHA-256',enc.encode(env.HERALD_SESSION_SECRET));return crypto.subtle.importKey('raw',digest,'AES-GCM',false,['encrypt','decrypt'])}
 async function seal(env,value){const iv=crypto.getRandomValues(new Uint8Array(12));const cipher=await crypto.subtle.encrypt({name:'AES-GCM',iv},await key(env),enc.encode(JSON.stringify(value)));return b64(iv)+'.'+b64(new Uint8Array(cipher))}
 async function open(env,value){try{const [iv,c]=value.split('.');return JSON.parse(dec.decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:un64(iv)},await key(env),un64(c))))}catch{return null}}
+// A Discord 429 is a temporary API limitation, not evidence of a missing role.
+// At login only: wait briefly and retry once, respecting Retry-After (max 3 seconds).
+const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 async function discord(path,token){
- try{
-  const r=await fetch('https://discord.com/api/v10'+path,{headers:{authorization:'Bearer '+token,accept:'application/json'}});
-  if(!r.ok)return {ok:false,status:r.status};
-  return {ok:true,data:await r.json()};
- }catch{return {ok:false,status:0}}
+ for(let attempt=0;attempt<2;attempt++){
+  try{
+   const r=await fetch('https://discord.com/api/v10'+path,{headers:{authorization:'Bearer '+token,accept:'application/json'}});
+   if(r.status===429){
+    let retry=0;
+    try{const data=await r.json();retry=Number(data.retry_after)||0}catch{}
+    const h=Number(r.headers.get('retry-after'));if(Number.isFinite(h)&&h>0)retry=h;
+    if(attempt===0&&retry>0&&retry<=3){await wait(retry*1000+100);continue}
+    return {ok:false,status:429,retryAfter:retry};
+   }
+   if(!r.ok)return {ok:false,status:r.status};
+   return {ok:true,data:await r.json()};
+  }catch{return {ok:false,status:0}}
+ }
+ return {ok:false,status:429};
 }
 async function check(token){
- const user=await discord('/users/@me',token);
- if(!user.ok||!user.data?.id)return {admin:false,reason:'discord_identity_unavailable',discordStatus:user.status};
+ // One membership call: the guild member response includes user.id and roles.
  const member=await discord('/users/@me/guilds/'+GUILD+'/member',token);
- if(!member.ok)return {user:user.data,admin:false,reason:'discord_membership_unavailable',discordStatus:member.status};
- if(!Array.isArray(member.data?.roles))return {user:user.data,admin:false,reason:'discord_roles_missing'};
- return {user:user.data,admin:member.data.roles.includes(ADMIN),reason:member.data.roles.includes(ADMIN)?'ok':'reporter_role_not_present'};
+ if(!member.ok)return {admin:false,reason:'discord_membership_unavailable',discordStatus:member.status,retryAfter:member.retryAfter};
+ const user=member.data?.user;
+ if(!user?.id)return {admin:false,reason:'discord_identity_unavailable'};
+ if(!Array.isArray(member.data?.roles))return {user,admin:false,reason:'discord_roles_missing'};
+ return {user,admin:member.data.roles.includes(ADMIN),reason:member.data.roles.includes(ADMIN)?'ok':'reporter_role_not_present'};
 }
+// A short-lived encrypted authorization snapshot avoids Discord calls on every
+// page load. Access automatically expires and must then be re-authorized.
+function validSession(session){return !!(session&&session.exp>Date.now()&&session.verifiedUntil>Date.now()&&session.role===ADMIN&&session.id)}
 function callbackUrl(req,env){return env.HERALD_CALLBACK_URL||new URL('/api/herald/callback',req.url).toString()}
 function addCookies(response,values){const h=new Headers(response.headers);for(const c of values)h.append('set-cookie',c);return new Response(response.body,{status:response.status,headers:h})}
 const fail=(msg)=>new Response(`<!doctype html><html lang="en"><meta charset="utf-8"><title>Royal Herald Login</title><body style="background:#071322;color:#e8c47b;font:18px Arial;text-align:center;padding:10vh 20px"><h1>Royal Herald</h1><p>${msg}</p><a style="color:#e8c47b" href="/news/">Back to the Herald</a></body></html>`,{status:403,headers:{'content-type':'text/html; charset=utf-8','cache-control':'no-store',"content-security-policy":"default-src 'none'; style-src 'unsafe-inline'"}})
@@ -40,9 +57,7 @@ export default {async fetch(req,env){
   if(req.method!=='GET'&&req.method!=='HEAD')return json({error:'Method not allowed'},405);
   if(!env.HERALD_SESSION_SECRET)return redirect('/news/');
   const session=await open(env,getCookie(req,SESS));
-  if(!session||session.exp<Date.now())return redirect('/news/');
-  const member=await check(session.token);
-  if(!member?.admin||member.user.id!==session.id)return redirect('/news/');
+  if(!validSession(session))return redirect('/news/');
   const assetUrl=new URL('/news/admin/index.html',url.origin);
   const asset=await env.ASSETS.fetch(new Request(assetUrl,req));
   const h=new Headers(asset.headers);h.set('cache-control','private, no-store');h.set('x-robots-tag','noindex, nofollow');
@@ -64,9 +79,10 @@ export default {async fetch(req,env){
   if(!tokenRes.ok)return fail('Discord token exchange failed.');
   const token=await tokenRes.json();if(!token.access_token)return fail('No access token returned.');
   const member=await check(token.access_token);
-  if(!member?.admin){console.warn('Herald OAuth authorization rejected',member?.reason||'unknown',member?.discordStatus||'');return addCookies(fail(member?.reason==='discord_membership_unavailable'?'Discord membership could not be verified (HTTP '+member.discordStatus+'). Please contact an administrator.':member?.reason==='reporter_role_not_present'?'Reporter role is not present in the Discord membership response.':'Discord identity could not be verified.'),[cookie(STATE,'',0),cookie(SESS,'',0)]);}
-  const ttl=Math.max(60,Math.min(3600,(token.expires_in||3600)-60));
-  const session=await seal(env,{id:member.user.id,token:token.access_token,exp:Date.now()+ttl*1000});
+  if(!member?.admin){console.warn('Herald OAuth authorization rejected',member?.reason||'unknown',member?.discordStatus||'');return addCookies(fail(member?.reason==='discord_membership_unavailable'?'Discord membership check temporarily unavailable (HTTP '+member.discordStatus+'). Please wait and try again.':member?.reason==='reporter_role_not_present'?'Reporter role is not present in the Discord membership response.':'Discord identity could not be verified.'),[cookie(STATE,'',0),cookie(SESS,'',0)]);}
+  const ttl=Math.max(60,Math.min(900,(token.expires_in||3600)-60));
+  const expires=Date.now()+ttl*1000;
+  const session=await seal(env,{id:member.user.id,username:member.user.username,global_name:member.user.global_name,role:ADMIN,exp:expires,verifiedUntil:expires});
   return addCookies(redirect('/news/admin/'),[cookie(SESS,session,ttl),cookie(STATE,'',0)]);
  }
  if(p==='/api/herald/logout'&&req.method==='POST'){
@@ -74,10 +90,8 @@ export default {async fetch(req,env){
   return addCookies(json({ok:true}),[cookie(SESS,'',0)]);
  }
  if(p==='/api/herald/me'&&req.method==='GET'){
-  const session=await open(env,getCookie(req,SESS));if(!session||session.exp<Date.now())return json({authenticated:false,isAdmin:false},401);
-  const member=await check(session.token);
-  if(!member?.admin||member.user.id!==session.id)return json({authenticated:false,isAdmin:false},403);
-  return json({authenticated:true,isAdmin:true,user:{id:member.user.id,username:member.user.username,global_name:member.user.global_name}});
+  const session=await open(env,getCookie(req,SESS));if(!validSession(session))return json({authenticated:false,isAdmin:false},401);
+  return json({authenticated:true,isAdmin:true,user:{id:session.id,username:session.username,global_name:session.global_name}});
  }
  if(p==='/api/herald/articles')return json({error:'Publishing not yet enabled. D1 and sanitization required.'},501);
  return json({error:'Not found'},404);
