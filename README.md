@@ -1,10 +1,7 @@
-# The Citadel V3.11.1 — Royal Herald Branding
+# The Citadel V3.11.2 — The Royal Herald Logo
 
-- Added existing Citadel logo to the news-page navigation.
-- Removed redundant NEWS link from news-page header.
-- Introduced custom typographic Royal Herald emblem.
-- Added a homepage ticker checkbox for featured articles, **visible only after server-verified admin login**.
-- Added homepage ticker preference to editor UI, but no backend persistence yet.
-- Removed the public publishing-access message; it appears only when the backend authenticates an administrator.
-- Existing login API endpoints are still placeholders: `/api/herald/login`, `/api/herald/me`, `/api/herald/articles`.
-- **Security:** Never trust checkbox state or editor visibility for access control. Implement Discord OAuth2 role `1462585046329200700`, CSRF protection, HTML sanitization, and server-side D1 writes before activating.
+- Replaced the temporary CSS-based Royal Herald title emblem on `/news/` with the custom, transparent Royal Herald logo.
+- New file: `assets/royal-herald-logo.png` (RGBA transparency, 2127×739).
+- Responsive logo sizing on desktop and mobile without cropping or adding a background.
+- The small Citadel logo in the navigation, news layout, homepage Kingdom Pulse and all existing functionality remain unchanged.
+- Discord authentication and CMS APIs are still pending and are not enabled by this release.
