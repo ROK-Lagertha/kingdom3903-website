@@ -224,6 +224,25 @@ main{width:min(calc(100% - 48px),1640px);padding-top:clamp(18px,2vw,34px)}
 @media(max-width:850px){.herald-shell{grid-template-columns:minmax(0,1fr) auto;gap:12px;min-height:0;padding:20px}.herald-heading{grid-column:1/-1;border-right:0;border-bottom:1px solid rgba(222,166,67,.3);padding:0 0 12px;height:auto}.herald-standard{height:65px}.herald-chest{grid-column:2;grid-row:2;min-height:90px}.herald-chest .chest-art{font-size:50px}.herald-story{grid-column:1;grid-row:2}.herald-controls{grid-column:1/-1;grid-row:3;flex-direction:row;align-items:center;gap:12px;padding-top:8px;border-top:1px solid rgba(222,166,67,.22)}}
 @media(max-width:450px){.herald{padding:0 7px}.herald-shell{padding:16px 17px}.herald-heading{gap:12px}.herald-brand strong{font-size:22px}.herald-chest{display:none}.herald-story{grid-column:1/-1}.herald-controls{grid-column:1/-1}.herald-shell:before,.herald-shell:after{font-size:24px}.herald-shell:before{left:-9px}.herald-shell:after{right:-9px}}
 @media(prefers-reduced-motion:reduce){.herald-story{transition:none}}
+
+/* V3.9.3: Transparent Royal Herald artwork, with real accessible live news above it. */
+.herald{max-width:1124px;padding:0 12px}
+.herald-shell{
+  border:36px solid transparent;
+  border-image-source:url('assets/royal-herald-frame.png');
+  border-image-slice:175 175 175 175;
+  border-image-width:36px;
+  border-image-repeat:stretch;
+  border-radius:0;box-shadow:none;
+  background:radial-gradient(ellipse at 45% 50%,rgba(17,48,87,.38),transparent 75%);
+  min-height:154px;padding:4px 10px;gap:14px;
+}
+.herald-shell::before,.herald-shell::after{content:none!important}
+.herald-heading{padding-left:2px}
+.herald-standard{background:transparent;border:0;box-shadow:none;width:30px}
+.herald-standard span{font-size:24px}
+@media(max-width:850px){.herald-shell{grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:5px 8px}.herald-heading{grid-column:1/-1;grid-row:1;padding-bottom:8px}.herald-story{grid-column:1/-1;grid-row:2}.herald-controls{grid-column:1/-1;grid-row:3}}
+@media(max-width:600px){.herald{padding:0 4px}.herald-shell{border-width:22px;border-image-width:22px;padding:2px 5px;gap:7px}.herald-heading{padding:0 0 6px}.herald-brand strong{font-size:17px}.herald-brand small{font-size:8px}.herald-story{gap:7px}.herald-copy p{font-size:12px;margin:4px 0}.herald-controls{padding-top:5px}.herald-standard{width:26px;height:34px;min-height:34px}}
 </style>
 </head>
 <body><main id="home">
