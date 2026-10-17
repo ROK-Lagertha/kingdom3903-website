@@ -180,6 +180,24 @@ main{width:min(calc(100% - 48px),1640px);padding-top:clamp(18px,2vw,34px)}
 .herald-copy p{font-size:12px}
 }
 @media(max-width:450px){.herald{padding:0 10px}.herald-shell{padding:12px 15px}.herald-heading{gap:9px}.herald-brand strong{font-size:17px}.herald-shell:before,.herald-shell:after{font-size:18px}.herald-symbol{font-size:20px}}
+
+/* V3.9.4 — Royal Herald: foreground frame and restored readable layout */
+.herald{width:100%;max-width:1124px;margin:12px auto 34px;padding:0 12px}
+.herald-shell{position:relative;isolation:isolate;display:grid;grid-template-columns:minmax(170px,26%) minmax(0,1fr) 116px;align-items:center;gap:22px;min-height:164px;padding:30px 46px;border:0!important;border-image:none!important;border-radius:0;background:radial-gradient(ellipse at 48% 50%,rgba(20,55,96,.30),transparent 80%);box-shadow:none;overflow:visible}
+.herald-shell::before{content:''!important;position:absolute;inset:0;display:block;transform:none;z-index:5;pointer-events:none;border:32px solid transparent;border-image-source:url('assets/royal-herald-frame.png');border-image-slice:160 160 160 160;border-image-width:32px;border-image-repeat:stretch;background:none;filter:drop-shadow(0 0 5px rgba(216,144,43,.22));}
+.herald-shell::after{content:none!important}
+.herald-heading{grid-column:1;grid-row:1;min-width:0;display:flex;align-items:center;gap:9px;height:auto;padding:0 17px 0 0;border-right:1px solid rgba(217,164,73,.32)}
+.herald-brand strong{font:700 clamp(19px,2vw,27px)/1 Georgia,serif;color:#f6ca77}.herald-brand strong em{font-size:1em}
+.herald-brand small{font-size:9px;letter-spacing:.12em;margin-top:8px}
+.herald-standard{flex:none;width:24px;min-height:35px;height:auto;align-self:center;background:none;border:0;box-shadow:none}.herald-standard span{font-size:23px}
+.herald-chest{display:none!important}
+.herald-story{grid-column:2;grid-row:1;display:flex;align-items:flex-start;gap:12px;min-width:0}
+.herald-copy{min-width:0}.herald-copy strong{font-size:clamp(19px,1.8vw,24px);line-height:1.15}.herald-copy p{font:clamp(13px,1.1vw,15px)/1.45 system-ui,sans-serif;margin:7px 0}.herald-copy time{font-size:11px}
+.herald-symbol{flex:none;font-size:23px}
+.herald-controls{grid-column:3;grid-row:1;display:flex;flex-direction:column;justify-content:space-between;align-items:center;align-self:stretch;gap:15px;padding:0;border:0}
+.herald-dots{display:flex;gap:6px}.herald-actions{display:flex;gap:7px;align-items:center}
+@media(max-width:750px){.herald{padding:0 8px}.herald-shell{grid-template-columns:minmax(0,1fr);gap:12px;padding:34px 38px;min-height:0}.herald-shell::before{border-width:27px;border-image-width:27px}.herald-heading{grid-column:1;grid-row:1;padding:0 0 10px;border-right:0;border-bottom:1px solid rgba(217,164,73,.25)}.herald-brand strong{font-size:21px}.herald-brand strong br,.herald-brand small br{display:none}.herald-brand strong em::before{content:' '}.herald-story{grid-column:1;grid-row:2}.herald-controls{grid-column:1;grid-row:3;flex-direction:row;justify-content:space-between;align-items:center;border-top:1px solid rgba(217,164,73,.2);padding-top:9px}.herald-copy p{font-size:13px}}
+@media(max-width:420px){.herald{padding:0 3px}.herald-shell{padding:30px 30px;gap:9px}.herald-shell::before{border-width:23px;border-image-width:23px}.herald-brand strong{font-size:18px}.herald-brand small{font-size:8px}.herald-symbol{font-size:20px}.herald-copy strong{font-size:18px}.herald-copy p{font-size:12px}.herald-controls button{width:30px;height:30px}}
 </style>
 <style>
 /* V3.8.2: keep panorama strictly inside header and fade into royal navy */
@@ -201,6 +219,24 @@ main{width:min(calc(100% - 48px),1640px);padding-top:clamp(18px,2vw,34px)}
 @media(max-width:850px){.herald-shell{grid-template-columns:minmax(0,1fr) auto;gap:12px;min-height:0;padding:20px}.herald-heading{grid-column:1/-1;border-right:0;border-bottom:1px solid rgba(222,166,67,.3);padding:0 0 12px;height:auto}.herald-standard{height:65px}.herald-chest{grid-column:2;grid-row:2;min-height:90px}.herald-chest .chest-art{font-size:50px}.herald-story{grid-column:1;grid-row:2}.herald-controls{grid-column:1/-1;grid-row:3;flex-direction:row;align-items:center;gap:12px;padding-top:8px;border-top:1px solid rgba(222,166,67,.22)}}
 @media(max-width:450px){.herald{padding:0 7px}.herald-shell{padding:16px 17px}.herald-heading{gap:12px}.herald-brand strong{font-size:22px}.herald-chest{display:none}.herald-story{grid-column:1/-1}.herald-controls{grid-column:1/-1}.herald-shell:before,.herald-shell:after{font-size:24px}.herald-shell:before{left:-9px}.herald-shell:after{right:-9px}}
 @media(prefers-reduced-motion:reduce){.herald-story{transition:none}}
+
+/* V3.9.4 — Royal Herald: foreground frame and restored readable layout */
+.herald{width:100%;max-width:1124px;margin:12px auto 34px;padding:0 12px}
+.herald-shell{position:relative;isolation:isolate;display:grid;grid-template-columns:minmax(170px,26%) minmax(0,1fr) 116px;align-items:center;gap:22px;min-height:164px;padding:30px 46px;border:0!important;border-image:none!important;border-radius:0;background:radial-gradient(ellipse at 48% 50%,rgba(20,55,96,.30),transparent 80%);box-shadow:none;overflow:visible}
+.herald-shell::before{content:''!important;position:absolute;inset:0;display:block;transform:none;z-index:5;pointer-events:none;border:32px solid transparent;border-image-source:url('assets/royal-herald-frame.png');border-image-slice:160 160 160 160;border-image-width:32px;border-image-repeat:stretch;background:none;filter:drop-shadow(0 0 5px rgba(216,144,43,.22));}
+.herald-shell::after{content:none!important}
+.herald-heading{grid-column:1;grid-row:1;min-width:0;display:flex;align-items:center;gap:9px;height:auto;padding:0 17px 0 0;border-right:1px solid rgba(217,164,73,.32)}
+.herald-brand strong{font:700 clamp(19px,2vw,27px)/1 Georgia,serif;color:#f6ca77}.herald-brand strong em{font-size:1em}
+.herald-brand small{font-size:9px;letter-spacing:.12em;margin-top:8px}
+.herald-standard{flex:none;width:24px;min-height:35px;height:auto;align-self:center;background:none;border:0;box-shadow:none}.herald-standard span{font-size:23px}
+.herald-chest{display:none!important}
+.herald-story{grid-column:2;grid-row:1;display:flex;align-items:flex-start;gap:12px;min-width:0}
+.herald-copy{min-width:0}.herald-copy strong{font-size:clamp(19px,1.8vw,24px);line-height:1.15}.herald-copy p{font:clamp(13px,1.1vw,15px)/1.45 system-ui,sans-serif;margin:7px 0}.herald-copy time{font-size:11px}
+.herald-symbol{flex:none;font-size:23px}
+.herald-controls{grid-column:3;grid-row:1;display:flex;flex-direction:column;justify-content:space-between;align-items:center;align-self:stretch;gap:15px;padding:0;border:0}
+.herald-dots{display:flex;gap:6px}.herald-actions{display:flex;gap:7px;align-items:center}
+@media(max-width:750px){.herald{padding:0 8px}.herald-shell{grid-template-columns:minmax(0,1fr);gap:12px;padding:34px 38px;min-height:0}.herald-shell::before{border-width:27px;border-image-width:27px}.herald-heading{grid-column:1;grid-row:1;padding:0 0 10px;border-right:0;border-bottom:1px solid rgba(217,164,73,.25)}.herald-brand strong{font-size:21px}.herald-brand strong br,.herald-brand small br{display:none}.herald-brand strong em::before{content:' '}.herald-story{grid-column:1;grid-row:2}.herald-controls{grid-column:1;grid-row:3;flex-direction:row;justify-content:space-between;align-items:center;border-top:1px solid rgba(217,164,73,.2);padding-top:9px}.herald-copy p{font-size:13px}}
+@media(max-width:420px){.herald{padding:0 3px}.herald-shell{padding:30px 30px;gap:9px}.herald-shell::before{border-width:23px;border-image-width:23px}.herald-brand strong{font-size:18px}.herald-brand small{font-size:8px}.herald-symbol{font-size:20px}.herald-copy strong{font-size:18px}.herald-copy p{font-size:12px}.herald-controls button{width:30px;height:30px}}
 </style>
 <style>
 /* Royal Herald v3.9: real, accessible HTML rather than baked-in artwork */
@@ -243,6 +279,24 @@ main{width:min(calc(100% - 48px),1640px);padding-top:clamp(18px,2vw,34px)}
 .herald-standard span{font-size:24px}
 @media(max-width:850px){.herald-shell{grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:5px 8px}.herald-heading{grid-column:1/-1;grid-row:1;padding-bottom:8px}.herald-story{grid-column:1/-1;grid-row:2}.herald-controls{grid-column:1/-1;grid-row:3}}
 @media(max-width:600px){.herald{padding:0 4px}.herald-shell{border-width:22px;border-image-width:22px;padding:2px 5px;gap:7px}.herald-heading{padding:0 0 6px}.herald-brand strong{font-size:17px}.herald-brand small{font-size:8px}.herald-story{gap:7px}.herald-copy p{font-size:12px;margin:4px 0}.herald-controls{padding-top:5px}.herald-standard{width:26px;height:34px;min-height:34px}}
+
+/* V3.9.4 — Royal Herald: foreground frame and restored readable layout */
+.herald{width:100%;max-width:1124px;margin:12px auto 34px;padding:0 12px}
+.herald-shell{position:relative;isolation:isolate;display:grid;grid-template-columns:minmax(170px,26%) minmax(0,1fr) 116px;align-items:center;gap:22px;min-height:164px;padding:30px 46px;border:0!important;border-image:none!important;border-radius:0;background:radial-gradient(ellipse at 48% 50%,rgba(20,55,96,.30),transparent 80%);box-shadow:none;overflow:visible}
+.herald-shell::before{content:''!important;position:absolute;inset:0;display:block;transform:none;z-index:5;pointer-events:none;border:32px solid transparent;border-image-source:url('assets/royal-herald-frame.png');border-image-slice:160 160 160 160;border-image-width:32px;border-image-repeat:stretch;background:none;filter:drop-shadow(0 0 5px rgba(216,144,43,.22));}
+.herald-shell::after{content:none!important}
+.herald-heading{grid-column:1;grid-row:1;min-width:0;display:flex;align-items:center;gap:9px;height:auto;padding:0 17px 0 0;border-right:1px solid rgba(217,164,73,.32)}
+.herald-brand strong{font:700 clamp(19px,2vw,27px)/1 Georgia,serif;color:#f6ca77}.herald-brand strong em{font-size:1em}
+.herald-brand small{font-size:9px;letter-spacing:.12em;margin-top:8px}
+.herald-standard{flex:none;width:24px;min-height:35px;height:auto;align-self:center;background:none;border:0;box-shadow:none}.herald-standard span{font-size:23px}
+.herald-chest{display:none!important}
+.herald-story{grid-column:2;grid-row:1;display:flex;align-items:flex-start;gap:12px;min-width:0}
+.herald-copy{min-width:0}.herald-copy strong{font-size:clamp(19px,1.8vw,24px);line-height:1.15}.herald-copy p{font:clamp(13px,1.1vw,15px)/1.45 system-ui,sans-serif;margin:7px 0}.herald-copy time{font-size:11px}
+.herald-symbol{flex:none;font-size:23px}
+.herald-controls{grid-column:3;grid-row:1;display:flex;flex-direction:column;justify-content:space-between;align-items:center;align-self:stretch;gap:15px;padding:0;border:0}
+.herald-dots{display:flex;gap:6px}.herald-actions{display:flex;gap:7px;align-items:center}
+@media(max-width:750px){.herald{padding:0 8px}.herald-shell{grid-template-columns:minmax(0,1fr);gap:12px;padding:34px 38px;min-height:0}.herald-shell::before{border-width:27px;border-image-width:27px}.herald-heading{grid-column:1;grid-row:1;padding:0 0 10px;border-right:0;border-bottom:1px solid rgba(217,164,73,.25)}.herald-brand strong{font-size:21px}.herald-brand strong br,.herald-brand small br{display:none}.herald-brand strong em::before{content:' '}.herald-story{grid-column:1;grid-row:2}.herald-controls{grid-column:1;grid-row:3;flex-direction:row;justify-content:space-between;align-items:center;border-top:1px solid rgba(217,164,73,.2);padding-top:9px}.herald-copy p{font-size:13px}}
+@media(max-width:420px){.herald{padding:0 3px}.herald-shell{padding:30px 30px;gap:9px}.herald-shell::before{border-width:23px;border-image-width:23px}.herald-brand strong{font-size:18px}.herald-brand small{font-size:8px}.herald-symbol{font-size:20px}.herald-copy strong{font-size:18px}.herald-copy p{font-size:12px}.herald-controls button{width:30px;height:30px}}
 </style>
 </head>
 <body><main id="home">
@@ -252,7 +306,7 @@ main{width:min(calc(100% - 48px),1640px);padding-top:clamp(18px,2vw,34px)}
 </section>
 <nav class="royal-nav" aria-label="Main navigation"><a class="royal-nav-item" href="#home" aria-current="page"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7"/><path d="M5 9v11h14V9"/><path d="M9 20v-7h6v7"/></svg><span class="nav-label">HOME</span></a><a class="royal-nav-item" href="#tools"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 17.5 3-3L6 3 3 6l11.5 11.5Z"/><path d="m13 19 6-6"/><path d="m16 16 4 4"/><path d="m19 21 2-2"/><path d="m3 21 6-6"/><path d="m5 19-2 2"/><path d="M14 3 3 14"/></svg><span class="nav-label">TOOLS</span></a><a class="royal-nav-item" href="https://discord.gg/MJ5bgWDVP3" target="_blank" rel="noopener noreferrer"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span class="nav-label">RECRUITMENT</span></a><a class="royal-nav-item" href="#kingdom"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m2 8 5 4 5-7 5 7 5-4-2 12H4L2 8Z"/><path d="M4 20h16"/></svg><span class="nav-label">KINGDOM</span></a><a class="royal-nav-item" href="https://flagfiller.kingdom3903.com/"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 22V4"/><path d="M4 5c5-3 9 3 16 0v12c-7 3-11-3-16 0"/></svg><span class="nav-label">REGISTRY</span></a></nav>
 <section class="herald" aria-label="Kingdom News" id="news"><div class="herald-shell">
-<div class="herald-heading"><div class="herald-standard" aria-hidden="true"><span>⚜</span></div><div class="herald-brand"><strong>KINGDOM<br><em>NEWS</em></strong><small>THE ROYAL HERALD<br>3903</small></div></div><div class="herald-chest" aria-hidden="true"><span>👑</span><span class="chest-art">🗝️</span></div>
+<div class="herald-heading"><div class="herald-standard" aria-hidden="true"><span>⚜</span></div><div class="herald-brand"><strong>KINGDOM<br><em>NEWS</em></strong><small>THE ROYAL HERALD<br>3903</small></div></div>
 <div class="herald-story" aria-live="polite" aria-atomic="true"><span class="herald-symbol" id="herald-icon" aria-hidden="true">👑</span><div class="herald-copy"><strong id="herald-title">Royal Honors</strong><p id="herald-text">This week's Royal Chest recipients have been announced. Thank you for your contributions!</p><time id="herald-date" datetime="2026-10-16">16 October 2026</time></div></div>
 <div class="herald-controls"><div class="herald-dots" aria-hidden="true"><i class="active"></i><i></i><i></i><i></i></div><div class="herald-actions"><button type="button" id="herald-prev" aria-label="Previous news">‹</button><span class="herald-counter" id="herald-counter">1 / 4</span><button type="button" id="herald-next" aria-label="Next news">›</button></div></div>
 </div></section>
