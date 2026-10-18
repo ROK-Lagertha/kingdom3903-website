@@ -1,3 +1,21 @@
+# The Citadel — Kingdom 3903
+
+## V3.13.8 — Kingdom Pulse Manager (18 October 2026)
+
+- Protected `/news/admin/` now has a Kingdom Pulse Manager listing published articles.
+- Select up to four, order with arrows, and save the rotation to the existing D1 `herald_pulse_slots` table.
+- The homepage fetches `/api/herald/public/pulse`, a read-only endpoint returning only selected published stories in slot order.
+- No sample headlines remain hardcoded in the ticker. Empty selections display a friendly fallback and link to `/news/`.
+- `/api/herald/pulse` requires the existing verified Discord Reporter session and same-origin PUT requests.
+- Unpublishing or archiving an article removes it from the Pulse automatically.
+- No D1 schema migration or additional Cloudflare bindings required. Existing drafts, publishing, login, layout and assets preserved.
+
+## Next: V3.13.9 — Article image uploads
+
+Each article should support a **user-uploaded individual cover image**, stored in Cloudflare R2 and associated with its article. Upload, replace and remove controls will be available in the Reporter editor. Images must render **only on the opened full article**, never on Latest News cards or the Kingdom Pulse ticker. This needs a new R2 bucket/binding and a D1 migration; it is **not yet implemented** in V3.13.8.
+
+---
+
 ## V3.13.4 – Publishing compatibility hotfix (18 October 2026)
 
 - Corrected Wrangler Worker name to `kingdom3903-website` to resolve Cloudflare CI warning.

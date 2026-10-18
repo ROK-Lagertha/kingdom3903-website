@@ -110,6 +110,41 @@ async function publicNews(req,env,url,p){
   const r=await env.HERALD_DB.prepare("SELECT id,slug,title,summary,category,author_display_name,published_at FROM herald_articles WHERE status='published' ORDER BY published_at DESC LIMIT 60").all();return json({articles:r.results||[]});
  }catch(e){console.error('Public Herald D1 error',e);return json({error:'News service unavailable'},503)}
 }
+// Public, read-only carousel: selected published articles only, in slot order.
+async function publicPulse(req,env){
+ if(req.method!=='GET')return json({error:'Method not allowed'},405);
+ if(!env.HERALD_DB)return json({error:'News service unavailable'},503);
+ try{
+  const r=await env.HERALD_DB.prepare("SELECT s.slot,a.id,a.title,a.summary,a.category,a.published_at FROM herald_pulse_slots s JOIN herald_articles a ON a.id=s.article_id WHERE a.status='published' ORDER BY s.slot ASC LIMIT 4").all();
+  return json({articles:r.results||[]});
+ }catch(e){console.error('Public Pulse error',e);return json({error:'News service unavailable'},503)}
+}
+async function managePulse(req,env,url){
+ const session=await open(env,getCookie(req,SESS));if(!validSession(session))return json({error:'Reporter login required'},401);
+ if(!env.HERALD_DB)return json({error:'D1 binding missing'},503);
+ const db=env.HERALD_DB;
+ if(req.method==='GET'){
+  const [published,slots]=await Promise.all([
+   db.prepare("SELECT id,title,summary,category,published_at FROM herald_articles WHERE status='published' ORDER BY published_at DESC LIMIT 150").all(),
+   db.prepare("SELECT slot,article_id FROM herald_pulse_slots ORDER BY slot").all()
+  ]);
+  return json({articles:published.results||[],slots:slots.results||[]});
+ }
+ if(req.method!=='PUT')return json({error:'Method not allowed'},405);
+ if(!sameOrigin(req,url))return json({error:'Invalid request origin'},403);
+ if(!(req.headers.get('content-type')||'').startsWith('application/json'))return json({error:'JSON required'},415);
+ let payload;try{payload=await req.json()}catch{return json({error:'Invalid JSON'},400)}
+ const ids=payload?.article_ids;
+ if(!Array.isArray(ids)||ids.length>4||ids.some(id=>!Number.isSafeInteger(id)||id<=0)||new Set(ids).size!==ids.length)return json({error:'Select up to four distinct published articles'},400);
+ try{
+  if(ids.length){const placeholders=ids.map(()=>'?').join(',');const check=await db.prepare(`SELECT id FROM herald_articles WHERE status='published' AND id IN (${placeholders})`).bind(...ids).all();if((check.results||[]).length!==ids.length)return json({error:'Only published articles may be selected'},409)}
+  // Delete then insert as a single D1 batch: no half-updated ticker.
+  const statements=[db.prepare('DELETE FROM herald_pulse_slots'),...ids.map((id,i)=>db.prepare('INSERT INTO herald_pulse_slots(slot,article_id,updated_by_discord_id) VALUES(?,?,?)').bind(i+1,id,session.id))];
+  await db.batch(statements);
+  for(const id of ids)await audit(db,id,session.id,'pulse_reorder');
+  return json({ok:true,article_ids:ids});
+ }catch(e){console.error('Pulse manager error',e);return json({error:'Could not save Pulse selection'},500)}
+}
 async function editorial(req,env,url,p){
  const session=await open(env,getCookie(req,SESS));if(!validSession(session))return json({error:'Reporter login required'},401);
  if(!env.HERALD_DB)return json({error:'D1 binding HERALD_DB missing'},503);
@@ -180,6 +215,7 @@ export default {async fetch(req,env){
   return new Response(asset.body,{status:asset.status,headers:h});
  }
  if(!p.startsWith('/api/herald/'))return env.ASSETS.fetch(req);
+ if(p==='/api/herald/public/pulse')return publicPulse(req,env);
  if(p==='/api/herald/public/articles'||/^\/api\/herald\/public\/articles\/\d+$/.test(p))return publicNews(req,env,url,p);
  if(!env.DISCORD_CLIENT_SECRET||!env.HERALD_SESSION_SECRET)return json({error:'Authentication is not configured'},503);
  if(p==='/api/herald/login'&&req.method==='GET'){
@@ -210,7 +246,9 @@ export default {async fetch(req,env){
   const session=await open(env,getCookie(req,SESS));if(!validSession(session))return json({authenticated:false,isAdmin:false},401);
   return json({authenticated:true,isAdmin:true,user:{id:session.id,username:session.username,global_name:session.global_name}});
  }
+ if(p==='/api/herald/public/pulse')return publicPulse(req,env);
  if(p==='/api/herald/public/articles'||/^\/api\/herald\/public\/articles\/\d+$/.test(p))return publicNews(req,env,url,p);
+ if(p==='/api/herald/pulse')return managePulse(req,env,url);
  if(p==='/api/herald/articles'||/^\/api\/herald\/articles\/\d+$/.test(p))return editorial(req,env,url,p);
  return json({error:'Not found'},404);
 }};
