@@ -58,6 +58,35 @@ function cleanText(v,max){return typeof v==='string'?v.trim().slice(0,max):''}
 function safeBody(v){return typeof v==='string'?v.slice(0,50000):''}
 function slugify(v){return v.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,75)||'dispatch'}
 async function audit(db,id,actor,action){await db.prepare('INSERT INTO herald_article_audit(article_id,actor_discord_id,action) VALUES(?,?,?)').bind(id,actor,action).run()}
+// Strict formatting-only HTML subset. No attributes, links, images, embeds or scripts.
+// Reject rather than attempting to repair unsafe markup.
+function sanitizeArticleHtml(input){
+ const allowed=new Set(['p','br','strong','b','em','i','u','ul','ol','li','h2','h3','blockquote']);
+ const tags=/<[^>]*>/g;let pos=0,out='',stack=[];
+ const esc=t=>t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+ for(const m of input.matchAll(tags)){
+  const raw=m[0],v=raw.match(/^<\s*(\/)?\s*([a-z][a-z0-9]*)\s*(\/)?\s*>$/i);
+  if(!v||!allowed.has(v[2].toLowerCase()))throw Error('Unsupported HTML tag or attributes. Use basic formatting tags only.');
+  const name=v[2].toLowerCase(),closing=!!v[1],self=!!v[3];
+  out+=esc(input.slice(pos,m.index));pos=m.index+raw.length;
+  if(name==='br'){if(closing)throw Error('Invalid BR tag');out+='<br>';continue}
+  if(self)throw Error('Self-closing formatting tag not supported');
+  if(closing){if(stack.pop()!==name)throw Error('HTML tags must be correctly nested');out+='</'+name+'>'}
+  else{stack.push(name);out+='<'+name+'>'}
+ }
+ const tail=input.slice(pos);if(tail.includes('<')||tail.includes('>'))throw Error('Invalid HTML syntax');out+=esc(tail);
+ if(stack.length)throw Error('Close all formatting tags before publishing');
+ if(out.length>60000)throw Error('Article too long');return out;
+}
+async function publicNews(req,env,url,p){
+ if(req.method!=='GET')return json({error:'Method not allowed'},405);
+ if(!env.HERALD_DB)return json({error:'News service unavailable'},503);
+ try{
+  const id=p.match(/^\/api\/herald\/public\/articles\/(\d+)$/);
+  if(id){const a=await env.HERALD_DB.prepare("SELECT id,slug,title,summary,category,body_html,author_display_name,published_at FROM herald_articles WHERE id=? AND status='published'").bind(Number(id[1])).first();return a?json({article:a}):json({error:'Not found'},404)}
+  const r=await env.HERALD_DB.prepare("SELECT id,slug,title,summary,category,author_display_name,published_at FROM herald_articles WHERE status='published' ORDER BY published_at DESC LIMIT 60").all();return json({articles:r.results||[]});
+ }catch(e){console.error('Public Herald D1 error',e);return json({error:'News service unavailable'},503)}
+}
 async function editorial(req,env,url,p){
  const session=await open(env,getCookie(req,SESS));if(!validSession(session))return json({error:'Reporter login required'},401);
  if(!env.HERALD_DB)return json({error:'D1 binding HERALD_DB missing'},503);
@@ -67,6 +96,29 @@ async function editorial(req,env,url,p){
  try{
   if(p==='/api/herald/articles'&&method==='GET'){
    const result=await db.prepare('SELECT id,slug,title,summary,category,status,author_display_name,created_at,updated_at,published_at FROM herald_articles ORDER BY updated_at DESC LIMIT 150').all();return json({articles:result.results||[]});
+  }
+  if(match&&method==='POST'){
+   const id=Number(match[1]);
+   if(!sameOrigin(req,url))return json({error:'Invalid origin'},403);
+   const action=req.headers.get('x-herald-action');
+   if(!['publish','unpublish','archive'].includes(action))return json({error:'Unknown action'},400);
+   const old=await db.prepare('SELECT status,body_html,title FROM herald_articles WHERE id=?').bind(id).first();
+   if(!old)return json({error:'Not found'},404);
+   if(action==='publish'){
+    if(old.status!=='draft')return json({error:'Only drafts can be published'},409);
+    let safe;try{safe=sanitizeArticleHtml(old.body_html||'')}catch(e){return json({error:e.message},422)}
+    if(!safe.trim())return json({error:'Article content is required'},400);
+    await db.prepare("UPDATE herald_articles SET body_html=?,status='published',published_at=strftime('%Y-%m-%dT%H:%M:%fZ','now'),updated_at=strftime('%Y-%m-%dT%H:%M:%fZ','now') WHERE id=? AND status='draft'").bind(safe,id).run();
+   }else if(action==='unpublish'){
+    if(old.status!=='published')return json({error:'Only published articles can be unpublished'},409);
+    await db.prepare("UPDATE herald_articles SET status='draft',published_at=NULL,updated_at=strftime('%Y-%m-%dT%H:%M:%fZ','now') WHERE id=?").bind(id).run();
+    await db.prepare('DELETE FROM herald_pulse_slots WHERE article_id=?').bind(id).run();
+   }else{
+    if(old.status==='archived')return json({error:'Already archived'},409);
+    await db.prepare("UPDATE herald_articles SET status='archived',updated_at=strftime('%Y-%m-%dT%H:%M:%fZ','now') WHERE id=?").bind(id).run();
+    await db.prepare('DELETE FROM herald_pulse_slots WHERE article_id=?').bind(id).run();
+   }
+   await audit(db,id,session.id,action);return json({ok:true,id,status:action==='publish'?'published':action==='unpublish'?'draft':'archived'});
   }
   if(match&&method==='GET'){
    const item=await db.prepare('SELECT * FROM herald_articles WHERE id=?').bind(Number(match[1])).first();return item?json({article:item}):json({error:'Not found'},404);
@@ -105,6 +157,7 @@ export default {async fetch(req,env){
   return new Response(asset.body,{status:asset.status,headers:h});
  }
  if(!p.startsWith('/api/herald/'))return env.ASSETS.fetch(req);
+ if(p==='/api/herald/public/articles'||/^\/api\/herald\/public\/articles\/\d+$/.test(p))return publicNews(req,env,url,p);
  if(!env.DISCORD_CLIENT_SECRET||!env.HERALD_SESSION_SECRET)return json({error:'Authentication is not configured'},503);
  if(p==='/api/herald/login'&&req.method==='GET'){
   const nonce=rand();const state=await seal(env,{nonce,exp:Date.now()+600000});
@@ -134,6 +187,7 @@ export default {async fetch(req,env){
   const session=await open(env,getCookie(req,SESS));if(!validSession(session))return json({authenticated:false,isAdmin:false},401);
   return json({authenticated:true,isAdmin:true,user:{id:session.id,username:session.username,global_name:session.global_name}});
  }
+ if(p==='/api/herald/public/articles'||/^\/api\/herald\/public\/articles\/\d+$/.test(p))return publicNews(req,env,url,p);
  if(p==='/api/herald/articles'||/^\/api\/herald\/articles\/\d+$/.test(p))return editorial(req,env,url,p);
  return json({error:'Not found'},404);
 }};

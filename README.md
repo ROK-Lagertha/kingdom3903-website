@@ -120,3 +120,14 @@ The `HERALD_DB` D1 binding is configured in `wrangler.jsonc`. The initial schema
 - **No publishing or public news synchronization yet.** HTML input is stored as draft only; it is not rendered on public pages. A server-side HTML sanitizer and publication review are mandatory before adding publish endpoints.
 - Ensure the existing `HERALD_DB` binding remains configured in Cloudflare and deploy the complete repository.
 - Smoke test: login, create a test draft, reload dashboard, reopen it and confirm persistence.
+
+
+## V3.13.3 — Publishing Engine (2026-10-18)
+
+- Reporter-only Publish, Unpublish and Archive controls, logged in `herald_article_audit`.
+- Server-side strict allowlist for formatting-only HTML. Unsupported tags and **all attributes** are rejected with HTTP 422. No links, images, iframes or inline styles are supported in this version.
+- Published articles available via read-only `/api/herald/public/articles` and `/api/herald/public/articles/:id`; drafts remain private.
+- Royal Herald displays published D1 articles under Published Dispatches, retaining existing static cards as fallback.
+- Publishing requires a non-empty body; unpublishing/archiving removes any assigned Pulse slots.
+- Next: dedicated article pages, full public feed migration, admin-only Kingdom Pulse selection, robust automated tests and CSRF hardening.
+- Do not deploy without verifying production D1 binding and testing Discord Reporter login.
