@@ -101,12 +101,61 @@ function sanitizeArticleHtml(input){
  if(stack.length)throw Error('Close all formatting tags before publishing');
  if(out.length>60000)throw Error('Article too long');return out;
 }
+// V3.13.9 — Images are private R2 objects; public reads require a published article.
+const IMAGE_TYPES={'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/gif':'gif'};
+async function articleImage(req,env,url,p){
+ const m=p.match(/^\/api\/herald\/articles\/(\d+)\/image$/);
+ if(!m)return json({error:'Not found'},404);
+ const id=Number(m[1]);
+ if(!env.HERALD_DB||!env.HERALD_IMAGES)return json({error:'Image storage not configured'},503);
+ const session=await open(env,getCookie(req,SESS));if(!validSession(session))return json({error:'Reporter login required'},401);
+ if(!sameOrigin(req,url))return json({error:'Invalid origin'},403);
+ if(!['POST','DELETE'].includes(req.method))return json({error:'Method not allowed'},405);
+ const article=await env.HERALD_DB.prepare('SELECT id FROM herald_articles WHERE id=?').bind(id).first();
+ if(!article)return json({error:'Article not found'},404);
+ const previous=await env.HERALD_DB.prepare('SELECT object_key FROM herald_article_images WHERE article_id=?').bind(id).first();
+ if(req.method==='DELETE'){
+  await env.HERALD_DB.prepare('DELETE FROM herald_article_images WHERE article_id=?').bind(id).run();
+  await audit(env.HERALD_DB,id,session.id,'update');
+  if(previous?.object_key)try{await env.HERALD_IMAGES.delete(previous.object_key)}catch(e){console.error('R2 cleanup',e)}
+  return json({ok:true,has_image:false});
+ }
+ const type=(req.headers.get('content-type')||'').split(';')[0].trim().toLowerCase();
+ if(!IMAGE_TYPES[type])return json({error:'Choose a JPG, PNG, WebP or GIF image'},415);
+ const size=Number(req.headers.get('content-length'));
+ if(Number.isFinite(size)&&size>5*1024*1024)return json({error:'Maximum image size is 5 MB'},413);
+ const bytes=await req.arrayBuffer();
+ if(!bytes.byteLength||bytes.byteLength>5*1024*1024)return json({error:'Maximum image size is 5 MB'},413);
+ const b=new Uint8Array(bytes);
+ const valid=type==='image/jpeg'?b[0]===255&&b[1]===216&&b[2]===255:
+  type==='image/png'?b.slice(0,8).every((v,i)=>v===[137,80,78,71,13,10,26,10][i]):
+  type==='image/gif'?String.fromCharCode(...b.slice(0,6)).match(/^GIF8[79]a$/):
+  b.length>=12&&String.fromCharCode(...b.slice(0,4))==='RIFF'&&String.fromCharCode(...b.slice(8,12))==='WEBP';
+ if(!valid)return json({error:'Image file does not match its format'},422);
+ const key=`articles/${id}/${crypto.randomUUID()}.${IMAGE_TYPES[type]}`;
+ await env.HERALD_IMAGES.put(key,bytes,{httpMetadata:{contentType:type}});
+ try{
+  await env.HERALD_DB.prepare('INSERT INTO herald_article_images(article_id,object_key,content_type,byte_size,updated_by_discord_id) VALUES(?,?,?,?,?) ON CONFLICT(article_id) DO UPDATE SET object_key=excluded.object_key,content_type=excluded.content_type,byte_size=excluded.byte_size,updated_by_discord_id=excluded.updated_by_discord_id,updated_at=CURRENT_TIMESTAMP').bind(id,key,type,bytes.byteLength,session.id).run();
+  await audit(env.HERALD_DB,id,session.id,'update');
+ }catch(e){await env.HERALD_IMAGES.delete(key);throw e}
+ if(previous?.object_key)try{await env.HERALD_IMAGES.delete(previous.object_key)}catch(e){console.error('R2 cleanup',e)}
+ return json({ok:true,has_image:true,image_url:`/api/herald/images/${id}?v=${encodeURIComponent(key.split('/').pop())}`});
+}
+async function serveArticleImage(req,env,p){
+ if(req.method!=='GET'&&req.method!=='HEAD')return json({error:'Method not allowed'},405);
+ if(!env.HERALD_DB||!env.HERALD_IMAGES)return json({error:'Image unavailable'},503);
+ const id=Number(p.match(/^\/api\/herald\/images\/(\d+)$/)?.[1]);if(!id)return json({error:'Not found'},404);
+ const row=await env.HERALD_DB.prepare("SELECT i.object_key,i.content_type FROM herald_article_images i JOIN herald_articles a ON a.id=i.article_id WHERE i.article_id=? AND a.status='published'").bind(id).first();
+ if(!row)return json({error:'Not found'},404);
+ const obj=await env.HERALD_IMAGES.get(row.object_key);if(!obj)return json({error:'Not found'},404);
+ return new Response(req.method==='HEAD'?null:obj.body,{headers:{'content-type':row.content_type,'content-disposition':'inline','x-content-type-options':'nosniff','cache-control':'public, max-age=300','content-security-policy':"default-src 'none'; sandbox"}});
+}
 async function publicNews(req,env,url,p){
  if(req.method!=='GET')return json({error:'Method not allowed'},405);
  if(!env.HERALD_DB)return json({error:'News service unavailable'},503);
  try{
   const id=p.match(/^\/api\/herald\/public\/articles\/(\d+)$/);
-  if(id){const a=await env.HERALD_DB.prepare("SELECT id,slug,title,summary,category,body_html,author_display_name,published_at FROM herald_articles WHERE id=? AND status='published'").bind(Number(id[1])).first();return a?json({article:a}):json({error:'Not found'},404)}
+  if(id){const a=await env.HERALD_DB.prepare("SELECT a.id,a.slug,a.title,a.summary,a.category,a.body_html,a.author_display_name,a.published_at,CASE WHEN i.article_id IS NULL THEN 0 ELSE 1 END AS has_image FROM herald_articles a LEFT JOIN herald_article_images i ON i.article_id=a.id WHERE a.id=? AND a.status='published'").bind(Number(id[1])).first();return a?json({article:a}):json({error:'Not found'},404)}
   const r=await env.HERALD_DB.prepare("SELECT id,slug,title,summary,category,author_display_name,published_at FROM herald_articles WHERE status='published' ORDER BY published_at DESC LIMIT 60").all();return json({articles:r.results||[]});
  }catch(e){console.error('Public Herald D1 error',e);return json({error:'News service unavailable'},503)}
 }
@@ -179,7 +228,7 @@ async function editorial(req,env,url,p){
    await audit(db,id,session.id,action);return json({ok:true,id,status:action==='publish'?'published':action==='unpublish'?'draft':'archived'});
   }
   if(match&&method==='GET'){
-   const item=await db.prepare('SELECT * FROM herald_articles WHERE id=?').bind(Number(match[1])).first();return item?json({article:item}):json({error:'Not found'},404);
+   const item=await db.prepare('SELECT a.*,CASE WHEN i.article_id IS NULL THEN 0 ELSE 1 END AS has_image FROM herald_articles a LEFT JOIN herald_article_images i ON i.article_id=a.id WHERE a.id=?').bind(Number(match[1])).first();return item?json({article:item}):json({error:'Not found'},404);
   }
   if((p==='/api/herald/articles'&&method==='POST')||(match&&method==='PUT')){
    if(!(req.headers.get('content-type')||'').toLowerCase().startsWith('application/json'))return json({error:'JSON required'},415);
@@ -215,6 +264,7 @@ export default {async fetch(req,env){
   return new Response(asset.body,{status:asset.status,headers:h});
  }
  if(!p.startsWith('/api/herald/'))return env.ASSETS.fetch(req);
+ if(/^\/api\/herald\/images\/\d+$/.test(p))return serveArticleImage(req,env,p);
  if(p==='/api/herald/public/pulse')return publicPulse(req,env);
  if(p==='/api/herald/public/articles'||/^\/api\/herald\/public\/articles\/\d+$/.test(p))return publicNews(req,env,url,p);
  if(!env.DISCORD_CLIENT_SECRET||!env.HERALD_SESSION_SECRET)return json({error:'Authentication is not configured'},503);
@@ -248,6 +298,7 @@ export default {async fetch(req,env){
  }
  if(p==='/api/herald/public/pulse')return publicPulse(req,env);
  if(p==='/api/herald/public/articles'||/^\/api\/herald\/public\/articles\/\d+$/.test(p))return publicNews(req,env,url,p);
+ if(/^\/api\/herald\/articles\/\d+\/image$/.test(p))return articleImage(req,env,url,p);
  if(p==='/api/herald/pulse')return managePulse(req,env,url);
  if(p==='/api/herald/articles'||/^\/api\/herald\/articles\/\d+$/.test(p))return editorial(req,env,url,p);
  return json({error:'Not found'},404);

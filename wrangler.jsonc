@@ -17,5 +17,11 @@
       "database_name": "citadel-herald-db",
       "database_id": "a35fc252-3112-4754-b5a0-d7efc6473a41"
     }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "HERALD_IMAGES",
+      "bucket_name": "citadel-herald-images"
+    }
   ]
 }

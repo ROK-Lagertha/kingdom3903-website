@@ -179,3 +179,12 @@ Publishing now normalizes legacy `<color=#RRGGBB>` and `</color>` markup on the 
 - Published articles are sorted newest first and retain the royal card decorations and full article modal.
 - Added loading, empty and temporary-error states; Reporter login, article editor, database and Kingdom Pulse homepage remain unchanged.
 - Next: manage the four Kingdom Pulse slots from the protected admin dashboard and connect the homepage ticker to D1.
+
+
+## V3.13.9 — Article Image Manager
+- Cloudflare R2 binding `HERALD_IMAGES` -> bucket `citadel-herald-images` in `wrangler.jsonc`.
+- **Before deployment**, execute `migrations/0002_herald_article_images.sql` on production D1 `citadel-herald-db` (Cloudflare D1 Console). Safe `CREATE TABLE IF NOT EXISTS`; no existing tables modified.
+- In the protected editor, save/open an article, select a JPG/PNG/WebP/GIF (max 5 MB), then **UPLOAD / REPLACE IMAGE**. Use **REMOVE IMAGE** to delete. Images may be changed even after publication; text editing rules remain unchanged.
+- Public image access is only granted while the associated article is published; images are not included in public article lists or Kingdom Pulse. Public article detail includes `has_image`.
+- Uploads validate session, origin, MIME, file signatures and size; R2 object names are randomized. No public R2 bucket, API tokens or additional secrets needed.
+- Test: upload to draft, publish, open article, confirm image; check no image in news cards or homepage ticker; replace and remove image; unpublish and confirm image endpoint is inaccessible.
