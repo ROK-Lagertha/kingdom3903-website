@@ -1,3 +1,11 @@
+## V3.13.4 – Publishing compatibility hotfix (18 October 2026)
+
+- Corrected Wrangler Worker name to `kingdom3903-website` to resolve Cloudflare CI warning.
+- Publishing accepts common editor formatting attributes but strips all attributes before public rendering.
+- Supports `div`, `span`, `h1`, and `h4` as formatting-only input. `span` is unwrapped, `div` becomes `p`, `h1` becomes `h2`, `h4` becomes `h3`.
+- Unsupported tags remain blocked, now with a specific tag name in the error message.
+- No D1 schema changes. Existing drafts and Discord OAuth flow remain unchanged.
+
 # The Citadel — Kingdom 3903
 
 **Project status:** V3.12.9 · 17 October 2026  

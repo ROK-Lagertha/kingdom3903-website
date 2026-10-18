@@ -58,23 +58,28 @@ function cleanText(v,max){return typeof v==='string'?v.trim().slice(0,max):''}
 function safeBody(v){return typeof v==='string'?v.slice(0,50000):''}
 function slugify(v){return v.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,75)||'dispatch'}
 async function audit(db,id,actor,action){await db.prepare('INSERT INTO herald_article_audit(article_id,actor_discord_id,action) VALUES(?,?,?)').bind(id,actor,action).run()}
-// Strict formatting-only HTML subset. No attributes, links, images, embeds or scripts.
-// Reject rather than attempting to repair unsafe markup.
+// Safe formatting-only HTML. Accept common editor attributes but strip them on output.
+// Unsupported elements (including script, style, iframe, img and links) are rejected.
 function sanitizeArticleHtml(input){
- const allowed=new Set(['p','br','strong','b','em','i','u','ul','ol','li','h2','h3','blockquote']);
- const tags=/<[^>]*>/g;let pos=0,out='',stack=[];
+ const allowed=new Set(['p','br','strong','b','em','i','u','ul','ol','li','h2','h3','blockquote','div','span','h1','h4']);
+ const rename={div:'p',h1:'h2',h4:'h3'};
  const esc=t=>t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+ const tags=/<[^>]*>/g;let pos=0,out='',stack=[];
  for(const m of input.matchAll(tags)){
-  const raw=m[0],v=raw.match(/^<\s*(\/)?\s*([a-z][a-z0-9]*)\s*(\/)?\s*>$/i);
-  if(!v||!allowed.has(v[2].toLowerCase()))throw Error('Unsupported HTML tag or attributes. Use basic formatting tags only.');
-  const name=v[2].toLowerCase(),closing=!!v[1],self=!!v[3];
+  const raw=m[0],v=raw.match(/^<\s*(\/)?\s*([a-z][a-z0-9]*)(?:\s+[^<>]*?)?\s*(\/)?\s*>$/i);
+  if(!v)throw Error('Invalid HTML tag. Check for broken markup.');
+  const name=v[2].toLowerCase();
+  if(!allowed.has(name))throw Error('Unsupported HTML tag: <'+name+'>. Remove it before publishing.');
+  const closing=!!v[1],self=!!v[3],safe=rename[name]||name;
   out+=esc(input.slice(pos,m.index));pos=m.index+raw.length;
   if(name==='br'){if(closing)throw Error('Invalid BR tag');out+='<br>';continue}
   if(self)throw Error('Self-closing formatting tag not supported');
-  if(closing){if(stack.pop()!==name)throw Error('HTML tags must be correctly nested');out+='</'+name+'>'}
-  else{stack.push(name);out+='<'+name+'>'}
+  if(closing){if(stack.pop()!==name)throw Error('HTML tags must be correctly nested');if(name!=='span')out+='</'+safe+'>'}
+  else{stack.push(name);if(name!=='span')out+='<'+safe+'>'}
  }
- const tail=input.slice(pos);if(tail.includes('<')||tail.includes('>'))throw Error('Invalid HTML syntax');out+=esc(tail);
+ const tail=input.slice(pos);
+ if(tail.includes('<')||tail.includes('>'))throw Error('Invalid HTML syntax');
+ out+=esc(tail);
  if(stack.length)throw Error('Close all formatting tags before publishing');
  if(out.length>60000)throw Error('Article too long');return out;
 }
