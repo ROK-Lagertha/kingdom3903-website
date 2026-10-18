@@ -101,3 +101,7 @@ Cloudflare project: `kingdom3903-website`. Deploy command: `npx wrangler deploy`
 This repository archive contains the website source and production assets **without `.git` history**. GitHub holds commit history separately. The ZIP does **not** contain Cloudflare secrets, live Discord credentials or future D1 database records.
 
 For a restore, use a known Git commit or the archived ZIP, deploy with Wrangler, ensure Cloudflare secrets and domain routing remain configured, then test the public site and Reporter login. Back up D1 separately before future schema migrations.
+
+## V3.13.0 security patch
+
+The Worker now returns 404 for direct requests to `/news/admin/dashboard.html`, while the authenticated `/news/admin/` route continues to serve it internally. Verify both cases after deployment.

@@ -53,6 +53,8 @@ function addCookies(response,values){const h=new Headers(response.headers);for(c
 const fail=(msg)=>new Response(`<!doctype html><html lang="en"><meta charset="utf-8"><title>Royal Herald Login</title><body style="background:#071322;color:#e8c47b;font:18px Arial;text-align:center;padding:10vh 20px"><h1>Royal Herald</h1><p>${msg}</p><a style="color:#e8c47b" href="/news/">Back to the Herald</a></body></html>`,{status:403,headers:{'content-type':'text/html; charset=utf-8','cache-control':'no-store',"content-security-policy":"default-src 'none'; style-src 'unsafe-inline'"}})
 export default {async fetch(req,env){
  const url=new URL(req.url),p=url.pathname;
+ // Block direct access to the admin dashboard static asset.
+ if(p==='/news/admin/dashboard.html')return json({error:'Not found'},404);
  if(p==='/news/admin'||p==='/news/admin/'||p==='/news/admin/index.html'){
   if(req.method!=='GET'&&req.method!=='HEAD')return json({error:'Method not allowed'},405);
   if(!env.HERALD_SESSION_SECRET)return redirect('/news/');
