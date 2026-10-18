@@ -139,3 +139,12 @@ The `HERALD_DB` D1 binding is configured in `wrangler.jsonc`. The initial schema
 - Publishing requires a non-empty body; unpublishing/archiving removes any assigned Pulse slots.
 - Next: dedicated article pages, full public feed migration, admin-only Kingdom Pulse selection, robust automated tests and CSRF hardening.
 - Do not deploy without verifying production D1 binding and testing Discord Reporter login.
+
+## V3.13.5 — Rich Text Editor (18 October 2026)
+
+- Replaced raw HTML textarea with a visual contenteditable editor in `/news/admin/`.
+- Toolbar: bold, italic, underline, paragraph, headings, lists, quote, text color, remove formatting, undo/redo.
+- Drafts remain stored as HTML in existing Cloudflare D1 table; no database migration needed.
+- When loading old drafts containing RoK `<color=#RRGGBB>` markup, editor attempts to convert those tags to visual colored spans. Review converted legacy content before publishing.
+- Publishing sanitizer supports safe hexadecimal text colors on spans/font tags, while stripping other HTML attributes and rejecting unsafe elements.
+- Known limitations: this is a lightweight native-browser editor, not a full word processor. Pasting complex rich content may produce unsupported tags; use plain-text paste if publication fails. Links and embedded media are intentionally unsupported. Test cross-browser formatting before production editorial use.

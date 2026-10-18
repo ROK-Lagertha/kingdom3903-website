@@ -61,7 +61,7 @@ async function audit(db,id,actor,action){await db.prepare('INSERT INTO herald_ar
 // Safe formatting-only HTML. Accept common editor attributes but strip them on output.
 // Unsupported elements (including script, style, iframe, img and links) are rejected.
 function sanitizeArticleHtml(input){
- const allowed=new Set(['p','br','strong','b','em','i','u','ul','ol','li','h2','h3','blockquote','div','span','h1','h4']);
+ const allowed=new Set(['p','br','strong','b','em','i','u','ul','ol','li','h2','h3','blockquote','div','span','h1','h4','font']);
  const rename={div:'p',h1:'h2',h4:'h3'};
  const esc=t=>t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
  const tags=/<[^>]*>/g;let pos=0,out='',stack=[];
@@ -74,8 +74,17 @@ function sanitizeArticleHtml(input){
   out+=esc(input.slice(pos,m.index));pos=m.index+raw.length;
   if(name==='br'){if(closing)throw Error('Invalid BR tag');out+='<br>';continue}
   if(self)throw Error('Self-closing formatting tag not supported');
-  if(closing){if(stack.pop()!==name)throw Error('HTML tags must be correctly nested');if(name!=='span')out+='</'+safe+'>'}
-  else{stack.push(name);if(name!=='span')out+='<'+safe+'>'}
+  if(closing){if(stack.pop()!==name)throw Error('HTML tags must be correctly nested');out+='</'+(name==='font'?'span':safe)+'>'}
+  else{
+   stack.push(name);
+   if(name==='span'||name==='font'){
+    const style=raw.match(/\bstyle\s*=\s*["']([^"']*)["']/i)?.[1]||'';
+    const cssColor=style.match(/(?:^|;)\s*color\s*:\s*(#[0-9a-f]{3}(?:[0-9a-f]{3})?)(?:\s*;|\s*$)/i)?.[1];
+    const fontColor=raw.match(/\bcolor\s*=\s*["']?(#[0-9a-f]{3}(?:[0-9a-f]{3})?)/i)?.[1];
+    const color=cssColor||fontColor;
+    out+='<span'+(color?' style="color:'+color.toLowerCase()+'"':'')+'>';
+   }else out+='<'+safe+'>';
+  }
  }
  const tail=input.slice(pos);
  if(tail.includes('<')||tail.includes('>'))throw Error('Invalid HTML syntax');
