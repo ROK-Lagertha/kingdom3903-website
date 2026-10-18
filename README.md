@@ -153,3 +153,11 @@ The `HERALD_DB` D1 binding is configured in `wrangler.jsonc`. The initial schema
 ## V3.13.6 — Legacy RoK publishing fix
 
 Publishing now normalizes legacy `<color=#RRGGBB>` and `</color>` markup on the server before applying the HTML allowlist. Existing drafts are not deleted or migrated. For existing articles, open and save the draft before publishing to persist editor conversions. Unknown tags remain rejected.
+
+
+## V3.13.7 — Live News Layout
+- Removed hardcoded Royal Honors, Fort Launches, Fort Joins, and Community Appreciation sample cards and static featured story from `/news/`.
+- Public Royal Herald now has one `Latest News` section sourced exclusively from `/api/herald/public/articles`.
+- Published articles are sorted newest first and retain the royal card decorations and full article modal.
+- Added loading, empty and temporary-error states; Reporter login, article editor, database and Kingdom Pulse homepage remain unchanged.
+- Next: manage the four Kingdom Pulse slots from the protected admin dashboard and connect the homepage ticker to D1.
