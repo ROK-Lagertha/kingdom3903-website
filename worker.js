@@ -60,7 +60,16 @@ function slugify(v){return v.toLowerCase().normalize('NFKD').replace(/[\u0300-\u
 async function audit(db,id,actor,action){await db.prepare('INSERT INTO herald_article_audit(article_id,actor_discord_id,action) VALUES(?,?,?)').bind(id,actor,action).run()}
 // Safe formatting-only HTML. Accept common editor attributes but strip them on output.
 // Unsupported elements (including script, style, iframe, img and links) are rejected.
+function normalizeLegacyRokMarkup(input){
+ // Legacy Rise of Kingdoms mail markup is not HTML. Translate only known formatting
+ // tokens, keeping the actual HTML sanitizer as the final security boundary.
+ let value=String(input||'');
+ value=value.replace(/(?:<|&lt;)\s*color\s*=\s*#([0-9a-f]{6})\s*(?:>|&gt;)/gi,(_,hex)=>'<span style="color:#'+hex+'">');
+ value=value.replace(/(?:<|&lt;)\s*\/color\s*(?:>|&gt;)/gi,'</span>');
+ return value;
+}
 function sanitizeArticleHtml(input){
+ input=normalizeLegacyRokMarkup(input);
  const allowed=new Set(['p','br','strong','b','em','i','u','ul','ol','li','h2','h3','blockquote','div','span','h1','h4','font']);
  const rename={div:'p',h1:'h2',h4:'h3'};
  const esc=t=>t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');

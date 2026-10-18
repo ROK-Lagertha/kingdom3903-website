@@ -148,3 +148,8 @@ The `HERALD_DB` D1 binding is configured in `wrangler.jsonc`. The initial schema
 - When loading old drafts containing RoK `<color=#RRGGBB>` markup, editor attempts to convert those tags to visual colored spans. Review converted legacy content before publishing.
 - Publishing sanitizer supports safe hexadecimal text colors on spans/font tags, while stripping other HTML attributes and rejecting unsafe elements.
 - Known limitations: this is a lightweight native-browser editor, not a full word processor. Pasting complex rich content may produce unsupported tags; use plain-text paste if publication fails. Links and embedded media are intentionally unsupported. Test cross-browser formatting before production editorial use.
+
+
+## V3.13.6 — Legacy RoK publishing fix
+
+Publishing now normalizes legacy `<color=#RRGGBB>` and `</color>` markup on the server before applying the HTML allowlist. Existing drafts are not deleted or migrated. For existing articles, open and save the draft before publishing to persist editor conversions. Unknown tags remain rejected.
