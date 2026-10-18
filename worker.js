@@ -51,6 +51,45 @@ function validSession(session){return !!(session&&session.exp>Date.now()&&sessio
 function callbackUrl(req,env){return env.HERALD_CALLBACK_URL||new URL('/api/herald/callback',req.url).toString()}
 function addCookies(response,values){const h=new Headers(response.headers);for(const c of values)h.append('set-cookie',c);return new Response(response.body,{status:response.status,headers:h})}
 const fail=(msg)=>new Response(`<!doctype html><html lang="en"><meta charset="utf-8"><title>Royal Herald Login</title><body style="background:#071322;color:#e8c47b;font:18px Arial;text-align:center;padding:10vh 20px"><h1>Royal Herald</h1><p>${msg}</p><a style="color:#e8c47b" href="/news/">Back to the Herald</a></body></html>`,{status:403,headers:{'content-type':'text/html; charset=utf-8','cache-control':'no-store',"content-security-policy":"default-src 'none'; style-src 'unsafe-inline'"}})
+
+// D1 editorial API. Only a verified Reporter session may read or change drafts.
+function sameOrigin(req,url){const origin=req.headers.get('origin');if(origin&&origin!==url.origin)return false;const site=req.headers.get('sec-fetch-site');return !site||site==='same-origin'||site==='none'}
+function cleanText(v,max){return typeof v==='string'?v.trim().slice(0,max):''}
+function safeBody(v){return typeof v==='string'?v.slice(0,50000):''}
+function slugify(v){return v.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,75)||'dispatch'}
+async function audit(db,id,actor,action){await db.prepare('INSERT INTO herald_article_audit(article_id,actor_discord_id,action) VALUES(?,?,?)').bind(id,actor,action).run()}
+async function editorial(req,env,url,p){
+ const session=await open(env,getCookie(req,SESS));if(!validSession(session))return json({error:'Reporter login required'},401);
+ if(!env.HERALD_DB)return json({error:'D1 binding HERALD_DB missing'},503);
+ const db=env.HERALD_DB,method=req.method;
+ if(method!=='GET'&&!sameOrigin(req,url))return json({error:'Invalid request origin'},403);
+ const match=p.match(/^\/api\/herald\/articles\/(\d+)$/);
+ try{
+  if(p==='/api/herald/articles'&&method==='GET'){
+   const result=await db.prepare('SELECT id,slug,title,summary,category,status,author_display_name,created_at,updated_at,published_at FROM herald_articles ORDER BY updated_at DESC LIMIT 150').all();return json({articles:result.results||[]});
+  }
+  if(match&&method==='GET'){
+   const item=await db.prepare('SELECT * FROM herald_articles WHERE id=?').bind(Number(match[1])).first();return item?json({article:item}):json({error:'Not found'},404);
+  }
+  if((p==='/api/herald/articles'&&method==='POST')||(match&&method==='PUT')){
+   if(!(req.headers.get('content-type')||'').toLowerCase().startsWith('application/json'))return json({error:'JSON required'},415);
+   const body=await req.text();if(body.length>75000)return json({error:'Payload too large'},413);
+   let data;try{data=JSON.parse(body)}catch{return json({error:'Invalid JSON'},400)}
+   const title=cleanText(data.title,140),summary=cleanText(data.summary,500),category=cleanText(data.category,60)||'Kingdom News',html=safeBody(data.body_html);
+   if(!title)return json({error:'Headline required'},400);
+   if(p==='/api/herald/articles'){
+    const slug=slugify(title)+'-'+crypto.randomUUID().slice(0,8);
+    const result=await db.prepare('INSERT INTO herald_articles(slug,title,summary,body_html,category,status,author_discord_id,author_display_name) VALUES(?,?,?,?,?,?,?,?)').bind(slug,title,summary,html,category,'draft',session.id,session.global_name||session.username||'Reporter').run();
+    const id=result.meta.last_row_id;await audit(db,id,session.id,'create');return json({ok:true,id,status:'draft'},201);
+   }
+   const id=Number(match[1]),old=await db.prepare('SELECT status FROM herald_articles WHERE id=?').bind(id).first();if(!old)return json({error:'Not found'},404);
+   if(old.status!=='draft')return json({error:'Only drafts can be edited in this release'},409);
+   await db.prepare("UPDATE herald_articles SET title=?,summary=?,body_html=?,category=?,updated_at=strftime('%Y-%m-%dT%H:%M:%fZ','now') WHERE id=?").bind(title,summary,html,category,id).run();await audit(db,id,session.id,'update');return json({ok:true,id,status:'draft'});
+  }
+  return json({error:'Method not allowed or publishing not yet enabled'},405);
+ }catch(e){console.error('Herald D1 API error',e?.message||e);return json({error:'Database operation failed'},500)}
+}
+
 export default {async fetch(req,env){
  const url=new URL(req.url),p=url.pathname;
  // Block direct access to the admin dashboard static asset.
@@ -95,6 +134,6 @@ export default {async fetch(req,env){
   const session=await open(env,getCookie(req,SESS));if(!validSession(session))return json({authenticated:false,isAdmin:false},401);
   return json({authenticated:true,isAdmin:true,user:{id:session.id,username:session.username,global_name:session.global_name}});
  }
- if(p==='/api/herald/articles')return json({error:'Publishing not yet enabled. D1 and sanitization required.'},501);
+ if(p==='/api/herald/articles'||/^\/api\/herald\/articles\/\d+$/.test(p))return editorial(req,env,url,p);
  return json({error:'Not found'},404);
 }};

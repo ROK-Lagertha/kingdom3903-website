@@ -105,3 +105,18 @@ For a restore, use a known Git commit or the archived ZIP, deploy with Wrangler,
 ## V3.13.0 security patch
 
 The Worker now returns 404 for direct requests to `/news/admin/dashboard.html`, while the authenticated `/news/admin/` route continues to serve it internally. Verify both cases after deployment.
+
+## D1 preparation (V3.13.1)
+
+The `HERALD_DB` D1 binding is configured in `wrangler.jsonc`. The initial schema is in `migrations/0001_herald_initial.sql`. In Cloudflare Dashboard → Storage & Databases → D1 → `citadel-herald-db` → Console, paste and execute that SQL once. Verify with `SELECT name FROM sqlite_master WHERE type = 'table' AND name LIKE 'herald_%' ORDER BY name;`. The public website and editor remain unchanged; this release does not enable publishing. Before applying migrations to a populated D1 database, take a database backup.
+
+
+## V3.13.2 — Protected D1 draft newsroom
+
+- Worker now provides authenticated `GET /api/herald/articles`, `GET /api/herald/articles/:id`, `POST /api/herald/articles`, `PUT /api/herald/articles/:id`.
+- Reporter role required for every endpoint; cross-origin writes rejected, request size limited, SQL parameterized.
+- New drafts are saved to D1 with author and audit records. Only drafts can be edited.
+- Admin dashboard lists articles and allows creating, opening and saving drafts.
+- **No publishing or public news synchronization yet.** HTML input is stored as draft only; it is not rendered on public pages. A server-side HTML sanitizer and publication review are mandatory before adding publish endpoints.
+- Ensure the existing `HERALD_DB` binding remains configured in Cloudflare and deploy the complete repository.
+- Smoke test: login, create a test draft, reload dashboard, reopen it and confirm persistence.

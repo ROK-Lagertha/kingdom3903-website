@@ -10,5 +10,12 @@
       "/news/admin",
       "/news/admin/*"
     ]
-  }
+  },
+  "d1_databases": [
+    {
+      "binding": "HERALD_DB",
+      "database_name": "citadel-herald-db",
+      "database_id": "a35fc252-3112-4754-b5a0-d7efc6473a41"
+    }
+  ]
 }
