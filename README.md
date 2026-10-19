@@ -270,3 +270,9 @@ Corrected the actual Cloudflare assets under `public/`: synchronized `public/rec
 - Six gold-icon feature cards with decorative corners.
 - Responsive six-column wide, three-column standard/tablet and two-column mobile grids.
 - All other sections and Cloudflare bindings unchanged.
+
+
+## V3.16.1 — Section 02 ornament fix
+- Rendered the Section 02 ornament inline using the identical SVG artwork as Section 01, with the numeral changed to 02.
+- Kept the matching standalone asset in public/assets as well.
+- Preserved all existing responsive layouts and cards. No database or Cloudflare configuration changes required.
