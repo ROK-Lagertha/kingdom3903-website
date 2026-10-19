@@ -297,3 +297,9 @@ Removed opaque overlay gradients in Recruitment section 03. The parchment artwor
 - Reworked section 04 with matching ornamental 04, blended background and responsive layout.
 - Added accessible button and modal displaying the user-provided BattleTrack KvK requirements image.
 - No database or Cloudflare binding changes.
+
+
+## V3.16.6 – English KvK Requirements image
+- Replaced the KvK Requirements modal graphic with the English, Citadel-styled BattleTrack infographic.
+- Kept the modal, button, and responsive display unchanged.
+- No database or Cloudflare binding changes.
