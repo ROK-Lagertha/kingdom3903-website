@@ -231,3 +231,11 @@ Publishing now normalizes legacy `<color=#RRGGBB>` and `</color>` markup on the 
 
 ## V3.15.4 — Recruitment mobile asset deployment fix
 Corrected the actual Cloudflare assets under `public/`: synchronized `public/recruitment/index.html` and added `public/assets/recruitment-mobile-castle-v3.15.3.webp`. This resolves the V3.15.2 mobile view persisting after V3.15.3 deployment. No D1 or R2 changes.
+
+
+## V3.15.5 — Recruitment highlight ribbon
+- Rebuilt the four-item ribbon beneath the Recruitment hero in royal navy/gold.
+- Replaced emoji icons with consistent inline gold SVG icons.
+- Desktop: one full-width horizontal row; tablet: responsive compact row; mobile: clean two-column/two-row grid.
+- Applied the same change to both source and deployed `public/recruitment/index.html`.
+- No D1, R2, Worker or Discord changes.
