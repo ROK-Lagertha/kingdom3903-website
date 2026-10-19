@@ -213,3 +213,10 @@ Publishing now normalizes legacy `<color=#RRGGBB>` and `</color>` markup on the 
 - Removed Our Story / Why 3903 hero buttons.
 - Preserved accessible mobile headline and copy, with mobile-specific background crop and overlay.
 - No changes to backend, database, bindings, Herald or recruitment links.
+
+
+## V3.15.2 — Recruitment mobile hero correction
+- Added dedicated mobile hero artwork crop without embedded headline text.
+- Rebuilt mobile hero overlay for clean, readable typography and visible mascot.
+- Desktop hero and existing features remain unchanged.
+- No D1 migration or Cloudflare binding changes.
