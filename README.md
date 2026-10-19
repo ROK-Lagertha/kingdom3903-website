@@ -303,3 +303,10 @@ Removed opaque overlay gradients in Recruitment section 03. The parchment artwor
 - Replaced the KvK Requirements modal graphic with the English, Citadel-styled BattleTrack infographic.
 - Kept the modal, button, and responsive display unchanged.
 - No database or Cloudflare binding changes.
+
+
+## V3.16.7 – Events & Community Gallery
+- Section 05 now uses the same inline ornamental number artwork as Sections 01–04.
+- Five individually cropped event images from the approved Recruitment mockup are included in public/assets.
+- Transparent event tiles blend into the Recruitment page background; captions are preserved in English.
+- Responsive: 5 desktop, 3 tablet, 2 mobile columns; no changes to Herald, KvK modal or Worker.
