@@ -1,336 +1,303 @@
-## V3.16.8 — Recruitment KvK scene refresh
+# 🏰 The Citadel — Kingdom 3903
 
-- Replaced the Section 04 battlefield background with the new text-free royal Citadel artwork.
-- Kept the existing responsive fade, content, KvK requirements popup, and other sections unchanged.
-- No Cloudflare configuration or D1 migration required.
+**More Than a Kingdom.**
 
-## V3.15.9 — Welcome layout
-- Replaced the Welcome section number with a dedicated ornamental SVG image, aligned beside the heading on all screen sizes.
-- Removed the nonfunctional video/image placeholder and its caption.
-- Added responsive header grid so title/subtitle never wrap underneath the numeral.
-- Preserved all other sections, Royal Herald and Worker integrations.
+[![Website](https://img.shields.io/badge/Website-kingdom3903.com-18365a?style=flat-square)](https://kingdom3903.com/) ![Status](https://img.shields.io/badge/Project-Active%20Development-d8ab5e?style=flat-square) ![Release](https://img.shields.io/badge/Documentation-v3.17.1-2574aa?style=flat-square)
 
-## V3.15.8 – Compact Recruitment spacing
+The Citadel is the community website, recruitment portal and information hub for **Kingdom 3903** in *Rise of Kingdoms*. It combines a royal navy-and-gold visual identity with live news, kingdom recruitment, community resources and links to supporting tools.
 
-- Cropped transparent padding from royal divider asset without altering ornament motifs.
-- Reduced vertical whitespace around every section, highlight strip and join block.
-- Responsive spacing for desktop, tablet and mobile.
-- Preserved Herald, R2, D1 and existing recruitment content.
+> **Unofficial fan project.** The Citadel is community-operated and is not affiliated with, endorsed by or an official property of Lilith Games.
 
-## V3.15.7 — Royal Divider (Recruitment)
-
-- Replaced legacy Recruitment section borders and SVG ornaments with the approved transparent gold-and-sapphire image.
-- Added responsive image separators between highlights and all six Recruitment sections.
-- Kept existing website, Herald, D1 and R2 behavior unchanged.
-
-# The Citadel — Kingdom 3903
-
-## V3.13.8 — Kingdom Pulse Manager (18 October 2026)
-
-- Protected `/news/admin/` now has a Kingdom Pulse Manager listing published articles.
-- Select up to four, order with arrows, and save the rotation to the existing D1 `herald_pulse_slots` table.
-- The homepage fetches `/api/herald/public/pulse`, a read-only endpoint returning only selected published stories in slot order.
-- No sample headlines remain hardcoded in the ticker. Empty selections display a friendly fallback and link to `/news/`.
-- `/api/herald/pulse` requires the existing verified Discord Reporter session and same-origin PUT requests.
-- Unpublishing or archiving an article removes it from the Pulse automatically.
-- No D1 schema migration or additional Cloudflare bindings required. Existing drafts, publishing, login, layout and assets preserved.
-
-## Next: V3.13.9 — Article image uploads
-
-Each article should support a **user-uploaded individual cover image**, stored in Cloudflare R2 and associated with its article. Upload, replace and remove controls will be available in the Reporter editor. Images must render **only on the opened full article**, never on Latest News cards or the Kingdom Pulse ticker. This needs a new R2 bucket/binding and a D1 migration; it is **not yet implemented** in V3.13.8.
+**Documentation baseline:** 19 October 2026 · Website release **v3.17.1**  
+**Repository:** https://github.com/ROK-Lagertha/kingdom3903-website  
+**Production website:** https://kingdom3903.com/
 
 ---
 
-## V3.13.4 – Publishing compatibility hotfix (18 October 2026)
+## 1. Project at a glance
 
-- Corrected Wrangler Worker name to `kingdom3903-website` to resolve Cloudflare CI warning.
-- Publishing accepts common editor formatting attributes but strips all attributes before public rendering.
-- Supports `div`, `span`, `h1`, and `h4` as formatting-only input. `span` is unwrapped, `div` becomes `p`, `h1` becomes `h2`, `h4` becomes `h3`.
-- Unsupported tags remain blocked, now with a specific tag name in the error message.
-- No D1 schema changes. Existing drafts and Discord OAuth flow remain unchanged.
+| Area | URL | Status |
+| --- | --- | --- |
+| Homepage / Kingdom Pulse | https://kingdom3903.com/ | Implemented; live D1 news rotation |
+| Royal Herald | https://kingdom3903.com/news/ | Implemented; published D1 articles |
+| Reporter administration | https://kingdom3903.com/news/admin/ | Implemented; Discord Reporter authentication |
+| Individual article permalink | `/news/{article-slug}` | Implemented; Discord previews |
+| Recruitment Center | https://kingdom3903.com/recruitment/ | Implemented; visual polish in progress |
+| FlagFiller Registry | https://flagfiller.kingdom3903.com/ | Linked external/subdomain tool; maintained separately |
+| ROK BattleTrack | Linked from homepage | Linked external project; maintained separately |
+| Kingdom / alliance information | Navigation and planned pages | Further development planned |
 
-# The Citadel — Kingdom 3903
+**Current focus:** final visual and responsive polish of the Recruitment Center. Sections 01–05 have been developed, and the six illustrated **Why Choose 3903?** cards still have visible cropping/frame imperfections. Section 06 (*Ready to Join?*) remains a candidate for further design work. Do not describe the Recruitment design as visually finalized.
 
-**Project status:** V3.12.9 · 17 October 2026  
-**Website:** https://kingdom3903.com  
-**GitHub:** https://github.com/ROK-Lagertha/kingdom3903-website
-
-The Citadel is the community portal and tools hub for Rise of Kingdoms Kingdom 3903. It is a fan project, not an official Lilith Games website.
-
-## Implemented features
+## 2. What visitors can do
 
 ### Homepage
-- Responsive royal navy-blue and gold design with kingdom panorama, Citadel logo, fleur-de-lis accents and capybara artwork.
-- Navigation: **Home, Tools, Recruitment, News, Kingdom, Registry**.
-- Three illustrated links: **ROK BattleTrack**, **Recruitment Center**, **FlagFiller Registry**.
-- **Kingdom Pulse**: compact rotating carousel of four news items with date, title, summary, arrows, pagination and links to news.
-- Matching gold double-border, blue diamond ornaments and tilted crown decoration.
-- Royal footer, community slogan and Lilith Games fan-project disclaimer.
 
-### Royal Herald — `/news/`
-- Dedicated news landing page with Royal Herald logo.
-- Featured **Latest Headline** and **Latest Dispatches** article cards.
-- Gold jewel frames, blue diamonds, tilted crowns, responsive spacing and hover effects.
-- Public readers do not see ticker-selection checkboxes or editorial controls.
-- Current articles are still static sample/seed content.
+- Browse the Citadel-themed royal-blue and gold landing page, kingdom artwork and navigation.
+- Read the **Kingdom Pulse**: up to **four** selected published Royal Herald articles rotate in a compact ticker.
+- Open a ticker story directly at its permanent article URL.
+- Follow the main cards to **ROK BattleTrack**, **Recruitment Center** and **FlagFiller Registry**.
+- Navigate to Recruitment, News and other website sections.
 
-### Reporter area — `/news/admin/`
-- Discord OAuth2 sign-in using the existing BattleTrack Discord application.
-- Server ID: `1462581217722368074`; **Reporter** role ID: `1561084418246844477`.
-- Cloudflare Worker validates Discord membership at login.
-- Encrypted `__Host-herald_session` cookie with HttpOnly, Secure and SameSite=Lax attributes.
-- Verified authorization snapshot expires after at most 15 minutes; logout supported.
-- Bounded HTTP 429 handling for Discord rate limits.
-- Admin dashboard and HTML editor preview exist, but **article publishing is not enabled**.
-- Redirect-loop fix: protected admin route internally serves `dashboard.html`.
+### The Royal Herald — `/news/`
 
-## Technical structure
+- Browse **Latest News** dynamically loaded from the Cloudflare D1 database, newest published articles first.
+- Open complete articles with formatted text and optional individually uploaded article images.
+- Share articles via permanent `/news/{slug}` links or the **COPY ARTICLE LINK** action.
+- Share a link on Discord and receive an article-specific preview containing its title, summary and the **Royal Herald logo**.
+- Article images are deliberately **not** shown in the Latest News preview cards, Kingdom Pulse or Discord previews. They appear only when the complete article is opened.
 
-| Path | Purpose |
+The previous hardcoded Royal Herald sample headlines were removed from the live news feed.
+
+### Reporter newsroom — `/news/admin/`
+
+- Sign in using Discord OAuth2 and verified membership of the configured **Reporter** role.
+- Create, edit, save and publish article drafts; unpublish and archive articles.
+- Use the lightweight visual rich-text editor (headings, emphasis, lists, quotes, color and basic formatting).
+- Upload, replace or remove **one individual image per article** through the Cloudflare R2-backed image manager.
+- Choose, reorder and save up to **four published articles** for the homepage Kingdom Pulse.
+- Maintain article and publication history through the audit data stored in D1.
+
+Only authorized Reporters have access to the editing endpoints. Public news reading requires no login.
+
+### Recruitment Center — `/recruitment/`
+
+The Recruitment navigation item **and** the homepage Recruitment card open this internal page, rather than immediately redirecting to the recruitment Discord.
+
+Current page sections:
+
+1. **Welcome to Kingdom 3903** — introduction, values, teamwork and community.
+2. **Why Choose 3903?** — six illustrated highlights: International Community, Competitive KvK, Organized Leadership, Regular Events, Tools & Tracking, Respectful Atmosphere.
+3. **How We Review Applications** — individual applicant reviews using previous KvK performance, development and activity, including HeroScrolls as an analytical tool.
+4. **KvK & Migration Requirements** — participation philosophy, illustrated background and a button opening the **English BattleTrack requirements infographic** in a modal.
+5. **Events & Community** — five illustrated event topics with short English descriptions.
+6. **Ready to Join?** — invitation to the Recruitment Discord / Migration Station.
+
+The Recruitment page has responsive layouts for desktop, tablet and mobile, illustrated scene backgrounds, numbered gold-and-sapphire ornaments and the approved royal divider graphic. **Section 02 artwork is a known visual issue:** residual borders/cropping need a later redesign with independent, clean illustrations. Avoid reusing cropped multi-card screenshots as production graphics.
+
+> **Visibility note:** Although the original recruitment concept intended to keep numeric performance thresholds within applicant discussions, Section 04 **currently publishes the full requirements chart** via the public button. Leadership should consciously decide whether this remains appropriate. The personal assessment and admission decision still take place through recruitment.
+
+## 3. Hosting and architecture
+
+| Component | Technology / purpose |
 | --- | --- |
-| `public/index.html` | Deployed homepage |
-| `public/news/index.html` | Deployed public Royal Herald |
-| `public/news/admin/dashboard.html` | Admin dashboard asset |
-| `public/assets/` | Production artwork |
-| `worker.js` | Discord OAuth2, Reporter authorization, sessions, API |
-| `wrangler.jsonc` | Cloudflare Worker and asset routing |
-| `index.html`, `news/`, `assets/` | Older root copies; not the configured production asset directory |
+| Hosting | Cloudflare Workers with static assets |
+| Application entry point | `worker.js` |
+| Production static assets | `public/` |
+| Configuration | `wrangler.jsonc` |
+| Article and editorial data | Cloudflare D1: `citadel-herald-db` |
+| Article image files | Cloudflare R2: `citadel-herald-images` |
+| Reporter login | Discord OAuth2 and Reporter role verification |
+| Deployment source | GitHub repository (`main`) linked to Cloudflare |
+| Client UI | HTML, CSS and JavaScript |
 
-Cloudflare project: `kingdom3903-website`. Deploy command: `npx wrangler deploy`; no build command. Static asset binding: `env.ASSETS`.
+Production bindings defined in `wrangler.jsonc`:
 
-### Configuration (never commit secret values)
-- `DISCORD_CLIENT_SECRET` — Cloudflare secret; Discord OAuth client secret.
-- `HERALD_SESSION_SECRET` — Cloudflare secret; random key for encrypted sessions.
-- `HERALD_CALLBACK_URL` — optional variable; `https://kingdom3903.com/api/herald/callback`.
-- Discord Developer Portal must register the exact callback URL.
-- BattleTrack and Citadel use the same Discord application, but separate Cloudflare Worker secrets.
+| Binding | Type | Resource |
+| --- | --- | --- |
+| `ASSETS` | Static assets | `./public` |
+| `HERALD_DB` | D1 | `citadel-herald-db` |
+| `HERALD_IMAGES` | R2 | `citadel-herald-images` |
+
+Cloudflare Worker name: `kingdom3903-website`.
 
-## Known limitations / important security review
+**Important source-layout rule:** `public/` is the configured static-assets deployment directory. The repository also includes some older top-level HTML/assets copies. Changes made **only** to root `index.html`, root `news/`, root `assets/` or other duplicate source files do **not** necessarily change what Cloudflare serves. For frontend modifications, always verify the corresponding file under `public/` and confirm the final ZIP/repository tree contains the new assets. A previous mobile Recruitment issue was caused by updating the wrong copy.
 
-1. **P0:** The protected admin route serves `public/news/admin/dashboard.html`, but this asset's direct URL may still be publicly accessible through Cloudflare Assets. Verify and prevent direct access or move the dashboard outside the public asset directory. No secrets or privileged data belong in HTML/JS.
-2. Article API `/api/herald/articles` deliberately returns HTTP 501 until D1 storage and safe publication controls exist.
-3. News items and Kingdom Pulse currently come from static code; no unified CMS database.
-4. A revoked Reporter role may retain access until its existing session expires (maximum 15 minutes).
-5. Add automated auth, routing, mobile, accessibility and deployment regression tests.
+### Notable paths
 
-## Roadmap
+```text
+worker.js                                Cloudflare Worker and Herald routes
+wrangler.jsonc                           Worker, assets, D1 and R2 bindings
+public/index.html                       Homepage
+public/recruitment/index.html           Recruitment page
+public/news/index.html                  Royal Herald public page
+public/news/admin/dashboard.html        Reporter editor (protected by Worker routing)
+public/assets/                          Deployed artwork, styles and related assets
+migrations/0001_herald_initial.sql      Original Herald D1 tables
+migrations/0002_herald_article_images.sql  Article image metadata table
+README.md                               Project documentation
+```
 
-### Next session — Security and stability (P0)
-- [ ] Protect **all** admin dashboard asset paths, not only `/news/admin/`.
-- [ ] Test Discord login, callback, Reporter denial, session expiry, logout and 429 response handling.
-- [ ] Verify homepage, Herald, links, mobile layouts and Cloudflare deployment after changes.
+## 4. Cloudflare and Discord configuration
+
+### Required secrets and settings
+
+Configure sensitive values in Cloudflare **Worker Secrets**, not in GitHub or source files:
+
+- `DISCORD_CLIENT_SECRET` — OAuth2 client secret for the Discord application.
+- `HERALD_SESSION_SECRET` — strong random secret for encrypted Reporter sessions (at least 32 characters).
+- `HERALD_CALLBACK_URL` — optional environment variable; recommended canonical callback: `https://kingdom3903.com/api/herald/callback`.
+
+The same callback URL must be registered in the Discord Developer Portal for the Discord application used by the Herald. BattleTrack and the website can share a Discord application, while their Worker secrets remain separate.
+
+Reporter authorization uses the following currently configured IDs in `worker.js`:
+
+- Discord guild: `1462581217722368074`
+- Reporter role: `1561084418246844477`
+- Discord OAuth client/application: `1557797621832360027`
+
+These IDs are configuration identifiers, **not credentials**. Changes to guild, role or application require deliberate backend configuration changes and retesting.
+
+### D1 tables
+
+The applied migrations establish:
+
+| Table | Purpose |
+| --- | --- |
+| `herald_articles` | Article content, slug, publication state, author and timestamps |
+| `herald_pulse_slots` | Selected homepage stories, positions 1–4 |
+| `herald_article_audit` | Editorial publication/change history |
+| `herald_article_images` | Per-article R2 object metadata |
+
+The schema files live under `migrations/` and have already been used for the production setup. **Do not rerun or replace populated production data blindly.** Take a D1 backup before schema changes. Database records and R2 objects are **not** included in GitHub website ZIP files.
+
+### R2 article images
+
+- Bucket: `citadel-herald-images` bound as `HERALD_IMAGES`.
+- Uploaded through the authenticated Reporter editor.
+- Supported image formats: JPEG, PNG, WebP and GIF; maximum **5 MB** per uploaded file.
+- Image access is handled through the Worker. The R2 bucket does not need public bucket access or a browser-side API key.
+- Article images are visible to visitors only for published article detail views, not summary lists or social preview cards.
+
+## 5. Application routes and editorial flow
+
+| Route | Access | Purpose |
+| --- | --- | --- |
+| `/` | Public | Citadel homepage and Kingdom Pulse |
+| `/recruitment/` | Public | Recruitment landing page |
+| `/news/` | Public | Latest published Herald articles |
+| `/news/{slug}` | Public if published | Permanent article page with social metadata |
+| `/news/admin/` | Reporter | Editor and Kingdom Pulse Manager |
+| `/api/herald/public/articles` | Public | Published article listing |
+| `/api/herald/public/articles/{id}` | Public if published | Full published article data |
+| `/api/herald/public/pulse` | Public | Selected homepage ticker stories |
+| `/api/herald/articles` | Reporter | Editorial article management |
+| `/api/herald/articles/{id}` | Reporter | Read/update an editorial article |
+| `/api/herald/articles/{id}/image` | Reporter | Upload/replace/remove article image |
+| `/api/herald/pulse` | Reporter | Edit homepage ticker selection |
+| `/api/herald/login` | Public entry | Discord OAuth login |
+| `/api/herald/callback` | OAuth callback | Verify Discord identity/role and set session |
+| `/api/herald/me` | Reporter | Check current session |
+| `/api/herald/logout` | Reporter | Log out |
 
-### Next 1–2 days — V3.13.0: Cloudflare D1
-- [ ] Create D1 database and versioned schema migrations.
-- [ ] Article fields: ID, slug, title, summary, safe HTML content, category, author, timestamps, draft/published/archived state.
-- [ ] Build authenticated server-side article CRUD with Reporter authorization.
-- [ ] Validate/sanitize HTML, enforce CSRF protections, and record publication changes.
-- [ ] Migrate existing four news items without disrupting the public page.
+The public image delivery endpoint is `/api/herald/images/{id}` (published content only).
 
-### Following days — V3.14.x: Royal Herald CMS
-- [ ] Protected list view of all articles with filtering and status.
-- [ ] HTML editor with preview, draft saving, editing, publishing and archiving.
-- [ ] **Admin-only** checkbox/selection controls for up to four Kingdom Pulse articles, with ordering.
-- [ ] Feed both homepage ticker and Royal Herald from published D1 articles.
-- [ ] Add safe caching and fallback behavior for database outages.
+**Normal publishing workflow:** log in → create/open draft → format content → save → optionally upload its image → publish → verify at `/news/` → optionally add the article to Kingdom Pulse → share its permalink on Discord. Unpublishing or archiving a selected article removes it from the ticker automatically.
 
-### Later enhancements
-- [ ] Dedicated article URLs, archive, search, categories, SEO and sharing.
-- [ ] Reporter/Administrator editorial permissions and optional review workflow.
-- [ ] Media management, accessibility and performance improvements.
-- [ ] Curated tools directory linking HeroScrolls, The King's Codex and MeTa ROK.
-- [ ] Optional account-age calculator mini-tool.
+Discord previews use article title/summary and the Herald brand image rather than the uploaded article picture.
 
-## Established decisions
-- Preserve the royal navy/gold visual identity and capybara cards.
-- Public users never control which articles appear in Kingdom Pulse.
-- Do not duplicate existing Seed/Power, DKP/KPR, speedup or Artifact Guide tools when HeroScrolls, BattleTrack, The King's Codex or established resources already cover the need.
-- Publish complete ZIP releases with a GitHub commit Summary and Description.
+## 6. Deployment and verification
 
-## Backup / recovery
+The repository's production branch is `main`. Cloudflare is connected to the repository for deployments; successful push and successful production deployment are separate checks.
 
-This repository archive contains the website source and production assets **without `.git` history**. GitHub holds commit history separately. The ZIP does **not** contain Cloudflare secrets, live Discord credentials or future D1 database records.
+**GitHub Desktop workflow:**
 
-For a restore, use a known Git commit or the archived ZIP, deploy with Wrangler, ensure Cloudflare secrets and domain routing remain configured, then test the public site and Reporter login. Back up D1 separately before future schema migrations.
+1. Work from the newest repository state and keep a rollback point.
+2. Replace the complete intended files; ensure changed frontend files/assets are inside `public/`.
+3. Review the GitHub Desktop **Changes** tab. Check for accidental file deletions or duplicate nested project folders.
+4. Commit with a descriptive **Summary** and **Description**, then **Push origin**.
+5. Wait until the Cloudflare deployment for `kingdom3903-website` is successful.
+6. Test the live production domain on desktop and mobile; use a hard reload/private tab when checking cached assets.
 
-## V3.13.0 security patch
+For manual Worker deployment where Wrangler is available, the repository configuration supports:
 
-The Worker now returns 404 for direct requests to `/news/admin/dashboard.html`, while the authenticated `/news/admin/` route continues to serve it internally. Verify both cases after deployment.
+```bash
+npx wrangler deploy
+```
 
-## D1 preparation (V3.13.1)
+No separate frontend build command is defined in the current repository root. The deployment must use the repository root containing `worker.js`, `wrangler.jsonc` and `public/`.
 
-The `HERALD_DB` D1 binding is configured in `wrangler.jsonc`. The initial schema is in `migrations/0001_herald_initial.sql`. In Cloudflare Dashboard → Storage & Databases → D1 → `citadel-herald-db` → Console, paste and execute that SQL once. Verify with `SELECT name FROM sqlite_master WHERE type = 'table' AND name LIKE 'herald_%' ORDER BY name;`. The public website and editor remain unchanged; this release does not enable publishing. Before applying migrations to a populated D1 database, take a database backup.
+### Smoke-test checklist
 
+- [ ] Homepage, navigation and illustrated cards load without missing assets.
+- [ ] Recruitment navigation and homepage card both lead to `/recruitment/`.
+- [ ] Recruitment hero, sections, card graphics and dividers work on desktop/tablet/mobile.
+- [ ] **VIEW KvK REQUIREMENTS** opens/closes the English infographic on desktop and mobile.
+- [ ] `/news/` loads published D1 articles in the correct order.
+- [ ] Opening a permanent article URL directly (private browser) works.
+- [ ] Discord link preview uses article title, summary and Royal Herald logo.
+- [ ] Uploaded image displays inside full published article **only**.
+- [ ] Kingdom Pulse shows only selected published articles and follows saved order.
+- [ ] Authorized Reporter can log in, edit, publish, manage images and ticker.
+- [ ] Unauthorized readers cannot access editorial endpoints; direct `/news/admin/dashboard.html` should return 404.
+- [ ] Browser console, worker logs and Cloudflare deployment status show no new errors.
 
-## V3.13.2 — Protected D1 draft newsroom
+## 7. Security, reliability and backups
 
-- Worker now provides authenticated `GET /api/herald/articles`, `GET /api/herald/articles/:id`, `POST /api/herald/articles`, `PUT /api/herald/articles/:id`.
-- Reporter role required for every endpoint; cross-origin writes rejected, request size limited, SQL parameterized.
-- New drafts are saved to D1 with author and audit records. Only drafts can be edited.
-- Admin dashboard lists articles and allows creating, opening and saving drafts.
-- **No publishing or public news synchronization yet.** HTML input is stored as draft only; it is not rendered on public pages. A server-side HTML sanitizer and publication review are mandatory before adding publish endpoints.
-- Ensure the existing `HERALD_DB` binding remains configured in Cloudflare and deploy the complete repository.
-- Smoke test: login, create a test draft, reload dashboard, reopen it and confirm persistence.
+- Never commit Discord secrets, session secrets, OAuth tokens or administrator credentials.
+- Reporter permissions are checked on the Worker; UI-only hiding is not sufficient authorization.
+- The Worker issues secure, HttpOnly, SameSite=Lax session cookies with short-lived verified authorization (currently up to approximately **15 minutes**).
+- The admin HTML must remain inaccessible via its direct asset path. The Worker explicitly returns 404 for `/news/admin/dashboard.html` and serves the dashboard through the authenticated `/news/admin/` route.
+- HTML submitted by Reporters is subject to backend formatting validation/sanitization. Rich-text pastes are not guaranteed to work with arbitrary HTML, links or embeds.
+- Check same-origin write protections and upload limits whenever editorial endpoints change.
+- Back up **D1 content** and **R2 objects** separately. A repository ZIP alone is not a complete content backup.
+- Retain a known-good Git commit for rollbacks. Reverting a website deployment does not automatically revert database migrations.
+- Add automated tests for auth, permissions, endpoints, direct links, asset routing, accessibility and responsive breakpoints (work still outstanding).
 
+## 8. Current quality notes / known issues
 
-## V3.13.3 — Publishing Engine (2026-10-18)
+| Priority | Topic | Current state / next action |
+| --- | --- | --- |
+| P1 | Recruitment §02 illustrations | **Still visually imperfect**: inconsistent cropping/remaining decoration; replace with truly independent clean source illustrations. The v3.17.1 release is accepted as a temporary stopgap, not a final visual fix. |
+| P2 | Recruitment §06 | Final CTA area is functional but has not had the same dedicated mockup-by-mockup polish as earlier sections. |
+| P2 | Recruitment §04 public thresholds | The English popup exposes exact KvK requirements. Confirm leadership wants these numbers public; the earlier concept avoided publishing thresholds. |
+| P2 | Repository duplication | Old top-level copies and a nested `kingdom3903 website/` directory are present; determine canonical sources and clean safely after validating deployment paths. |
+| P2 | Automated regression tests | No comprehensive automated testing workflow established for Worker, auth or responsive UI. |
+| P3 | Editorial improvements | Search/filter, accessibility, SEO and editor ergonomics can be expanded later. |
 
-- Reporter-only Publish, Unpublish and Archive controls, logged in `herald_article_audit`.
-- Server-side strict allowlist for formatting-only HTML. Unsupported tags and **all attributes** are rejected with HTTP 422. No links, images, iframes or inline styles are supported in this version.
-- Published articles available via read-only `/api/herald/public/articles` and `/api/herald/public/articles/:id`; drafts remain private.
-- Royal Herald displays published D1 articles under Published Dispatches, retaining existing static cards as fallback.
-- Publishing requires a non-empty body; unpublishing/archiving removes any assigned Pulse slots.
-- Next: dedicated article pages, full public feed migration, admin-only Kingdom Pulse selection, robust automated tests and CSRF hardening.
-- Do not deploy without verifying production D1 binding and testing Discord Reporter login.
+These notes intentionally distinguish **working functionality** from **remaining visual and engineering debt**.
 
-## V3.13.5 — Rich Text Editor (18 October 2026)
+## 9. Roadmap
 
-- Replaced raw HTML textarea with a visual contenteditable editor in `/news/admin/`.
-- Toolbar: bold, italic, underline, paragraph, headings, lists, quote, text color, remove formatting, undo/redo.
-- Drafts remain stored as HTML in existing Cloudflare D1 table; no database migration needed.
-- When loading old drafts containing RoK `<color=#RRGGBB>` markup, editor attempts to convert those tags to visual colored spans. Review converted legacy content before publishing.
-- Publishing sanitizer supports safe hexadecimal text colors on spans/font tags, while stripping other HTML attributes and rejecting unsafe elements.
-- Known limitations: this is a lightweight native-browser editor, not a full word processor. Pasting complex rich content may produce unsupported tags; use plain-text paste if publication fails. Links and embedded media are intentionally unsupported. Test cross-browser formatting before production editorial use.
+### Next — finish Recruitment Center
 
+- [ ] Polish **06 – Ready to Join?** using the approved royal visual language.
+- [ ] Revisit the six §02 images with separate border-free source art and a single consistent HTML/CSS frame.
+- [ ] Validate the complete Recruitment page on common phone, tablet and desktop widths.
+- [ ] Decide whether the full public KvK requirements infographic should remain publicly accessible.
 
-## V3.13.6 — Legacy RoK publishing fix
+### Next — expand Kingdom identity
 
-Publishing now normalizes legacy `<color=#RRGGBB>` and `</color>` markup on the server before applying the HTML allowlist. Existing drafts are not deleted or migrated. For existing articles, open and save the draft before publishing to persist editor conversions. Unknown tags remain rejected.
+- [ ] **The Alliance Network**: dedicated page for all seven alliances and their responsibilities.
+- [ ] **Meet the Leadership**: introduce the R5/R4 team, responsibilities and optional member profiles.
+- [ ] Improve navigation to Kingdom information as new sections become available.
 
+### Later — tools, content and stability
 
-## V3.13.7 — Live News Layout
-- Removed hardcoded Royal Honors, Fort Launches, Fort Joins, and Community Appreciation sample cards and static featured story from `/news/`.
-- Public Royal Herald now has one `Latest News` section sourced exclusively from `/api/herald/public/articles`.
-- Published articles are sorted newest first and retain the royal card decorations and full article modal.
-- Added loading, empty and temporary-error states; Reporter login, article editor, database and Kingdom Pulse homepage remain unchanged.
-- Next: manage the four Kingdom Pulse slots from the protected admin dashboard and connect the homepage ticker to D1.
+- [ ] Curate links to external resources such as **HeroScrolls**, **The King's Codex** and **MeTa ROK**.
+- [ ] Consider a small account-age calculator as a separate mini-tool.
+- [ ] Improve news discovery (archives, search/categories, optional editorial enhancements).
+- [ ] Add automated Worker/API smoke tests, deployment validation and accessibility checks.
+- [ ] Rationalize duplicate source files and large production image assets safely.
 
+**Deliberate non-goals:** Do not duplicate existing full-featured Seed/Power tools, DKP/KPR systems, speedup calculators or an artifact guide when existing established tools already cover those needs.
 
-## V3.13.9 — Article Image Manager
-- Cloudflare R2 binding `HERALD_IMAGES` -> bucket `citadel-herald-images` in `wrangler.jsonc`.
-- **Before deployment**, execute `migrations/0002_herald_article_images.sql` on production D1 `citadel-herald-db` (Cloudflare D1 Console). Safe `CREATE TABLE IF NOT EXISTS`; no existing tables modified.
-- In the protected editor, save/open an article, select a JPG/PNG/WebP/GIF (max 5 MB), then **UPLOAD / REPLACE IMAGE**. Use **REMOVE IMAGE** to delete. Images may be changed even after publication; text editing rules remain unchanged.
-- Public image access is only granted while the associated article is published; images are not included in public article lists or Kingdom Pulse. Public article detail includes `has_image`.
-- Uploads validate session, origin, MIME, file signatures and size; R2 object names are randomized. No public R2 bucket, API tokens or additional secrets needed.
-- Test: upload to draft, publish, open article, confirm image; check no image in news cards or homepage ticker; replace and remove image; unpublish and confirm image endpoint is inaccessible.
+## 10. Release history — major milestones
 
+The README tracks the **current** implementation first. Individual historic patch notes are condensed here rather than repeated as contradictory project descriptions.
 
-## V3.14.0 — Royal Herald permalinks and Discord previews
-- Every published article has a shareable `/news/{slug}` URL, resolved against D1 on the Worker. Draft, archived and unpublished articles are not publicly routable.
-- Discord and other crawlers receive article-specific Open Graph and Twitter Card title/summary/canonical URL. Preview artwork uses the Royal Herald logo, **not** individual article images.
-- Clicking READ DISPATCH opens the article and updates the browser URL; direct links open the article automatically. A COPY ARTICLE LINK button is provided in the article view.
-- Homepage Kingdom Pulse now links to the actual article permalink instead of the legacy query-string link.
-- No database migration or new bindings required. Existing OAuth, Reporter CMS, R2 article images and D1 pulse selections remain unchanged.
-- Test: publish an article, open its direct URL in a private browser, copy/share to Discord and confirm the preview contains its title/summary and Herald logo. Discord may cache older previews.
+| Release | Milestone |
+| --- | --- |
+| v3.13.0–v3.13.3 | Reporter protection, Cloudflare D1 drafts, safe publication, audit trail and public article APIs |
+| v3.13.4–v3.13.7 | Publishing compatibility, WYSIWYG editor, legacy RoK color handling and live Latest News |
+| v3.13.8 | D1-based Kingdom Pulse Manager: four editorially selected stories |
+| v3.13.9 | R2 individual article image uploads, replacement and removal |
+| v3.14.0 | Permanent Herald article links and Discord Open Graph previews |
+| v3.15.0–v3.15.9 | Recruitment page, responsive hero/highlights, royal section dividers, Welcome layout |
+| v3.16.0–v3.16.4 | Section 02 and 03 visual layouts, numbered ornaments and integrated application-review scene |
+| v3.16.5–v3.16.8 | KvK Requirements popup, English infographic, Event gallery and updated battlefield background |
+| v3.16.9–v3.17.1 | Illustrated Why Choose 3903 gallery and image-framing correction attempts; visual limitations remain |
 
+---
 
-## V3.15.0 — Recruitment Center
-- New responsive `/recruitment/` landing page (desktop, tablet, mobile).
-- Homepage Recruitment navigation and Recruitment card now link internally to `/recruitment/`.
-- Recruitment Discord invitation is available on the new page; original invitation URL retained.
-- Sections: Welcome, Why 3903, Individual Performance Review, KvK & Migration Requirements (no internal thresholds), Events, Join.
-- Existing Herald, D1, R2, OAuth and Kingdom Pulse implementation unchanged.
-- No SQL migration or new bindings required.
+## 11. Contributing and working conventions
 
+- Match the established **royal navy, gold, sapphire and fleur-de-lis** Citadel identity.
+- Write public-facing Kingdom/Recruitment content in **English** unless an explicitly multilingual component is planned.
+- Support desktop, tablet and smartphone; avoid cropped text and baked-in image labels that conflict with responsive layouts.
+- Keep image-only decorations separate from editable textual content where practical.
+- Do not add sensitive admission scores, internal operational details or personally identifiable player information without a deliberate review.
+- For website releases, deliver complete replacement files or a complete project ZIP, plus a GitHub **Summary** and **Description**; no partial code snippets as the primary deployment artifact.
+- Record completed changes, outstanding defects and migration requirements accurately, and verify both the deployed `public/` files and final archive before a release.
 
-### V3.15.1 — Recruitment hero visual
-- Replaced plain recruitment hero with custom cinematic Kingdom 3903 banner matching approved visual direction.
-- Removed Our Story / Why 3903 hero buttons.
-- Preserved accessible mobile headline and copy, with mobile-specific background crop and overlay.
-- No changes to backend, database, bindings, Herald or recruitment links.
-
-
-## V3.15.2 — Recruitment mobile hero correction
-- Added dedicated mobile hero artwork crop without embedded headline text.
-- Rebuilt mobile hero overlay for clean, readable typography and visible mascot.
-- Desktop hero and existing features remain unchanged.
-- No D1 migration or Cloudflare binding changes.
-
-
-### V3.15.3 — Recruitment mobile hero refinement
-- Reworked the mobile hero to match the compact castle-background mockup.
-- Removed the oversized capybara/banner composition on mobile and avoided baked-in duplicate lettering.
-- Preserved the desktop banner, all Recruitment sections, and existing integrations.
-- Mobile CTA buttons remain removed as requested.
-
-
-## V3.15.4 — Recruitment mobile asset deployment fix
-Corrected the actual Cloudflare assets under `public/`: synchronized `public/recruitment/index.html` and added `public/assets/recruitment-mobile-castle-v3.15.3.webp`. This resolves the V3.15.2 mobile view persisting after V3.15.3 deployment. No D1 or R2 changes.
-
-
-## V3.15.5 — Recruitment highlight ribbon
-- Rebuilt the four-item ribbon beneath the Recruitment hero in royal navy/gold.
-- Replaced emoji icons with consistent inline gold SVG icons.
-- Desktop: one full-width horizontal row; tablet: responsive compact row; mobile: clean two-column/two-row grid.
-- Applied the same change to both source and deployed `public/recruitment/index.html`.
-- No D1, R2, Worker or Discord changes.
-
-
-## V3.15.6 — Recruitment ornament dividers
-- Replaced boxy highlight ribbon borders with a delicate gold filigree and blue jewel SVG separator above and below.
-- Removed mobile inner cell borders while preserving the responsive 4-column / 2-column layout.
-- Updated both root and public Recruitment pages. No D1/R2 changes.
-
-## V3.16.0 — Why Choose 3903 visual redesign
-- Ornamental 02 numeral matching Welcome 01.
-- Six gold-icon feature cards with decorative corners.
-- Responsive six-column wide, three-column standard/tablet and two-column mobile grids.
-- All other sections and Cloudflare bindings unchanged.
-
-
-## V3.16.1 — Section 02 ornament fix
-- Rendered the Section 02 ornament inline using the identical SVG artwork as Section 01, with the numeral changed to 02.
-- Kept the matching standalone asset in public/assets as well.
-- Preserved all existing responsive layouts and cards. No database or Cloudflare configuration changes required.
-
-
-## V3.16.2 — How We Review Applications
-- Section 03 now uses the matching inline gold-and-sapphire numbered ornament.
-- Removed the Recruitment Discord card from section 03.
-- Added the approved mockup’s parchment/candle visual as a responsive background with foreground copy.
-- Mobile layout retains readable text with a contrast gradient.
-
-
-## V3.16.3 — Seamless application review artwork
-- Removed the rectangular image-block appearance in Section 03 by blending the parchment scene into the page background with responsive gradient and edge fades.
-- Kept copy, ornament and other website functions unchanged.
-
-
-## V3.16.4 — Review scene color integration
-Removed opaque overlay gradients in Recruitment section 03. The parchment artwork now fades to true transparency, showing the exact underlying page background rather than a separate navy rectangle. Responsive mobile image fade maintained.
-
-## V3.16.5 – KvK & Migration Requirements
-- Reworked section 04 with matching ornamental 04, blended background and responsive layout.
-- Added accessible button and modal displaying the user-provided BattleTrack KvK requirements image.
-- No database or Cloudflare binding changes.
-
-
-## V3.16.6 – English KvK Requirements image
-- Replaced the KvK Requirements modal graphic with the English, Citadel-styled BattleTrack infographic.
-- Kept the modal, button, and responsive display unchanged.
-- No database or Cloudflare binding changes.
-
-
-## V3.16.7 – Events & Community Gallery
-- Section 05 now uses the same inline ornamental number artwork as Sections 01–04.
-- Five individually cropped event images from the approved Recruitment mockup are included in public/assets.
-- Transparent event tiles blend into the Recruitment page background; captions are preserved in English.
-- Responsive: 5 desktop, 3 tablet, 2 mobile columns; no changes to Herald, KvK modal or Worker.
-
-
-## V3.16.9 – Illustrated Why Choose 3903
-- Replaced six icon-only benefit cards with six individually cropped fantasy illustrations.
-- Matched Events & Community: transparent card backgrounds, gold framed art, titles and descriptions beneath.
-- Responsive six/three/two-column gallery; retained Section 02 ornament and all other features.
-
-
-### V3.17.0 — Why Choose 3903 artwork correction
-- Re-cropped six gallery artworks to remove neighboring ornaments and cut-off decorative edges.
-- Applied consistent complete CSS gold frames to each image, responsive at every screen width.
-- Kept the six topics, text, section ornaments and other site features unchanged.
-
-
-## V3.17.1 — Why Choose gallery image correction
-- Replaced six cropped framed illustrations with clean interior artwork, removing embedded bottom medallions and adjacent borders.
-- Added one responsive gold frame per image in CSS; no duplicated ornament layers.
-- Preserved all other pages, texts, and application functionality.
+**The Citadel — Kingdom 3903 · More Than a Kingdom.**
