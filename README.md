@@ -328,3 +328,9 @@ Removed opaque overlay gradients in Recruitment section 03. The parchment artwor
 - Re-cropped six gallery artworks to remove neighboring ornaments and cut-off decorative edges.
 - Applied consistent complete CSS gold frames to each image, responsive at every screen width.
 - Kept the six topics, text, section ornaments and other site features unchanged.
+
+
+## V3.17.1 — Why Choose gallery image correction
+- Replaced six cropped framed illustrations with clean interior artwork, removing embedded bottom medallions and adjacent borders.
+- Added one responsive gold frame per image in CSS; no duplicated ornament layers.
+- Preserved all other pages, texts, and application functionality.
