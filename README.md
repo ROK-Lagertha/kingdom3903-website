@@ -316,3 +316,9 @@ Removed opaque overlay gradients in Recruitment section 03. The parchment artwor
 - Five individually cropped event images from the approved Recruitment mockup are included in public/assets.
 - Transparent event tiles blend into the Recruitment page background; captions are preserved in English.
 - Responsive: 5 desktop, 3 tablet, 2 mobile columns; no changes to Herald, KvK modal or Worker.
+
+
+## V3.16.9 – Illustrated Why Choose 3903
+- Replaced six icon-only benefit cards with six individually cropped fantasy illustrations.
+- Matched Events & Community: transparent card backgrounds, gold framed art, titles and descriptions beneath.
+- Responsive six/three/two-column gallery; retained Section 02 ornament and all other features.
