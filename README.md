@@ -197,3 +197,12 @@ Publishing now normalizes legacy `<color=#RRGGBB>` and `</color>` markup on the 
 - Homepage Kingdom Pulse now links to the actual article permalink instead of the legacy query-string link.
 - No database migration or new bindings required. Existing OAuth, Reporter CMS, R2 article images and D1 pulse selections remain unchanged.
 - Test: publish an article, open its direct URL in a private browser, copy/share to Discord and confirm the preview contains its title/summary and Herald logo. Discord may cache older previews.
+
+
+## V3.15.0 — Recruitment Center
+- New responsive `/recruitment/` landing page (desktop, tablet, mobile).
+- Homepage Recruitment navigation and Recruitment card now link internally to `/recruitment/`.
+- Recruitment Discord invitation is available on the new page; original invitation URL retained.
+- Sections: Welcome, Why 3903, Individual Performance Review, KvK & Migration Requirements (no internal thresholds), Events, Join.
+- Existing Herald, D1, R2, OAuth and Kingdom Pulse implementation unchanged.
+- No SQL migration or new bindings required.
