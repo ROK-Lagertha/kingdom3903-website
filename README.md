@@ -1,3 +1,10 @@
+## V3.15.8 – Compact Recruitment spacing
+
+- Cropped transparent padding from royal divider asset without altering ornament motifs.
+- Reduced vertical whitespace around every section, highlight strip and join block.
+- Responsive spacing for desktop, tablet and mobile.
+- Preserved Herald, R2, D1 and existing recruitment content.
+
 ## V3.15.7 — Royal Divider (Recruitment)
 
 - Replaced legacy Recruitment section borders and SVG ornaments with the approved transparent gold-and-sapphire image.
