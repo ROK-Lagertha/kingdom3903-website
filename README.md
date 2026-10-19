@@ -188,3 +188,12 @@ Publishing now normalizes legacy `<color=#RRGGBB>` and `</color>` markup on the 
 - Public image access is only granted while the associated article is published; images are not included in public article lists or Kingdom Pulse. Public article detail includes `has_image`.
 - Uploads validate session, origin, MIME, file signatures and size; R2 object names are randomized. No public R2 bucket, API tokens or additional secrets needed.
 - Test: upload to draft, publish, open article, confirm image; check no image in news cards or homepage ticker; replace and remove image; unpublish and confirm image endpoint is inaccessible.
+
+
+## V3.14.0 — Royal Herald permalinks and Discord previews
+- Every published article has a shareable `/news/{slug}` URL, resolved against D1 on the Worker. Draft, archived and unpublished articles are not publicly routable.
+- Discord and other crawlers receive article-specific Open Graph and Twitter Card title/summary/canonical URL. Preview artwork uses the Royal Herald logo, **not** individual article images.
+- Clicking READ DISPATCH opens the article and updates the browser URL; direct links open the article automatically. A COPY ARTICLE LINK button is provided in the article view.
+- Homepage Kingdom Pulse now links to the actual article permalink instead of the legacy query-string link.
+- No database migration or new bindings required. Existing OAuth, Reporter CMS, R2 article images and D1 pulse selections remain unchanged.
+- Test: publish an article, open its direct URL in a private browser, copy/share to Discord and confirm the preview contains its title/summary and Herald logo. Discord may cache older previews.

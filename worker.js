@@ -164,7 +164,7 @@ async function publicPulse(req,env){
  if(req.method!=='GET')return json({error:'Method not allowed'},405);
  if(!env.HERALD_DB)return json({error:'News service unavailable'},503);
  try{
-  const r=await env.HERALD_DB.prepare("SELECT s.slot,a.id,a.title,a.summary,a.category,a.published_at FROM herald_pulse_slots s JOIN herald_articles a ON a.id=s.article_id WHERE a.status='published' ORDER BY s.slot ASC LIMIT 4").all();
+  const r=await env.HERALD_DB.prepare("SELECT s.slot,a.id,a.slug,a.title,a.summary,a.category,a.published_at FROM herald_pulse_slots s JOIN herald_articles a ON a.id=s.article_id WHERE a.status='published' ORDER BY s.slot ASC LIMIT 4").all();
   return json({articles:r.results||[]});
  }catch(e){console.error('Public Pulse error',e);return json({error:'News service unavailable'},503)}
 }
@@ -249,8 +249,35 @@ async function editorial(req,env,url,p){
  }catch(e){console.error('Herald D1 API error',e?.message||e);return json({error:'Database operation failed'},500)}
 }
 
+// Public article permalinks are rendered server-side so Discord and other crawlers
+// receive per-article metadata without executing browser JavaScript.
+const htmlEscape=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+async function publicArticlePage(req,env,url,slug){
+ if(req.method!=='GET'&&req.method!=='HEAD')return new Response('Method not allowed',{status:405,headers:{allow:'GET, HEAD'}});
+ if(!env.HERALD_DB)return new Response('News temporarily unavailable',{status:503});
+ let article;
+ try{article=await env.HERALD_DB.prepare("SELECT id,slug,title,summary,category,published_at FROM herald_articles WHERE slug=? AND status='published' LIMIT 1").bind(slug).first()}
+ catch(e){console.error('Herald permalink lookup',e);return new Response('News temporarily unavailable',{status:503})}
+ if(!article)return new Response('Article not found. Visit https://kingdom3903.com/news/',{status:404,headers:{'content-type':'text/plain; charset=utf-8','x-robots-tag':'noindex'}});
+ const asset=await env.ASSETS.fetch(new Request(new URL('/news/',url.origin),{method:'GET'}));
+ if(!asset.ok)return asset;
+ let page=await asset.text();
+ const title=htmlEscape(article.title+' | The Royal Herald · Kingdom 3903');
+ const description=htmlEscape(article.summary||'Official news from Kingdom 3903 and The Citadel.');
+ const canonical=url.origin+'/news/'+encodeURIComponent(article.slug);
+ const image=url.origin+'/assets/royal-herald-logo.png';
+ const tags=`<base href="/news/"><title>${title}</title><meta name="description" content="${description}"><link rel="canonical" href="${htmlEscape(canonical)}"><meta property="og:type" content="article"><meta property="og:site_name" content="The Royal Herald · Kingdom 3903"><meta property="og:title" content="${title}"><meta property="og:description" content="${description}"><meta property="og:url" content="${htmlEscape(canonical)}"><meta property="og:image" content="${htmlEscape(image)}"><meta property="og:image:alt" content="The Royal Herald · Kingdom 3903"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${title}"><meta name="twitter:description" content="${description}"><meta name="twitter:image" content="${htmlEscape(image)}">`;
+ // Replace the default title; no duplicated title elements.
+ page=page.replace(/<title>[^<]*<\/title>/i,'').replace('</head>',tags+'</head>');
+ const h=new Headers(asset.headers);h.set('content-type','text/html; charset=utf-8');h.set('cache-control','public, max-age=60');h.set('x-content-type-options','nosniff');
+ return new Response(req.method==='HEAD'?null:page,{status:200,headers:h});
+}
+
 export default {async fetch(req,env){
  const url=new URL(req.url),p=url.pathname;
+ // Dedicated article URLs: published slugs only, never admin/API paths.
+ const match=p.match(/^\/news\/([a-z0-9][a-z0-9-]{0,199})\/?$/);
+ if(match&&match[1]!=='admin')return publicArticlePage(req,env,url,match[1]);
  // Block direct access to the admin dashboard static asset.
  if(p==='/news/admin/dashboard.html')return json({error:'Not found'},404);
  if(p==='/news/admin'||p==='/news/admin/'||p==='/news/admin/index.html'){
