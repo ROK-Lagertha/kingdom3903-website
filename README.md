@@ -1,3 +1,9 @@
+## V3.16.8 — Recruitment KvK scene refresh
+
+- Replaced the Section 04 battlefield background with the new text-free royal Citadel artwork.
+- Kept the existing responsive fade, content, KvK requirements popup, and other sections unchanged.
+- No Cloudflare configuration or D1 migration required.
+
 ## V3.15.9 — Welcome layout
 - Replaced the Welcome section number with a dedicated ornamental SVG image, aligned beside the heading on all screen sizes.
 - Removed the nonfunctional video/image placeholder and its caption.
