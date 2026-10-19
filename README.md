@@ -1,3 +1,9 @@
+## V3.15.9 — Welcome layout
+- Replaced the Welcome section number with a dedicated ornamental SVG image, aligned beside the heading on all screen sizes.
+- Removed the nonfunctional video/image placeholder and its caption.
+- Added responsive header grid so title/subtitle never wrap underneath the numeral.
+- Preserved all other sections, Royal Herald and Worker integrations.
+
 ## V3.15.8 – Compact Recruitment spacing
 
 - Cropped transparent padding from royal divider asset without altering ornament motifs.
