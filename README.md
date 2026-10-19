@@ -220,3 +220,10 @@ Publishing now normalizes legacy `<color=#RRGGBB>` and `</color>` markup on the 
 - Rebuilt mobile hero overlay for clean, readable typography and visible mascot.
 - Desktop hero and existing features remain unchanged.
 - No D1 migration or Cloudflare binding changes.
+
+
+### V3.15.3 — Recruitment mobile hero refinement
+- Reworked the mobile hero to match the compact castle-background mockup.
+- Removed the oversized capybara/banner composition on mobile and avoided baked-in duplicate lettering.
+- Preserved the desktop banner, all Recruitment sections, and existing integrations.
+- Mobile CTA buttons remain removed as requested.

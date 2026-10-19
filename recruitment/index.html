@@ -19,6 +19,21 @@
   .hero-mobile-copy { padding:46px 16px 250px; }
   .hero-mobile-copy h1 { font-size:clamp(32px,8.6vw,40px); }
 }
+
+/* V3.15.3 — Mockup-aligned mobile hero: castle-only image, compact composition.
+   Desktop image stays untouched. No duplicated baked-in text or CTA buttons. */
+@media (max-width: 800px) {
+ .hero {min-height:0;height:auto;aspect-ratio:auto;display:flex;align-items:center;justify-content:center;isolation:isolate;background:#061322;}
+ .hero-art {display:none;}
+ .hero::before {content:"";position:absolute;inset:0;z-index:0;background:url('/assets/recruitment-mobile-castle-v3.15.3.webp') center center/cover no-repeat;}
+ .hero::after {content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,#06142682 0%,#061426b0 38%,#061426c7 75%,#0614269e 100%);}
+ .hero-mobile-copy {display:flex;flex-direction:column;justify-content:center;align-items:center;position:relative;z-index:2;width:100%;max-width:520px;min-height:350px;padding:33px 21px 35px;text-align:center;}
+ .hero-mobile-copy h1 {font-family:Georgia,serif;font-size:clamp(32px,8.1vw,47px);line-height:1.1;letter-spacing:.025em;margin:0 0 10px;color:#ffdc95;text-shadow:0 3px 14px #000e;}
+ .hero-mobile-copy .motto {font-size:clamp(10px,2.45vw,13px);letter-spacing:.23em;color:#f4e7ce;}
+ .hero-mobile-copy .motto::after {content:"";display:block;width:min(220px,70vw);height:1px;margin:16px auto 0;background:linear-gradient(90deg,transparent,#d5a653,transparent);}
+ .hero-mobile-copy p {font-size:clamp(13px,3.3vw,15px);line-height:1.55;max-width:375px;margin:18px auto 0;color:#fff;text-shadow:0 2px 9px #000;}
+}
+@media (max-width:390px) {.hero-mobile-copy{min-height:330px;padding:28px 16px 31px}.hero-mobile-copy h1{font-size:clamp(29px,8.5vw,37px)}}
 </style></head><body>
 <header class="top"><div class="wrap top-inner"><a class="brand" href="/" aria-label="The Citadel homepage"><img src="/assets/citadel-logo.png" alt="The Citadel · 3903"></a><button class="menu" id="menu" aria-expanded="false" aria-controls="nav" aria-label="Toggle navigation">☰</button><nav id="nav" class="nav" aria-label="Main navigation"><a href="/">HOME</a><a href="/#tools">TOOLS</a><a href="/recruitment/" aria-current="page">RECRUITMENT</a><a href="/news/">NEWS</a><a href="/#kingdom">KINGDOM</a><a href="https://flagfiller.kingdom3903.com/">REGISTRY</a><a class="join" href="https://discord.gg/MJ5bgWDVP3" target="_blank" rel="noopener noreferrer">JOIN DISCORD ↗</a></nav></div></header>
 <main><section class="hero" aria-label="Join Kingdom 3903 — More Than a Kingdom"><img class="hero-art" src="/assets/recruitment-hero-v3.15.1.png" alt="Join Kingdom 3903. More Than a Kingdom. An international community built on teamwork, respect and shared success. Fight with us, grow with us, and be part of something special. Royal blue and gold Kingdom 3903 castle and crowned capybara." fetchpriority="high"><div class="hero-mobile-copy"><h1>JOIN<br>KINGDOM 3903</h1><div class="motto">MORE THAN A KINGDOM.</div><p>An international community built on teamwork, respect and shared success. Fight with us, grow with us, and be part of something special.</p></div></section>
