@@ -276,3 +276,10 @@ Corrected the actual Cloudflare assets under `public/`: synchronized `public/rec
 - Rendered the Section 02 ornament inline using the identical SVG artwork as Section 01, with the numeral changed to 02.
 - Kept the matching standalone asset in public/assets as well.
 - Preserved all existing responsive layouts and cards. No database or Cloudflare configuration changes required.
+
+
+## V3.16.2 — How We Review Applications
+- Section 03 now uses the matching inline gold-and-sapphire numbered ornament.
+- Removed the Recruitment Discord card from section 03.
+- Added the approved mockup’s parchment/candle visual as a responsive background with foreground copy.
+- Mobile layout retains readable text with a contrast gradient.
