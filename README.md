@@ -1,3 +1,9 @@
+## V3.15.7 — Royal Divider (Recruitment)
+
+- Replaced legacy Recruitment section borders and SVG ornaments with the approved transparent gold-and-sapphire image.
+- Added responsive image separators between highlights and all six Recruitment sections.
+- Kept existing website, Herald, D1 and R2 behavior unchanged.
+
 # The Citadel — Kingdom 3903
 
 ## V3.13.8 — Kingdom Pulse Manager (18 October 2026)
