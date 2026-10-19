@@ -227,3 +227,7 @@ Publishing now normalizes legacy `<color=#RRGGBB>` and `</color>` markup on the 
 - Removed the oversized capybara/banner composition on mobile and avoided baked-in duplicate lettering.
 - Preserved the desktop banner, all Recruitment sections, and existing integrations.
 - Mobile CTA buttons remain removed as requested.
+
+
+## V3.15.4 — Recruitment mobile asset deployment fix
+Corrected the actual Cloudflare assets under `public/`: synchronized `public/recruitment/index.html` and added `public/assets/recruitment-mobile-castle-v3.15.3.webp`. This resolves the V3.15.2 mobile view persisting after V3.15.3 deployment. No D1 or R2 changes.
