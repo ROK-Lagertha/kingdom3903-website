@@ -283,3 +283,8 @@ Corrected the actual Cloudflare assets under `public/`: synchronized `public/rec
 - Removed the Recruitment Discord card from section 03.
 - Added the approved mockup’s parchment/candle visual as a responsive background with foreground copy.
 - Mobile layout retains readable text with a contrast gradient.
+
+
+## V3.16.3 — Seamless application review artwork
+- Removed the rectangular image-block appearance in Section 03 by blending the parchment scene into the page background with responsive gradient and edge fades.
+- Kept copy, ornament and other website functions unchanged.
