@@ -288,3 +288,7 @@ Corrected the actual Cloudflare assets under `public/`: synchronized `public/rec
 ## V3.16.3 — Seamless application review artwork
 - Removed the rectangular image-block appearance in Section 03 by blending the parchment scene into the page background with responsive gradient and edge fades.
 - Kept copy, ornament and other website functions unchanged.
+
+
+## V3.16.4 — Review scene color integration
+Removed opaque overlay gradients in Recruitment section 03. The parchment artwork now fades to true transparency, showing the exact underlying page background rather than a separate navy rectangle. Responsive mobile image fade maintained.
