@@ -264,3 +264,9 @@ Corrected the actual Cloudflare assets under `public/`: synchronized `public/rec
 - Replaced boxy highlight ribbon borders with a delicate gold filigree and blue jewel SVG separator above and below.
 - Removed mobile inner cell borders while preserving the responsive 4-column / 2-column layout.
 - Updated both root and public Recruitment pages. No D1/R2 changes.
+
+## V3.16.0 — Why Choose 3903 visual redesign
+- Ornamental 02 numeral matching Welcome 01.
+- Six gold-icon feature cards with decorative corners.
+- Responsive six-column wide, three-column standard/tablet and two-column mobile grids.
+- All other sections and Cloudflare bindings unchanged.
