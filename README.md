@@ -322,3 +322,9 @@ Removed opaque overlay gradients in Recruitment section 03. The parchment artwor
 - Replaced six icon-only benefit cards with six individually cropped fantasy illustrations.
 - Matched Events & Community: transparent card backgrounds, gold framed art, titles and descriptions beneath.
 - Responsive six/three/two-column gallery; retained Section 02 ornament and all other features.
+
+
+### V3.17.0 — Why Choose 3903 artwork correction
+- Re-cropped six gallery artworks to remove neighboring ornaments and cut-off decorative edges.
+- Applied consistent complete CSS gold frames to each image, responsive at every screen width.
+- Kept the six topics, text, section ornaments and other site features unchanged.
