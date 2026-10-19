@@ -239,3 +239,9 @@ Corrected the actual Cloudflare assets under `public/`: synchronized `public/rec
 - Desktop: one full-width horizontal row; tablet: responsive compact row; mobile: clean two-column/two-row grid.
 - Applied the same change to both source and deployed `public/recruitment/index.html`.
 - No D1, R2, Worker or Discord changes.
+
+
+## V3.15.6 — Recruitment ornament dividers
+- Replaced boxy highlight ribbon borders with a delicate gold filigree and blue jewel SVG separator above and below.
+- Removed mobile inner cell borders while preserving the responsive 4-column / 2-column layout.
+- Updated both root and public Recruitment pages. No D1/R2 changes.
