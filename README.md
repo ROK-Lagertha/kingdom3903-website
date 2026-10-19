@@ -292,3 +292,8 @@ Corrected the actual Cloudflare assets under `public/`: synchronized `public/rec
 
 ## V3.16.4 — Review scene color integration
 Removed opaque overlay gradients in Recruitment section 03. The parchment artwork now fades to true transparency, showing the exact underlying page background rather than a separate navy rectangle. Responsive mobile image fade maintained.
+
+## V3.16.5 – KvK & Migration Requirements
+- Reworked section 04 with matching ornamental 04, blended background and responsive layout.
+- Added accessible button and modal displaying the user-provided BattleTrack KvK requirements image.
+- No database or Cloudflare binding changes.
