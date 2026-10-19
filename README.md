@@ -206,3 +206,10 @@ Publishing now normalizes legacy `<color=#RRGGBB>` and `</color>` markup on the 
 - Sections: Welcome, Why 3903, Individual Performance Review, KvK & Migration Requirements (no internal thresholds), Events, Join.
 - Existing Herald, D1, R2, OAuth and Kingdom Pulse implementation unchanged.
 - No SQL migration or new bindings required.
+
+
+### V3.15.1 — Recruitment hero visual
+- Replaced plain recruitment hero with custom cinematic Kingdom 3903 banner matching approved visual direction.
+- Removed Our Story / Why 3903 hero buttons.
+- Preserved accessible mobile headline and copy, with mobile-specific background crop and overlay.
+- No changes to backend, database, bindings, Herald or recruitment links.
