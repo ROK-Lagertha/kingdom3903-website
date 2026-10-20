@@ -2,13 +2,13 @@
 
 **More Than a Kingdom.**
 
-[![Website](https://img.shields.io/badge/Website-kingdom3903.com-18365a?style=flat-square)](https://kingdom3903.com/) ![Status](https://img.shields.io/badge/Project-Active%20Development-d8ab5e?style=flat-square) ![Release](https://img.shields.io/badge/Documentation-v3.17.1-2574aa?style=flat-square)
+[![Website](https://img.shields.io/badge/Website-kingdom3903.com-18365a?style=flat-square)](https://kingdom3903.com/) ![Status](https://img.shields.io/badge/Project-Active%20Development-d8ab5e?style=flat-square) ![Release](https://img.shields.io/badge/Documentation-v3.18.24-2574aa?style=flat-square)
 
 The Citadel is the community website, recruitment portal and information hub for **Kingdom 3903** in *Rise of Kingdoms*. It combines a royal navy-and-gold visual identity with live news, kingdom recruitment, community resources and links to supporting tools.
 
 > **Unofficial fan project.** The Citadel is community-operated and is not affiliated with, endorsed by or an official property of Lilith Games.
 
-**Documentation baseline:** 19 October 2026 · Website release **v3.17.1**  
+**Documentation updated:** 20 October 2026 · Latest confirmed Lara test patch **v3.18.24**  
 **Repository:** https://github.com/ROK-Lagertha/kingdom3903-website  
 **Production website:** https://kingdom3903.com/
 
@@ -27,7 +27,7 @@ The Citadel is the community website, recruitment portal and information hub for
 | ROK BattleTrack | Linked from homepage | Linked external project; maintained separately |
 | Kingdom / alliance information | Navigation and planned pages | Further development planned |
 
-**Current focus:** final visual and responsive polish of the Recruitment Center. Sections 01–05 have been developed, and the six illustrated **Why Choose 3903?** cards still have visible cropping/frame imperfections. Section 06 (*Ready to Join?*) remains a candidate for further design work. Do not describe the Recruitment design as visually finalized.
+**Current focus:** multilingual website rollout and Lara Translate integration for the Royal Herald. Recruitment visual polish remains an open item. Sections 01–05 have been developed, and the six illustrated **Why Choose 3903?** cards still have visible cropping/frame imperfections. Section 06 (*Ready to Join?*) remains a candidate for further design work. Do not describe the Recruitment design as visually finalized.
 
 ## 2. What visitors can do
 
@@ -115,6 +115,7 @@ public/news/admin/dashboard.html        Reporter editor (protected by Worker rou
 public/assets/                          Deployed artwork, styles and related assets
 migrations/0001_herald_initial.sql      Original Herald D1 tables
 migrations/0002_herald_article_images.sql  Article image metadata table
+migrations/0003_herald_translations.sql  Multilingual article translation table (applied in production)
 README.md                               Project documentation
 ```
 
@@ -148,6 +149,7 @@ The applied migrations establish:
 | `herald_pulse_slots` | Selected homepage stories, positions 1–4 |
 | `herald_article_audit` | Editorial publication/change history |
 | `herald_article_images` | Per-article R2 object metadata |
+| `herald_article_translations` | Stored article language variants; created via migration 0003 |
 
 The schema files live under `migrations/` and have already been used for the production setup. **Do not rerun or replace populated production data blindly.** Take a D1 backup before schema changes. Database records and R2 objects are **not** included in GitHub website ZIP files.
 
@@ -322,3 +324,60 @@ The README tracks the **current** implementation first. Individual historic patc
 - Retained seamless blending and mobile adaptations.
 =======
 >>>>>>> fa46a5f4a4f8c65fd3f0ce2cd33d5a7525d42ac2
+
+---
+
+## 12. Multilingual rollout & Lara Translate — 20 October 2026
+
+### Website localization
+
+The Citadel has a language selector with ten choices: English (`en`), German (`de`), Russian (`ru`), Turkish (`tr`), French (`fr`), Malay (`ms`), Finnish (`fi`), Ukrainian (`uk`), Uzbek (`uz`), and Indonesian (`id`). The selected language is stored in browser `localStorage` under `citadel-language`.
+
+- **Homepage:** static text and navigation translation implemented and reported working.
+- **Kingdom Tools:** static tool descriptions and calls to action translated in v3.18.18.
+- **Recruitment:** translation support added in v3.18.19; long-form content completed for all ten languages in v3.18.20.
+- **Royal Herald articles and Kingdom Pulse:** dynamic article translations **not yet implemented** in the public interfaces; still display original article content.
+- **Alliance Network and Citizens:** full content translation planned, not yet completed.
+- The flag selector and animated royal slogan occupy a slim strip above the main navigation (v3.18.17). Flag assets are served locally as SVG; a Ukrainian flag asset correction was provided in v3.18.16.
+
+Do not change header/navigation dimensions when modifying translations. Static lettering baked into images is not translated.
+
+### Lara Translate integration: confirmed milestones
+
+| Version | Result |
+| --- | --- |
+| v3.18.21 | Added protected preflight endpoint and D1 migration for article translations. |
+| v3.18.22 | Added protected English-to-German API smoke test using Lara JavaScript SDK. |
+| v3.18.23 | Improved error diagnostics after initial test failed. |
+| v3.18.24 | Added Cloudflare Workers Web Crypto compatibility adjustment; **live test succeeded**. |
+
+**Production verification (20 October 2026):**
+
+- `/api/herald/lara/status` returned `credentialsConfigured: true` and `translationTableReady: true`.
+- The D1 migration was manually executed in Cloudflare's production SQL console; a Time Travel bookmark was saved before the change.
+- `/api/herald/lara/test` returned `ok: true`, translating `Welcome to Kingdom 3903.` (`en-US`) into `Willkommen im Königreich 3903.` (`de-DE`).
+- The test reported `articlesModified: false` and `automaticPublishingEnabled: false`.
+- The initial SDK failure was `ReferenceError: window is not defined` in `BrowserCrypto`; the v3.18.24 compatibility adjustment resolved this **for the smoke test**. This does not yet establish compatibility for every language or full HTML articles.
+
+### Configuration and safety
+
+- Worker secrets **`LARA_ACCESS_KEY_ID`** and **`LARA_ACCESS_KEY_SECRET`** are configured in Cloudflare production. Never commit or print their values.
+- `HERALD_DB` binds to the production D1 database `citadel-herald-db`.
+- The protected test endpoints require a valid Reporter session; do not expose translation triggers publicly.
+- The migration `migrations/0003_herald_translations.sql` has already been applied in production; **do not run it again without checking the schema and migration state**.
+- Automatic article translation, bulk backfill, and translation publishing are **not enabled**. Existing articles, editorial flows, Discord login and Pulse selection must remain unchanged until explicitly tested.
+- Keep original English article data authoritative; store other languages separately and fall back to English when unavailable.
+
+### Next implementation steps (not yet done)
+
+1. Verify Lara supports all nine target languages, particularly Malay and Uzbek, with correct API language codes.
+2. Test translation of article title, summary and sanitized rich-text HTML; confirm formatting survives.
+3. Add controlled, authenticated translation jobs and D1 persistence; avoid retranslating on every page view and account for API quota.
+4. Add Reporter CMS controls for translation status, retry and manual corrections; do not overwrite manual edits silently.
+5. Update public article list/detail views, article permalinks, and Kingdom Pulse to select stored language variants based on `citadel-language`, with English fallback.
+6. Add safe backfill for existing published articles and test on one article before batch processing.
+7. Consider later reuse for Citizens' editable biographies, with consent and suitable access controls.
+
+### Developer handoff notes
+
+The latest known deployed application patch is **v3.18.24**. This README update is documentation-only and must not overwrite `worker.js`, `package.json`, deployed `public/` assets, D1 data, or secrets. Before the next backend change, obtain the newest repository state (not an older ZIP) and confirm the deployed Worker version. Use small patch ZIPs with complete replacement files, plus a GitHub Desktop Summary and Description; never ask the maintainer to assemble code snippets.
