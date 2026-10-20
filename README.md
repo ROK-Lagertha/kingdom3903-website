@@ -301,3 +301,9 @@ The README tracks the **current** implementation first. Individual historic patc
 - Record completed changes, outstanding defects and migration requirements accurately, and verify both the deployed `public/` files and final archive before a release.
 
 **The Citadel — Kingdom 3903 · More Than a Kingdom.**
+
+
+### V3.17.2 – Why Choose 3903 image cleanup
+- Replaced six Recruitment benefit image assets with consistent inner crops.
+- Removed edge decorations and suppressed redundant CSS ornaments.
+- Kept responsive layout and all other website functions unchanged.
