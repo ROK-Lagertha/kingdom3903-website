@@ -313,9 +313,12 @@ The README tracks the **current** implementation first. Individual historic patc
 - Matched the Section 06 ornament to the previous five section numbers.
 - Added a gold Migration Station CTA, retaining the existing Discord invitation.
 - Blended the scene into the page background and added mobile/tablet responsive rules.
+<<<<<<< HEAD
 
 ### V3.17.4 – Ready to Join artwork refinement
 - Replaced Section 06 scene with sharper approved borderless illustration.
 - Preserved the luminous gold script within the artwork.
 - Kept the heading, body and clickable Discord CTA as HTML, not part of the image.
 - Retained seamless blending and mobile adaptations.
+=======
+>>>>>>> fa46a5f4a4f8c65fd3f0ce2cd33d5a7525d42ac2
