@@ -319,6 +319,18 @@ export default {async fetch(req,env){
   const origin=req.headers.get('origin');if(origin&&origin!==url.origin)return json({error:'Invalid origin'},403);
   return addCookies(json({ok:true}),[cookie(SESS,'',0)]);
  }
+ // Reporter-only, read-only Lara integration readiness check. Never expose secret values.
+ if(p==='/api/herald/lara/status'&&req.method==='GET'){
+  const session=await open(env,getCookie(req,SESS));
+  if(!validSession(session))return json({error:'Reporter login required'},401,{'cache-control':'no-store'});
+  const configured=!!(env.LARA_ACCESS_KEY_ID&&env.LARA_ACCESS_KEY_SECRET);
+  let databaseReady=false;
+  if(env.HERALD_DB){
+   try{const row=await env.HERALD_DB.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='herald_article_translations'").first();databaseReady=!!row}
+   catch(e){console.warn('Lara readiness database check failed')}
+  }
+  return json({integration:'preflight',credentialsConfigured:configured,translationTableReady:databaseReady,translationApiTested:false,automaticPublishingEnabled:false},200,{'cache-control':'no-store'});
+ }
  if(p==='/api/herald/me'&&req.method==='GET'){
   const session=await open(env,getCookie(req,SESS));if(!validSession(session))return json({authenticated:false,isAdmin:false},401);
   return json({authenticated:true,isAdmin:true,user:{id:session.id,username:session.username,global_name:session.global_name}});
