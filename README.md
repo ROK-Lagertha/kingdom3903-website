@@ -2,15 +2,48 @@
 
 **More Than a Kingdom.**
 
-[![Website](https://img.shields.io/badge/Website-kingdom3903.com-18365a?style=flat-square)](https://kingdom3903.com/) ![Status](https://img.shields.io/badge/Project-Active%20Development-d8ab5e?style=flat-square) ![Release](https://img.shields.io/badge/Documentation-v3.18.24-2574aa?style=flat-square)
+[![Website](https://img.shields.io/badge/Website-kingdom3903.com-18365a?style=flat-square)](https://kingdom3903.com/) ![Status](https://img.shields.io/badge/Project-Active%20Development-d8ab5e?style=flat-square) ![Release](https://img.shields.io/badge/Documentation-v3.18.26-2574aa?style=flat-square)
 
 The Citadel is the community website, recruitment portal and information hub for **Kingdom 3903** in *Rise of Kingdoms*. It combines a royal navy-and-gold visual identity with live news, kingdom recruitment, community resources and links to supporting tools.
 
 > **Unofficial fan project.** The Citadel is community-operated and is not affiliated with, endorsed by or an official property of Lilith Games.
 
-**Documentation updated:** 20 October 2026 · Latest confirmed Lara test patch **v3.18.24**  
+**Documentation updated:** 21 October 2026 · Confirmed application patch **v3.18.24** · README **v3.18.26**  
 **Repository:** https://github.com/ROK-Lagertha/kingdom3903-website  
 **Production website:** https://kingdom3903.com/
+
+---
+
+## Current implementation snapshot — 21 October 2026
+
+**Verified against the GitHub `main` repository on 21 October 2026, with production Lara test results supplied by the maintainer.** This snapshot takes precedence where older paragraphs or roadmap entries below are out of date. Repository files confirm the presence of pages and code, but do not guarantee that every feature has been validated in a live browser.
+
+| Feature | Actual status | Outstanding work |
+| --- | --- | --- |
+| Homepage | Live Kingdom Pulse and ten-language navigation/home text | Dynamic ticker story translations pending |
+| Kingdom Tools `/tools/` | Dedicated page and language support work present | Final ten-language page QA |
+| Recruitment `/recruitment/` | Dedicated page; translated content file for ten languages is present | Browser QA, translation review and visual artwork fixes |
+| Alliance Network `/alliances/` | **Dedicated page exists** (not merely planned) | Populate alliance roles/details and translate all content |
+| Citizens `/citizens/` | **Dedicated page exists** (not merely planned) | Profile functionality/content and multilingual text |
+| Royal Herald `/news/` | D1-backed publication, Discord-authenticated CMS, Kingdom Pulse | Translation of article bodies/title/summary and delivery in selected languages |
+| Language strip | Fixed-right SVG flag selector in a slim bar above navigation; animated royal slogan | Preserve design while finishing multilingual coverage |
+| Lara Translate | Live English-to-German SDK smoke test succeeded after Worker compatibility fix | Test other nine target languages and rich-text HTML; persist translations; integrate CMS |
+
+The ten language options are **English (`en`), German (`de`), Russian (`ru`), Turkish (`tr`), French (`fr`), Malay (`ms`), Finnish (`fi`), Ukrainian (`uk`), Uzbek (`uz`) and Indonesian (`id`)**. The browser saves the language preference under `citadel-language`. Page-localized UI and database-backed Herald articles are **different systems**; the latter are **not yet auto-translated**.
+
+### Lara production checkpoint
+
+The production status endpoint `/api/herald/lara/status` was observed returning `credentialsConfigured: true` and `translationTableReady: true`. The protected `/api/herald/lara/test` returned `ok: true`, translating `Welcome to Kingdom 3903.` → `Willkommen im Königreich 3903.`. This confirms a real single-sentence English-to-German API call; it does **not** confirm translations to all nine target languages or formatted HTML content.
+
+- Cloudflare secrets `LARA_ACCESS_KEY_ID` and `LARA_ACCESS_KEY_SECRET` exist. **Never commit their values.**
+- `migrations/0003_herald_translations.sql` was executed in production D1; **do not repeat blindly**.
+- Automatic translation and publication remain **disabled**. The test reported `articlesModified: false`.
+- The earlier `ReferenceError: window is not defined` was resolved for this smoke test by the v3.18.24 Cloudflare Worker compatibility patch.
+- **Next:** validate nine target languages (especially Malay and Uzbek), translate one sanitized article including HTML, store variants safely in D1, then extend Reporter CMS and public Herald/Kingdom Pulse with English fallback.
+
+### Repository handoff rules
+
+Work from the latest `main`, not an older project ZIP. Deployable frontend files are under `public/`; the backend lives at `worker.js`. Deliver **complete replacement files in a small patch ZIP**, together with GitHub Desktop Summary and Description. Preserve the existing header, language strip, responsive menu, Discord authentication and publishing behavior.
 
 ---
 
@@ -25,7 +58,9 @@ The Citadel is the community website, recruitment portal and information hub for
 | Recruitment Center | https://kingdom3903.com/recruitment/ | Implemented; visual polish in progress |
 | FlagFiller Registry | https://flagfiller.kingdom3903.com/ | Linked external/subdomain tool; maintained separately |
 | ROK BattleTrack | Linked from homepage | Linked external project; maintained separately |
-| Kingdom / alliance information | Navigation and planned pages | Further development planned |
+| Alliance Network | https://kingdom3903.com/alliances/ | Dedicated page exists; profiles and translations pending |
+| Citizens of 3903 | https://kingdom3903.com/citizens/ | Dedicated page exists; profiles and translations pending |
+| Kingdom Tools | https://kingdom3903.com/tools/ | Dedicated page exists; translation QA ongoing |
 
 **Current focus:** multilingual website rollout and Lara Translate integration for the Royal Herald. Recruitment visual polish remains an open item. Sections 01–05 have been developed, and the six illustrated **Why Choose 3903?** cards still have visible cropping/frame imperfections. Section 06 (*Ready to Join?*) remains a candidate for further design work. Do not describe the Recruitment design as visually finalized.
 
@@ -260,9 +295,11 @@ These notes intentionally distinguish **working functionality** from **remaining
 
 ### Next — expand Kingdom identity
 
-- [ ] **The Alliance Network**: dedicated page for all seven alliances and their responsibilities.
+- [x] **The Alliance Network**: dedicated page created.
+- [ ] Complete the seven alliance profiles and translations.
 - [ ] **Meet the Leadership**: introduce the R5/R4 team, responsibilities and optional member profiles.
-- [ ] Improve navigation to Kingdom information as new sections become available.
+- [x] Add Kingdom Tools, Alliance Network and Citizens pages/navigation.
+- [ ] Implement/complete Citizens profiles and translate their content.
 
 ### Later — tools, content and stability
 
