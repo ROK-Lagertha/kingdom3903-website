@@ -587,7 +587,144 @@ header.citadel-nav-top{position:relative!important;top:auto!important}
 @media(max-width:600px){.citadel-footer{margin-top:44px;grid-template-columns:minmax(0,1fr) minmax(175px,1.7fr) minmax(0,1fr);min-height:170px}.citadel-footer .footer-cappy{max-height:175px}.citadel-footer .footer-center{padding:8px 0}.citadel-footer .footer-motto{font-size:clamp(12px,3.25vw,16px);letter-spacing:0;line-height:1.5}.citadel-footer .footer-note{font-size:10px;line-height:1.5;margin-top:12px}.citadel-footer .footer-divider{margin-bottom:10px}.citadel-footer .footer-bottom{margin-top:12px}}
 @media(max-width:380px){.citadel-footer{grid-template-columns:1fr 2.3fr 1fr}.citadel-footer .footer-cappy{max-height:135px}}
 </style>
-</head><body><header class="citadel-nav-top with-brand"><a class="citadel-nav-brand" href="/" aria-label="The Citadel homepage"><img src="/assets/citadel-logo.png" alt="The Citadel 3903"></a><nav class="royal-nav citadel-global-nav" aria-label="Main navigation"><a class="royal-nav-item" href="/"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7"/><path d="M5 9v11h14V9"/><path d="M9 20v-7h6v7"/></svg><span class="nav-label">HOME</span></a><a class="royal-nav-item" href="/tools/"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 17.5 3-3L6 3 3 6l11.5 11.5Z"/><path d="m13 19 6-6"/><path d="m16 16 4 4"/><path d="m19 21 2-2"/><path d="m3 21 6-6"/><path d="m5 19-2 2"/><path d="M14 3 3 14"/></svg><span class="nav-label">KINGDOM TOOLS</span></a><a class="royal-nav-item" href="/recruitment/" aria-current="page"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span class="nav-label">RECRUITMENT</span></a><a class="royal-nav-item" href="/news/" aria-label="News — The Royal Herald"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M7 8h5v5H7zM15 8h3M15 11h3M7 16h11"/></svg><span class="nav-label">ROYAL HERALD</span></a><a class="royal-nav-item" href="/alliances/" aria-current="page"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m2 8 5 4 5-7 5 7 5-4-2 12H4L2 8Z"/><path d="M4 20h16"/></svg><span class="nav-label">ALLIANCE NETWORK</span></a><a class="royal-nav-item" href="/citizens/"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="12" cy="9" r="3"/><path d="M6 19c0-4 12-4 12 0"/></svg><span class="nav-label">CITIZENS</span></a></nav></header><main class="citadel-directory"><h1>ALLIANCE NETWORK</h1><p class="lead">Seven alliances. One kingdom. Discover how we work together.</p><div class="directory-placeholder"><h2>THE ALLIANCES OF 3903</h2><p>ON-F · ON:S · ON:C · ON-P · ON-M · LW:D · ON:P</p><p>Our dedicated alliance profiles are being prepared. The full network will be introduced here.</p></div><a class="directory-back" href="/">← Back to The Citadel</a></main>
+
+<style id="citadel-v3185-consistent-navigation">
+/* One shared, stable navigation layout across all six public pages. */
+.citadel-nav-top {
+  box-sizing:border-box!important;
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+  width:100%!important;
+  max-width:none!important;
+  min-height:78px!important;
+  padding:0 12px!important;
+  gap:12px!important;
+  background:#040b16!important;
+  border-bottom:1px solid #a87931!important;
+  position:relative!important;
+  top:auto!important;
+}
+.citadel-nav-top .citadel-nav-brand {
+  display:flex!important;
+  flex:0 0 clamp(115px,15vw,180px)!important;
+  align-items:center!important;
+  justify-content:center!important;
+  margin:0!important;
+  padding:5px!important;
+}
+.citadel-nav-top .citadel-nav-brand img {
+  display:block!important;
+  width:100%!important;
+  max-width:170px!important;
+  height:auto!important;
+  max-height:68px!important;
+  object-fit:contain!important;
+}
+.citadel-nav-top .citadel-global-nav {
+  display:grid!important;
+  grid-template-columns:repeat(6,minmax(0,1fr))!important;
+  grid-template-rows:1fr!important;
+  flex:1 1 auto!important;
+  min-width:0!important;
+  width:auto!important;
+  max-width:none!important;
+  margin:0!important;
+  padding:0!important;
+  gap:0!important;
+  align-items:stretch!important;
+}
+.citadel-nav-top .citadel-global-nav .royal-nav-item {
+  box-sizing:border-box!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-width:0!important;
+  width:auto!important;
+  min-height:72px!important;
+  padding:7px 3px!important;
+  margin:0!important;
+  gap:4px!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  border:0!important;
+  border-left:1px solid rgba(207,160,81,.12)!important;
+  border-radius:0!important;
+  color:#f1c46b!important;
+  text-align:center!important;
+}
+.citadel-nav-top .citadel-global-nav .royal-nav-item:first-child {
+  border-left:0!important;
+}
+.citadel-nav-top .citadel-global-nav .royal-nav-item[aria-current="page"] {
+  background:#172d45!important;
+  color:#ffdd91!important;
+}
+.citadel-nav-top .citadel-global-nav .royal-nav-item:hover,
+.citadel-nav-top .citadel-global-nav .royal-nav-item:focus-visible {
+  background:#102238!important;
+}
+.citadel-nav-top .citadel-global-nav .nav-icon {
+  display:block!important;
+  width:21px!important;
+  height:21px!important;
+  flex-shrink:0!important;
+}
+.citadel-nav-top .citadel-global-nav .nav-label {
+  display:block!important;
+  font-size:clamp(8px,.75vw,11px)!important;
+  line-height:1.15!important;
+  letter-spacing:0!important;
+  white-space:normal!important;
+  overflow-wrap:normal!important;
+  word-break:normal!important;
+}
+@media(max-width:760px) {
+  .citadel-nav-top {
+    display:flex!important;
+    flex-direction:column!important;
+    flex-wrap:nowrap!important;
+    align-items:stretch!important;
+    min-height:0!important;
+    padding:0!important;
+    gap:0!important;
+  }
+  .citadel-nav-top .citadel-nav-brand {
+    flex:none!important;
+    align-self:flex-start!important;
+    width:126px!important;
+    height:48px!important;
+    padding:3px 8px!important;
+  }
+  .citadel-nav-top .citadel-nav-brand img {
+    max-width:115px!important;
+    max-height:44px!important;
+  }
+  .citadel-nav-top .citadel-global-nav {
+    flex:none!important;
+    width:100%!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    grid-template-rows:repeat(2,minmax(56px,auto))!important;
+  }
+  .citadel-nav-top .citadel-global-nav .royal-nav-item {
+    min-height:56px!important;
+    padding:5px 3px!important;
+    border-top:1px solid rgba(207,160,81,.09)!important;
+  }
+  .citadel-nav-top .citadel-global-nav .royal-nav-item:nth-child(3n+1) {
+    border-left:0!important;
+  }
+  .citadel-nav-top .citadel-global-nav .nav-icon {
+    width:19px!important;
+    height:19px!important;
+  }
+  .citadel-nav-top .citadel-global-nav .nav-label {
+    font-size:clamp(8px,2.25vw,10px)!important;
+  }
+}
+</style>
+</head><body><header class="citadel-nav-top with-brand"><a class="citadel-nav-brand" href="/" aria-label="The Citadel homepage"><img src="/assets/citadel-logo.png" alt="The Citadel 3903"></a><nav class="royal-nav citadel-global-nav" aria-label="Main navigation"><a class="royal-nav-item" href="/"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7"/><path d="M5 9v11h14V9"/><path d="M9 20v-7h6v7"/></svg><span class="nav-label">HOME</span></a><a class="royal-nav-item" href="/tools/"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 17.5 3-3L6 3 3 6l11.5 11.5Z"/><path d="m13 19 6-6"/><path d="m16 16 4 4"/><path d="m19 21 2-2"/><path d="m3 21 6-6"/><path d="m5 19-2 2"/><path d="M14 3 3 14"/></svg><span class="nav-label">KINGDOM TOOLS</span></a><a class="royal-nav-item" href="/recruitment/"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span class="nav-label">RECRUITMENT</span></a><a class="royal-nav-item" href="/news/" aria-label="News — The Royal Herald"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M7 8h5v5H7zM15 8h3M15 11h3M7 16h11"/></svg><span class="nav-label">ROYAL HERALD</span></a><a class="royal-nav-item" href="/alliances/" aria-current="page"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m2 8 5 4 5-7 5 7 5-4-2 12H4L2 8Z"/><path d="M4 20h16"/></svg><span class="nav-label">ALLIANCE NETWORK</span></a><a class="royal-nav-item" href="/citizens/"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="12" cy="9" r="3"/><path d="M6 19c0-4 12-4 12 0"/></svg><span class="nav-label">CITIZENS</span></a></nav></header><main class="citadel-directory"><h1>ALLIANCE NETWORK</h1><p class="lead">Seven alliances. One kingdom. Discover how we work together.</p><div class="directory-placeholder"><h2>THE ALLIANCES OF 3903</h2><p>ON-F · ON:S · ON:C · ON-P · ON-M · LW:D · ON:P</p><p>Our dedicated alliance profiles are being prepared. The full network will be introduced here.</p></div><a class="directory-back" href="/">← Back to The Citadel</a></main>
 <footer class="citadel-footer" aria-label="Kingdom 3903 community footer">
 <img class="footer-cappy" src="/assets/footer-cappy-strategy.png" alt="Royal capybara with strategy books and a globe" loading="lazy" width="675" height="580">
 <div class="footer-center"><div class="footer-divider" aria-hidden="true"></div><p class="footer-motto">Strategy. People.<br>Progress. <span class="footer-heart">❤️</span></p><p class="footer-note">Independent fan-made community website for Kingdom 3903. Not affiliated with, endorsed by, or sponsored by Lilith Games.</p><div class="footer-bottom" aria-hidden="true"></div></div>
