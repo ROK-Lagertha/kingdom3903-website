@@ -1,3 +1,4 @@
+import { Credentials, Translator } from '@translated/lara';
 // The Citadel / Royal Herald — Cloudflare Worker OAuth2
 // Requires env.ASSETS and three Cloudflare secrets. Never commit credentials.
 const GUILD='1462581217722368074';
@@ -330,6 +331,22 @@ export default {async fetch(req,env){
    catch(e){console.warn('Lara readiness database check failed')}
   }
   return json({integration:'preflight',credentialsConfigured:configured,translationTableReady:databaseReady,translationApiTested:false,automaticPublishingEnabled:false},200,{'cache-control':'no-store'});
+ }
+ // Reporter-only live translation smoke test. No database writes or article publication.
+ if(p==='/api/herald/lara/test'&&req.method==='GET'){
+  const session=await open(env,getCookie(req,SESS));
+  if(!validSession(session))return json({error:'Reporter login required'},401);
+  if(!env.LARA_ACCESS_KEY_ID||!env.LARA_ACCESS_KEY_SECRET)return json({ok:false,stage:'configuration',error:'Lara credentials missing'},503);
+  try{
+   const lara=new Translator(new Credentials(env.LARA_ACCESS_KEY_ID,env.LARA_ACCESS_KEY_SECRET));
+   const result=await lara.translate('Welcome to Kingdom 3903.','en-US','de-DE');
+   const translated=result?.translation;
+   if(typeof translated!=='string'||!translated.trim())return json({ok:false,stage:'response',error:'Lara returned no text'},502);
+   return json({ok:true,sourceLanguage:'en-US',targetLanguage:'de-DE',source:'Welcome to Kingdom 3903.',translation:translated,articlesModified:false,automaticPublishingEnabled:false});
+  }catch(e){
+   console.warn('Lara test failed',e?.name||'Error');
+   return json({ok:false,stage:'lara_api',errorType:e?.name||'TranslationError',message:'Translation test failed; check Cloudflare Worker logs and Lara quota. No article was modified.'},502);
+  }
  }
  if(p==='/api/herald/me'&&req.method==='GET'){
   const session=await open(env,getCookie(req,SESS));if(!validSession(session))return json({authenticated:false,isAdmin:false},401);
