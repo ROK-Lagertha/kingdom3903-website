@@ -344,7 +344,7 @@ export default {async fetch(req,env){
    if(typeof translated!=='string'||!translated.trim())return json({ok:false,stage:'response',error:'Lara returned no text'},502);
    return json({ok:true,sourceLanguage:'en-US',targetLanguage:'de-DE',source:'Welcome to Kingdom 3903.',translation:translated,articlesModified:false,automaticPublishingEnabled:false});
   }catch(e){
-   console.warn('Lara test failed',e?.name||'Error');
+   console.warn('Lara test failed', JSON.stringify({name:String(e?.name||'Error'),message:String(e?.message||'Unknown error').slice(0,500),stack:String(e?.stack||'').split('\n').slice(0,5).join(' | ').slice(0,900)}));
    return json({ok:false,stage:'lara_api',errorType:e?.name||'TranslationError',message:'Translation test failed; check Cloudflare Worker logs and Lara quota. No article was modified.'},502);
   }
  }
