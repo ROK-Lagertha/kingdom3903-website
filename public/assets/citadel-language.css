@@ -8,3 +8,7 @@
 .citadel-lang-choice{display:block;width:100%;border:0;border-radius:5px;padding:8px;text-align:left;color:#f4d18d;background:transparent;cursor:pointer;font-size:13px}
 .citadel-lang-choice:hover,.citadel-lang-choice[aria-selected=true]{background:#1b3550}
 @media(max-width:650px){.citadel-language-control{top:8px;left:auto;right:10px}.citadel-language-list{left:auto;right:0}}
+
+/* Local SVG flag images: avoid platform-specific emoji rendering as GB/DE/RU text. */
+.citadel-flag-icon{display:block;width:25px;height:17px;object-fit:cover;flex:none;border-radius:2px;box-shadow:0 0 0 1px #ffffff45}
+.citadel-lang-choice{display:flex;align-items:center;gap:10px}
