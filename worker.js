@@ -338,6 +338,9 @@ export default {async fetch(req,env){
   if(!validSession(session))return json({error:'Reporter login required'},401);
   if(!env.LARA_ACCESS_KEY_ID||!env.LARA_ACCESS_KEY_SECRET)return json({ok:false,stage:'configuration',error:'Lara credentials missing'},503);
   try{
+   // Lara SDK BrowserCrypto expects window.crypto; Workers exposes Web Crypto globally.
+   // This compatibility shim is scoped to the authenticated smoke-test path only.
+   if(typeof globalThis.window==='undefined')globalThis.window={crypto:globalThis.crypto};
    const lara=new Translator(new Credentials(env.LARA_ACCESS_KEY_ID,env.LARA_ACCESS_KEY_SECRET));
    const result=await lara.translate('Welcome to Kingdom 3903.','en-US','de-DE');
    const translated=result?.translation;
