@@ -667,12 +667,18 @@ main{width:min(calc(100% - 48px),1640px);padding-top:clamp(18px,2vw,34px)}
 .citadel-welcome{margin:clamp(8px,1.5vw,16px) auto clamp(16px,3vw,35px)!important}
 @media(max-width:600px){.home-royal-divider{width:100%;margin:14px auto 6px}.citadel-welcome{margin:6px auto 20px!important}}
 </style>
+
+<style id="citadel-home-panorama-v31812">
+/* Same 3:1 royal panorama format used on the kingdom subpages. */
+.citadel-home-panorama{display:block;width:100%;margin:0 auto clamp(12px,2vw,24px);aspect-ratio:3/1;overflow:hidden;background:#050a12}
+.citadel-home-panorama img{display:block;width:100%;height:100%;object-fit:cover;object-position:center center}
+@media(max-width:650px){.citadel-home-panorama{aspect-ratio:3/1;margin-bottom:14px}.citadel-home-panorama img{object-fit:contain}}
+</style>
 </head>
 <body><div class="citadel-nav-top with-brand"><a class="citadel-nav-brand" href="/" aria-label="The Citadel homepage"><img src="/assets/citadel-logo.png" alt="The Citadel 3903"></a><nav class="royal-nav citadel-global-nav" aria-label="Main navigation"><a class="royal-nav-item" href="/" aria-current="page"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7"/><path d="M5 9v11h14V9"/><path d="M9 20v-7h6v7"/></svg><span class="nav-label">HOME</span></a><a class="royal-nav-item" href="/tools/"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 17.5 3-3L6 3 3 6l11.5 11.5Z"/><path d="m13 19 6-6"/><path d="m16 16 4 4"/><path d="m19 21 2-2"/><path d="m3 21 6-6"/><path d="m5 19-2 2"/><path d="M14 3 3 14"/></svg><span class="nav-label">KINGDOM TOOLS</span></a><a class="royal-nav-item" href="/recruitment/"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span class="nav-label">RECRUITMENT</span></a><a class="royal-nav-item" href="/news/" aria-label="News — The Royal Herald"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M7 8h5v5H7zM15 8h3M15 11h3M7 16h11"/></svg><span class="nav-label">ROYAL HERALD</span></a><a class="royal-nav-item" href="/alliances/"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m2 8 5 4 5-7 5 7 5-4-2 12H4L2 8Z"/><path d="M4 20h16"/></svg><span class="nav-label">ALLIANCE NETWORK</span></a><a class="royal-nav-item" href="/citizens/"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="12" cy="9" r="3"/><path d="M6 19c0-4 12-4 12 0"/></svg><span class="nav-label">CITIZENS</span></a></nav></div>
 <main id="home">
-<section class="hero-layout" aria-label="The Citadel and Kingdom 3903">
-<header class="brand"><img class="logo" src="./assets/citadel-logo.png" alt="3903 The Citadel — The Heart of the Kingdom. More Than a Kingdom." width="1946" height="808" fetchpriority="high"></header>
-<div class="kingdom-visual"><img src="./assets/kingdom-panorama.webp" alt="Moonlit Kingdom 3903 fortress with royal blue banners and golden lights" width="975" height="373"></div>
+<section class="citadel-home-panorama" aria-label="The Citadel — Kingdom 3903">
+<img src="/assets/citadel-home-panorama-v3.18.12.webp" alt="The Citadel, Kingdom 3903 — royal golden crest over a moonlit fantasy kingdom, with a crowned capybara and the motto More Than a Kingdom" width="2172" height="724" fetchpriority="high" decoding="async">
 </section>
 
 <section class="pulse" aria-label="Kingdom Pulse — latest news" id="news">
