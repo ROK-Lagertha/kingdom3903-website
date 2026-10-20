@@ -301,3 +301,21 @@ The README tracks the **current** implementation first. Individual historic patc
 - Record completed changes, outstanding defects and migration requirements accurately, and verify both the deployed `public/` files and final archive before a release.
 
 **The Citadel — Kingdom 3903 · More Than a Kingdom.**
+
+
+### V3.17.2 – Why Choose 3903 image cleanup
+- Replaced six Recruitment benefit image assets with consistent inner crops.
+- Removed edge decorations and suppressed redundant CSS ornaments.
+- Kept responsive layout and all other website functions unchanged.
+
+### V3.17.3 – Recruitment invitation section
+- Redesigned Section 06 with the approved castle-gate scene and embedded script lettering.
+- Matched the Section 06 ornament to the previous five section numbers.
+- Added a gold Migration Station CTA, retaining the existing Discord invitation.
+- Blended the scene into the page background and added mobile/tablet responsive rules.
+
+### V3.17.4 – Ready to Join artwork refinement
+- Replaced Section 06 scene with sharper approved borderless illustration.
+- Preserved the luminous gold script within the artwork.
+- Kept the heading, body and clickable Discord CTA as HTML, not part of the image.
+- Retained seamless blending and mobile adaptations.
