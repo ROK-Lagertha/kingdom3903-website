@@ -1,0 +1,10 @@
+/* Citadel language control: absolute overlay; NEVER participates in header grid sizing. */
+.citadel-nav-top{position:relative!important}
+.citadel-language-control{position:absolute;top:5px;left:clamp(75px,11vw,143px);z-index:1001;line-height:1.2;font-family:Arial,sans-serif}
+.citadel-language-button{display:flex;align-items:center;justify-content:center;width:34px;height:30px;padding:0;border:1px solid #bd8d3c;border-radius:8px;background:#071322;color:#fff;font-size:20px;cursor:pointer;box-shadow:0 2px 10px #0008}
+.citadel-language-button:focus-visible,.citadel-lang-choice:focus-visible{outline:2px solid #f5ca70;outline-offset:2px}
+.citadel-language-list{position:absolute;top:35px;left:0;max-height:min(65vh,410px);overflow-y:auto;width:188px;padding:6px;background:#061120;border:1px solid #bd8d3c;border-radius:9px;box-shadow:0 12px 25px #000b}
+.citadel-language-list[hidden]{display:none!important}
+.citadel-lang-choice{display:block;width:100%;border:0;border-radius:5px;padding:8px;text-align:left;color:#f4d18d;background:transparent;cursor:pointer;font-size:13px}
+.citadel-lang-choice:hover,.citadel-lang-choice[aria-selected=true]{background:#1b3550}
+@media(max-width:650px){.citadel-language-control{top:8px;left:auto;right:10px}.citadel-language-list{left:auto;right:0}}
