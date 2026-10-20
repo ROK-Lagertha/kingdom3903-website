@@ -12,3 +12,15 @@
 /* Local SVG flag images: avoid platform-specific emoji rendering as GB/DE/RU text. */
 .citadel-flag-icon{display:block;width:25px;height:17px;object-fit:cover;flex:none;border-radius:2px;box-shadow:0 0 0 1px #ffffff45}
 .citadel-lang-choice{display:flex;align-items:center;gap:10px}
+
+/* v3.18.17: Dedicated slim royal strip ABOVE the existing navigation.
+   No changes to the menu grid, its item widths, or header artwork. */
+.citadel-royal-strip{position:relative;box-sizing:border-box;display:flex;align-items:center;justify-content:center;width:100%;height:34px;min-height:34px;padding:0 55px 0 12px;overflow:visible;background:#040d19;border-bottom:1px solid #9c7132;isolation:isolate;z-index:1005}
+.citadel-royal-ticker{position:relative;overflow:hidden;width:min(720px,100%);height:100%;display:flex;align-items:center;mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent)}
+.citadel-royal-slogan{display:block;white-space:nowrap;width:max-content;margin-left:auto;color:#eec77a;font-family:Georgia,serif;font-size:11px;letter-spacing:.18em;font-weight:bold;text-shadow:0 0 8px #9c713266;animation:citadel-motto-drift 19s linear infinite}
+@keyframes citadel-motto-drift{0%{transform:translateX(110%)}100%{transform:translateX(-130%)}}
+.citadel-royal-strip .citadel-language-control{position:absolute!important;top:2px!important;right:12px!important;left:auto!important;z-index:1010}
+.citadel-royal-strip .citadel-language-button{height:29px;width:37px}
+.citadel-royal-strip .citadel-language-list{top:34px;right:0;left:auto}
+@media(max-width:650px){.citadel-royal-strip{height:32px;min-height:32px;padding-right:53px}.citadel-royal-slogan{font-size:9px;letter-spacing:.09em;animation-duration:16s}.citadel-royal-strip .citadel-language-control{right:8px!important;top:1px!important}}
+@media(prefers-reduced-motion:reduce){.citadel-royal-slogan{animation:none;transform:none}}

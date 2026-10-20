@@ -44,6 +44,12 @@ ids.forEach(code=>{const item=document.createElement('button');item.type='button
 button.addEventListener('click',()=>{const opening=list.hidden;list.hidden=!opening;button.setAttribute('aria-expanded',String(opening));});
 document.addEventListener('click',event=>{if(!wrapper.contains(event.target))closeMenu();});document.addEventListener('keydown',event=>{if(event.key==='Escape')closeMenu();});
 wrapper.append(button,list);
-const top=document.querySelector('.citadel-nav-top');if(top)top.appendChild(wrapper);else document.body.prepend(wrapper);
+const top=document.querySelector('.citadel-nav-top');
+if(top){
+  const strip=document.createElement('div');strip.className='citadel-royal-strip';
+  const ticker=document.createElement('div');ticker.className='citadel-royal-ticker';ticker.setAttribute('aria-label','Kingdom 3903 motto');
+  const slogan=document.createElement('span');slogan.className='citadel-royal-slogan';slogan.textContent='✦ ONE KINGDOM  •  MANY NATIONS  •  ONE CITADEL ✦';
+  ticker.appendChild(slogan);strip.append(ticker,wrapper);top.parentNode.insertBefore(strip,top);
+}else document.body.prepend(wrapper);
 translateStatic(current);
 })();
