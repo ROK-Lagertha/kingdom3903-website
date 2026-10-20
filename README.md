@@ -307,3 +307,9 @@ The README tracks the **current** implementation first. Individual historic patc
 - Replaced six Recruitment benefit image assets with consistent inner crops.
 - Removed edge decorations and suppressed redundant CSS ornaments.
 - Kept responsive layout and all other website functions unchanged.
+
+### V3.17.3 – Recruitment invitation section
+- Redesigned Section 06 with the approved castle-gate scene and embedded script lettering.
+- Matched the Section 06 ornament to the previous five section numbers.
+- Added a gold Migration Station CTA, retaining the existing Discord invitation.
+- Blended the scene into the page background and added mobile/tablet responsive rules.
