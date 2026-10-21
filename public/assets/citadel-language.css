@@ -24,3 +24,9 @@
 .citadel-royal-strip .citadel-language-list{top:34px;right:0;left:auto}
 @media(max-width:650px){.citadel-royal-strip{height:32px;min-height:32px;padding-right:53px}.citadel-royal-slogan{font-size:9px;letter-spacing:.09em;animation-duration:16s}.citadel-royal-strip .citadel-language-control{right:8px!important;top:1px!important}}
 @media(prefers-reduced-motion:reduce){.citadel-royal-slogan{animation:none;transform:none}}
+
+/* v3.18.28: Compact flag-only picker in exactly two rows. */
+.citadel-royal-strip .citadel-language-list{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));grid-template-rows:repeat(2,32px);gap:4px;width:292px;max-width:calc(100vw - 16px);max-height:none;overflow:visible;padding:7px;box-sizing:border-box}
+.citadel-royal-strip .citadel-language-list[hidden]{display:none!important}
+.citadel-royal-strip .citadel-lang-choice{display:flex;align-items:center;justify-content:center;width:100%;height:32px;padding:3px;margin:0;font-size:0;line-height:0;border-radius:5px}
+.citadel-royal-strip .citadel-lang-choice .citadel-flag-icon{width:29px;height:20px}
