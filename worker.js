@@ -174,8 +174,13 @@ async function translateText(env,text,lang){
   const keys=result&&typeof result==='object'?Object.keys(result).slice(0,12):[];
   const innerKeys=payload&&typeof payload==='object'?Object.keys(payload).slice(0,12):[];
   const errorMessage=typeof payload?.error==='string'?payload.error.slice(0,180):'';
-  console.error('Herald Workers AI response unavailable',JSON.stringify({lang,model:HERALD_MODEL,responseType:typeof result,keys,innerKeys,errorMessage}));
-  throw Error('Workers AI returned no translation (response fields: '+innerKeys.join(',')+')');
+  // Record only metadata: never log original article text, translations or secrets.
+  const field=payload?.translated_text;
+  const translationMetadata={type:field===null?'null':Array.isArray(field)?'array':typeof field,isEmptyString:field==='',length:typeof field==='string'?field.length:undefined,arrayLength:Array.isArray(field)?field.length:undefined};
+  const usage=payload?.usage;
+  const usageMetadata=usage&&typeof usage==='object'?Object.fromEntries(Object.entries(usage).filter(([key,val])=>/token|neuron|duration|time/i.test(key)&&typeof val==='number').slice(0,8)):null;
+  console.error('Herald Workers AI response unavailable',JSON.stringify({lang,model:HERALD_MODEL,sourceLanguage:'english',targetLanguage:HERALD_LANGUAGES[lang],inputLength:text.length,responseType:typeof result,keys,innerKeys,translationMetadata,usageMetadata,errorMessage}));
+  throw Error('Workers AI returned no translation (type: '+translationMetadata.type+', length: '+(translationMetadata.length??'n/a')+')');
  }
  return value.trim();
 }
