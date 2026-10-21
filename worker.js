@@ -151,7 +151,7 @@ async function serveArticleImage(req,env,p){
  return new Response(req.method==='HEAD'?null:obj.body,{headers:{'content-type':row.content_type,'content-disposition':'inline','x-content-type-options':'nosniff','cache-control':'public, max-age=300','content-security-policy':"default-src 'none'; sandbox"}});
 }
 // Cloudflare Workers AI translation pipeline. English remains the canonical source.
-const HERALD_LANGUAGES={de:'de',ru:'ru',tr:'tr',fr:'fr',ms:'ms',fi:'fi',uk:'uk',uz:'uz',id:'id',es:'es','pt-BR':'pt',pl:'pl'};
+const HERALD_LANGUAGES={de:'german',ru:'russian',tr:'turkish',fr:'french',ms:'malay',fi:'finnish',uk:'ukrainian',uz:'uzbek',id:'indonesian',es:'spanish','pt-BR':'portuguese',pl:'polish'};
 const HERALD_MODEL='@cf/meta/m2m100-1.2b';
 function heraldLang(url){const code=url.searchParams.get('lang')||'en';return Object.hasOwn(HERALD_LANGUAGES,code)?code:'en'}
 async function translatedArticle(db,article,lang){
@@ -164,9 +164,19 @@ async function translatedArticle(db,article,lang){
 // Translate text nodes only; HTML tags, links, images and attributes are never sent to AI.
 async function translateText(env,text,lang){
  if(!text||!text.trim())return text;
- const result=await env.AI.run(HERALD_MODEL,{text,source_lang:'en',target_lang:HERALD_LANGUAGES[lang]});
- const value=result?.translated_text??result?.translation;
- if(typeof value!=='string'||!value.trim())throw Error('Workers AI returned no translation');
+ // Cloudflare's official M2M100 examples use language names (e.g. english, french).
+ const result=await env.AI.run(HERALD_MODEL,{text,source_lang:'english',target_lang:HERALD_LANGUAGES[lang]});
+ // Handle both the direct Workers binding response and a wrapped API response.
+ const payload=result?.result&&typeof result.result==='object'?result.result:result;
+ const value=payload?.translated_text??payload?.translation??payload?.answer;
+ if(typeof value!=='string'||!value.trim()){
+  // Log only the response shape and safe error metadata, never article text or credentials.
+  const keys=result&&typeof result==='object'?Object.keys(result).slice(0,12):[];
+  const innerKeys=payload&&typeof payload==='object'?Object.keys(payload).slice(0,12):[];
+  const errorMessage=typeof payload?.error==='string'?payload.error.slice(0,180):'';
+  console.error('Herald Workers AI response unavailable',JSON.stringify({lang,model:HERALD_MODEL,responseType:typeof result,keys,innerKeys,errorMessage}));
+  throw Error('Workers AI returned no translation (response fields: '+innerKeys.join(',')+')');
+ }
  return value.trim();
 }
 async function translateHtml(env,html,lang){
