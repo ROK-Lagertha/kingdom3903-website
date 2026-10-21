@@ -150,40 +150,40 @@ async function serveArticleImage(req,env,p){
  const obj=await env.HERALD_IMAGES.get(row.object_key);if(!obj)return json({error:'Not found'},404);
  return new Response(req.method==='HEAD'?null:obj.body,{headers:{'content-type':row.content_type,'content-disposition':'inline','x-content-type-options':'nosniff','cache-control':'public, max-age=300','content-security-policy':"default-src 'none'; sandbox"}});
 }
-// Cloudflare Workers AI translation pipeline. English remains the canonical source.
-const HERALD_LANGUAGES={de:'german',ru:'russian',tr:'turkish',fr:'french',ms:'malay',fi:'finnish',uk:'ukrainian',uz:'uzbek',id:'indonesian',es:'spanish','pt-BR':'portuguese',pl:'polish'};
-const HERALD_MODEL='@cf/meta/m2m100-1.2b';
-function heraldLang(url){const code=url.searchParams.get('lang')||'en';return Object.hasOwn(HERALD_LANGUAGES,code)?code:'en'}
-async function translatedArticle(db,article,lang){
- if(lang==='en'||!article)return article;
- try{const t=await db.prepare('SELECT title,summary,body_html,source_updated_at FROM herald_article_translations_v2 WHERE article_id=? AND language_code=?').bind(article.id,lang).first();
-  if(t&&t.source_updated_at===article.updated_at)return {...article,title:t.title,summary:t.summary,body_html:t.body_html||article.body_html};
- }catch(e){console.warn('Herald translation lookup unavailable',String(e?.message||e).slice(0,140))}
- return article;
-}
-// Translate text nodes only; HTML tags, links, images and attributes are never sent to AI.
-async function translateText(env,text,lang){
- if(!text||!text.trim())return text;
- // Cloudflare's official M2M100 examples use language names (e.g. english, french).
- const result=await env.AI.run(HERALD_MODEL,{text,source_lang:'english',target_lang:HERALD_LANGUAGES[lang]});
- // Handle both the direct Workers binding response and a wrapped API response.
- const payload=result?.result&&typeof result.result==='object'?result.result:result;
- const value=payload?.translated_text??payload?.translation??payload?.answer;
- if(typeof value!=='string'||!value.trim()){
-  // Log only the response shape and safe error metadata, never article text or credentials.
-  const keys=result&&typeof result==='object'?Object.keys(result).slice(0,12):[];
-  const innerKeys=payload&&typeof payload==='object'?Object.keys(payload).slice(0,12):[];
-  const errorMessage=typeof payload?.error==='string'?payload.error.slice(0,180):'';
-  // Record only metadata: never log original article text, translations or secrets.
-  const field=payload?.translated_text;
-  const translationMetadata={type:field===null?'null':Array.isArray(field)?'array':typeof field,isEmptyString:field==='',length:typeof field==='string'?field.length:undefined,arrayLength:Array.isArray(field)?field.length:undefined};
-  const usage=payload?.usage;
-  const usageMetadata=usage&&typeof usage==='object'?Object.fromEntries(Object.entries(usage).filter(([key,val])=>/token|neuron|duration|time/i.test(key)&&typeof val==='number').slice(0,8)):null;
-  console.error('Herald Workers AI response unavailable',JSON.stringify({lang,model:HERALD_MODEL,sourceLanguage:'english',targetLanguage:HERALD_LANGUAGES[lang],inputLength:text.length,responseType:typeof result,keys,innerKeys,translationMetadata,usageMetadata,errorMessage}));
-  throw Error('Workers AI returned no translation (type: '+translationMetadata.type+', length: '+(translationMetadata.length??'n/a')+')');
+ // Cloudflare Workers AI translation pipeline. English remains the canonical source.
+ const HERALD_LANGUAGES={de:'german',ru:'russian',tr:'turkish',fr:'french',ms:'malay',fi:'finnish',uk:'ukrainian',uz:'uzbek',id:'indonesian',es:'spanish','pt-BR':'portuguese',pl:'polish'};
+ const HERALD_MODEL='@cf/meta/m2m100-1.2b';
+ function heraldLang(url){const code=url.searchParams.get('lang')||'en';return Object.hasOwn(HERALD_LANGUAGES,code)?code:'en'}
+ async function translatedArticle(db,article,lang){
+  if(lang==='en'||!article)return article;
+  try{const t=await db.prepare('SELECT title,summary,body_html,source_updated_at FROM herald_article_translations_v2 WHERE article_id=? AND language_code=?').bind(article.id,lang).first();
+   if(t&&t.source_updated_at===article.updated_at)return {...article,title:t.title,summary:t.summary,body_html:t.body_html||article.body_html};
+  }catch(e){console.warn('Herald translation lookup unavailable',String(e?.message||e).slice(0,140))}
+  return article;
  }
- return value.trim();
-}
+ // Translate text nodes only; HTML tags, links, images and attributes are never sent to AI.
+ // API schema documents language codes; older Cloudflare examples use language names.
+ // One fallback is allowed only when the primary response has no translated text.
+ async function translateText(env,text,lang){
+  if(!text||!text.trim())return text;
+  const targetCode=lang==='pt-BR'?'pt':lang;
+  const candidates=[{source_lang:'en',target_lang:targetCode},{source_lang:'english',target_lang:HERALD_LANGUAGES[lang]}];
+  for(let index=0;index<candidates.length;index++){
+   const params=candidates[index];
+   const result=await env.AI.run(HERALD_MODEL,{text,...params});
+   const payload=result?.result&&typeof result.result==='object'?result.result:result;
+   const value=payload?.translated_text||payload?.translation||payload?.answer;
+   if(typeof value==='string'&&value.trim())return value.trim();
+   const keys=result&&typeof result==='object'?Object.keys(result).slice(0,12):[];
+   const innerKeys=payload&&typeof payload==='object'?Object.keys(payload).slice(0,12):[];
+   const field=payload?.translated_text;
+   const translationMetadata={type:field===null?'null':Array.isArray(field)?'array':typeof field,isEmptyString:field==='',length:typeof field==='string'?field.length:undefined};
+   const usage=payload?.usage;
+   const usageMetadata=usage&&typeof usage==='object'?Object.fromEntries(Object.entries(usage).filter(([key,val])=>/token|neuron|duration|time/i.test(key)&&typeof val==='number').slice(0,8)):null;
+   console.warn('Herald Workers AI returned empty translation',JSON.stringify({lang,model:HERALD_MODEL,attempt:index+1,sourceLanguage:params.source_lang,targetLanguage:params.target_lang,inputLength:text.length,keys,innerKeys,translationMetadata,usageMetadata}));
+  }
+  throw Error('Workers AI returned no translation after language-code and language-name attempts');
+ }
 async function translateHtml(env,html,lang){
  const parts=html.split(/(<[^>]*>)/g);const translated=[];
  for(const part of parts){

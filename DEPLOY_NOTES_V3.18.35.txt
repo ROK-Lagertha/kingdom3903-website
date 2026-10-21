@@ -1,0 +1,29 @@
+V3.18.35 — Workers AI translation repair
+
+REPLACE in your repository:
+- worker.js (complete replacement file)
+
+ADD to your repository:
+- migrations/0007_retry_empty_workers_ai_translations.sql
+
+Deployment:
+1. Copy the worker.js to the repository root; add migration into migrations folder.
+2. Commit and push via GitHub Desktop.
+3. Confirm Cloudflare deployment succeeds.
+4. In Cloudflare D1 -> citadel-herald-db -> Console, run the SQL in migration 0007 ONCE.
+5. Watch scheduled Workers logs and test /api/herald/public/articles/1?lang=de.
+   A translation will appear only after its scheduled job has completed.
+
+Notes:
+- D1 SQL is NOT run automatically by the static-site deployment.
+- This patch does not change your article content, static translations, other pages, or Cloudflare bindings.
+- Primary model call uses ISO language codes (en -> de/fr/es/etc).
+- One fallback uses spelled-out language names only if the model gives an empty result.
+- If both remain empty, logs provide response shape and request metadata, not article text.
+- It has not been tested with live Cloudflare credentials here; actual model behavior must be verified in deployment logs.
+
+GitHub Desktop Summary:
+fix: retry Workers AI translations with language codes
+
+GitHub Desktop Description:
+Use ISO language codes for M2M100 with a bounded legacy-name fallback. Retain D1 translation caching and scheduled background processing. Add targeted one-time SQL migration to retry jobs that failed due to empty Workers AI responses. No changes to existing articles or successful translations.
