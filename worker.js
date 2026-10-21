@@ -351,6 +351,25 @@ export default {async fetch(req,env){
    return json({ok:false,stage:'lara_api',errorType:e?.name||'TranslationError',message:'Translation test failed; check Cloudflare Worker logs and Lara quota. No article was modified.'},502);
   }
  }
+ // Reporter-only, one-language-at-a-time Lara compatibility test. This endpoint incurs a small API request only when explicitly called.
+ if(p==='/api/herald/lara/languages/test'&&req.method==='GET'){
+  const session=await open(env,getCookie(req,SESS));
+  if(!validSession(session))return json({error:'Reporter login required'},401,{'cache-control':'no-store'});
+  const targets={de:'de-DE',ru:'ru-RU',tr:'tr-TR',fr:'fr-FR',ms:'ms-MY',fi:'fi-FI',uk:'uk-UA',uz:'uz-UZ',id:'id-ID',es:'es-ES','pt-BR':'pt-BR',pl:'pl-PL'};
+  const lang=url.searchParams.get('lang');
+  if(!lang||!Object.prototype.hasOwnProperty.call(targets,lang))return json({ok:false,error:'Choose one valid target language',allowedLanguages:Object.keys(targets),requestsMade:0,articlesModified:false,automaticPublishingEnabled:false},400,{'cache-control':'no-store'});
+  if(!env.LARA_ACCESS_KEY_ID||!env.LARA_ACCESS_KEY_SECRET)return json({ok:false,stage:'configuration',error:'Lara credentials missing'},503,{'cache-control':'no-store'});
+  try{
+   if(typeof globalThis.window==='undefined')globalThis.window={crypto:globalThis.crypto};
+   const lara=new Translator(new Credentials(env.LARA_ACCESS_KEY_ID,env.LARA_ACCESS_KEY_SECRET));
+   const result=await lara.translate('Welcome to Kingdom 3903.','en-US',targets[lang]);
+   if(typeof result?.translation!=='string'||!result.translation.trim())return json({ok:false,language:lang,stage:'response',error:'Lara returned no translation',articlesModified:false},502,{'cache-control':'no-store'});
+   return json({ok:true,language:lang,sourceLanguage:'en-US',targetLanguage:targets[lang],translation:result.translation,requestsMade:1,articlesModified:false,automaticPublishingEnabled:false},200,{'cache-control':'no-store'});
+  }catch(e){
+   console.warn('Lara language compatibility test failed',JSON.stringify({language:lang,name:String(e?.name||'Error'),message:String(e?.message||'Unknown error').slice(0,350)}));
+   return json({ok:false,language:lang,stage:'lara_api',errorType:String(e?.name||'TranslationError'),message:'Translation test failed. Check Worker logs for the language and error; no articles were modified.',articlesModified:false},502,{'cache-control':'no-store'});
+  }
+ }
  if(p==='/api/herald/me'&&req.method==='GET'){
   const session=await open(env,getCookie(req,SESS));if(!validSession(session))return json({authenticated:false,isAdmin:false},401);
   return json({authenticated:true,isAdmin:true,user:{id:session.id,username:session.username,global_name:session.global_name}});
