@@ -1,7 +1,9 @@
 {
   "name": "kingdom3903-website",
   "main": "worker.js",
-  "ai": {"binding": "AI"},
+  "ai": {
+    "binding": "AI"
+  },
   "compatibility_date": "2026-10-01",
   "assets": {
     "directory": "./public",
@@ -24,5 +26,10 @@
       "binding": "HERALD_IMAGES",
       "bucket_name": "citadel-herald-images"
     }
-  ]
+  ],
+  "triggers": {
+    "crons": [
+      "*/1 * * * *"
+    ]
+  }
 }
