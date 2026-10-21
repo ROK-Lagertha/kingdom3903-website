@@ -162,7 +162,7 @@ async function serveArticleImage(req,env,p){
   return article;
  }
  // Use multilingual instruct model: M2M100 returned empty text in production.
- const HERALD_TRANSLATION_MODEL='@cf/meta/llama-3.1-8b-instruct';
+ const HERALD_TRANSLATION_MODEL='@cf/meta/llama-3.1-8b-instruct-fast';
  async function translateText(env,text,lang){
   if(!text||!text.trim())return text;
   const target=HERALD_LANGUAGES[lang];
