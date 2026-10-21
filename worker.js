@@ -214,40 +214,42 @@ async function translateArticleFields(env,article,lang){
 }
 // Cron-driven translation: one target language per invocation, no visitor-triggered AI calls.
 // Existing published articles are automatically backfilled. Jobs are capped at three attempts.
+// Queue only languages requested by visitors. D1 retains one job per article/language.
+async function queueHeraldTranslation(db,article,lang){
+ if(!article||lang==='en'||!Object.hasOwn(HERALD_LANGUAGES,lang))return;
+ const existing=await db.prepare('SELECT source_updated_at FROM herald_article_translations_v2 WHERE article_id=? AND language_code=?').bind(article.id,lang).first();
+ if(existing?.source_updated_at===article.updated_at)return;
+ await db.prepare(`INSERT INTO herald_translation_jobs(article_id,language_code,source_updated_at,attempts,locked_until,last_error)
+ VALUES(?,?,?,0,0,'') ON CONFLICT(article_id,language_code) DO UPDATE SET
+ source_updated_at=excluded.source_updated_at,attempts=0,locked_until=0,last_error=''
+ WHERE herald_translation_jobs.source_updated_at<>excluded.source_updated_at`).bind(article.id,lang,article.updated_at).run();
+}
 async function translateNextHeraldLanguage(env){
  if(!env.AI||!env.HERALD_DB){console.error('Herald translation requires AI and HERALD_DB bindings');return}
- const db=env.HERALD_DB;
- const rows=await db.prepare("SELECT id,title,summary,body_html,updated_at FROM herald_articles WHERE status='published' ORDER BY published_at ASC LIMIT 12").all();
- for(const a of rows.results||[]){
-  for(const lang of Object.keys(HERALD_LANGUAGES)){
-   const existing=await db.prepare('SELECT source_updated_at FROM herald_article_translations_v2 WHERE article_id=? AND language_code=?').bind(a.id,lang).first();
-   if(existing?.source_updated_at===a.updated_at)continue;
-   const state=await db.prepare('SELECT source_updated_at,attempts,locked_until FROM herald_translation_jobs WHERE article_id=? AND language_code=?').bind(a.id,lang).first();
-   if(state?.source_updated_at===a.updated_at&&(state.attempts>=3||state.locked_until>Date.now()))continue;
-   // A conditional update claims the language for this scheduled invocation.
-   await db.prepare(`INSERT INTO herald_translation_jobs(article_id,language_code,source_updated_at,attempts,locked_until,last_error)
-     VALUES(?,?,?,0,0,'') ON CONFLICT(article_id,language_code) DO UPDATE SET
-     source_updated_at=excluded.source_updated_at,attempts=0,locked_until=0,last_error=''
-     WHERE herald_translation_jobs.source_updated_at<>excluded.source_updated_at`).bind(a.id,lang,a.updated_at).run();
-   const claim=await db.prepare('UPDATE herald_translation_jobs SET attempts=attempts+1,locked_until=? WHERE article_id=? AND language_code=? AND source_updated_at=? AND attempts<3 AND locked_until<? RETURNING attempts').bind(Date.now()+240000,a.id,lang,a.updated_at,Date.now()).first();
-   if(!claim)continue;
-   try{
-    const translated=await translateArticleFields(env,a,lang);
-    const {title,summary,body_html:body}=translated;
-    const current=await db.prepare('SELECT status,updated_at FROM herald_articles WHERE id=?').bind(a.id).first();
-    if(current?.status==='published'&&current.updated_at===a.updated_at){
-     await db.prepare(`INSERT INTO herald_article_translations_v2(article_id,language_code,title,summary,body_html,source_updated_at,translation_status,updated_at)
-      VALUES(?,?,?,?,?,?,'machine',strftime('%Y-%m-%dT%H:%M:%fZ','now'))
-      ON CONFLICT(article_id,language_code) DO UPDATE SET title=excluded.title,summary=excluded.summary,body_html=excluded.body_html,source_updated_at=excluded.source_updated_at,translation_status='machine',updated_at=excluded.updated_at`)
-      .bind(a.id,lang,title,summary,body,a.updated_at).run();
-    }
-    await db.prepare('DELETE FROM herald_translation_jobs WHERE article_id=? AND language_code=? AND source_updated_at=?').bind(a.id,lang,a.updated_at).run();
-   }catch(e){
-    console.error('Herald translation failed',a.id,lang,'attempt',claim.attempts,String(e?.message||e).slice(0,300));
-    await db.prepare('UPDATE herald_translation_jobs SET locked_until=0,last_error=? WHERE article_id=? AND language_code=? AND source_updated_at=?').bind(String(e?.message||e).slice(0,350),a.id,lang,a.updated_at).run();
-   }
-   return; // Exactly one target language per scheduled run.
+ const db=env.HERALD_DB,now=Date.now();
+ const job=await db.prepare(`SELECT j.article_id,j.language_code,j.source_updated_at,a.title,a.summary,a.body_html,a.updated_at
+ FROM herald_translation_jobs j JOIN herald_articles a ON a.id=j.article_id
+ WHERE a.status='published' AND j.source_updated_at=a.updated_at AND j.attempts<3 AND j.locked_until<?
+ ORDER BY j.rowid ASC LIMIT 1`).bind(now).first();
+ if(!job)return;
+ const lang=job.language_code;
+ if(!Object.hasOwn(HERALD_LANGUAGES,lang))return;
+ const claim=await db.prepare('UPDATE herald_translation_jobs SET attempts=attempts+1,locked_until=? WHERE article_id=? AND language_code=? AND source_updated_at=? AND attempts<3 AND locked_until<? RETURNING attempts').bind(now+240000,job.article_id,lang,job.updated_at,now).first();
+ if(!claim)return;
+ try{
+  const {title,summary,body_html:body}=await translateArticleFields(env,job,lang);
+  const current=await db.prepare('SELECT status,updated_at FROM herald_articles WHERE id=?').bind(job.article_id).first();
+  if(current?.status==='published'&&current.updated_at===job.updated_at){
+   await db.prepare(`INSERT INTO herald_article_translations_v2(article_id,language_code,title,summary,body_html,source_updated_at,translation_status,updated_at)
+   VALUES(?,?,?,?,?,?,'machine',strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+   ON CONFLICT(article_id,language_code) DO UPDATE SET title=excluded.title,summary=excluded.summary,body_html=excluded.body_html,source_updated_at=excluded.source_updated_at,translation_status='machine',updated_at=excluded.updated_at`)
+   .bind(job.article_id,lang,title,summary,body,job.updated_at).run();
+   console.log('Herald translation cached',job.article_id,lang);
   }
+  await db.prepare('DELETE FROM herald_translation_jobs WHERE article_id=? AND language_code=? AND source_updated_at=?').bind(job.article_id,lang,job.updated_at).run();
+ }catch(e){
+  console.error('Herald translation failed',job.article_id,lang,'attempt',claim.attempts,String(e?.message||e).slice(0,300));
+  await db.prepare('UPDATE herald_translation_jobs SET locked_until=0,last_error=? WHERE article_id=? AND language_code=? AND source_updated_at=?').bind(String(e?.message||e).slice(0,350),job.article_id,lang,job.updated_at).run();
  }
 }
 async function publicNews(req,env,url,p){
@@ -255,8 +257,8 @@ async function publicNews(req,env,url,p){
  if(!env.HERALD_DB)return json({error:'News service unavailable'},503);
  try{
   const id=p.match(/^\/api\/herald\/public\/articles\/(\d+)$/);
-  if(id){const a=await env.HERALD_DB.prepare("SELECT a.id,a.slug,a.title,a.summary,a.category,a.body_html,a.author_display_name,a.published_at,a.updated_at,CASE WHEN i.article_id IS NULL THEN 0 ELSE 1 END AS has_image FROM herald_articles a LEFT JOIN herald_article_images i ON i.article_id=a.id WHERE a.id=? AND a.status='published'").bind(Number(id[1])).first();return a?json({article:await translatedArticle(env.HERALD_DB,a,heraldLang(url))}):json({error:'Not found'},404)}
-  const r=await env.HERALD_DB.prepare("SELECT id,slug,title,summary,category,author_display_name,published_at,updated_at FROM herald_articles WHERE status='published' ORDER BY published_at DESC LIMIT 60").all();return json({articles:await Promise.all((r.results||[]).map(a=>translatedArticle(env.HERALD_DB,a,heraldLang(url))))});
+  if(id){const a=await env.HERALD_DB.prepare("SELECT a.id,a.slug,a.title,a.summary,a.category,a.body_html,a.author_display_name,a.published_at,a.updated_at,CASE WHEN i.article_id IS NULL THEN 0 ELSE 1 END AS has_image FROM herald_articles a LEFT JOIN herald_article_images i ON i.article_id=a.id WHERE a.id=? AND a.status='published'").bind(Number(id[1])).first();if(!a)return json({error:'Not found'},404);const lang=heraldLang(url);await queueHeraldTranslation(env.HERALD_DB,a,lang);return json({article:await translatedArticle(env.HERALD_DB,a,lang)})}
+  const r=await env.HERALD_DB.prepare("SELECT id,slug,title,summary,category,author_display_name,published_at,updated_at FROM herald_articles WHERE status='published' ORDER BY published_at DESC LIMIT 60").all();const lang=heraldLang(url);const articles=r.results||[];if(lang!=='en')await Promise.all(articles.map(a=>queueHeraldTranslation(env.HERALD_DB,a,lang)));return json({articles:await Promise.all(articles.map(a=>translatedArticle(env.HERALD_DB,a,lang)))});
  }catch(e){console.error('Public Herald D1 error',e);return json({error:'News service unavailable'},503)}
 }
 // Public, read-only carousel: selected published articles only, in slot order.
@@ -265,7 +267,7 @@ async function publicPulse(req,env,url){
  if(!env.HERALD_DB)return json({error:'News service unavailable'},503);
  try{
   const r=await env.HERALD_DB.prepare("SELECT s.slot,a.id,a.slug,a.title,a.summary,a.category,a.published_at,a.updated_at FROM herald_pulse_slots s JOIN herald_articles a ON a.id=s.article_id WHERE a.status='published' ORDER BY s.slot ASC LIMIT 4").all();
-  return json({articles:await Promise.all((r.results||[]).map(a=>translatedArticle(env.HERALD_DB,a,heraldLang(url))))});
+  const lang=heraldLang(url);const articles=r.results||[];if(lang!=='en')await Promise.all(articles.map(a=>queueHeraldTranslation(env.HERALD_DB,a,lang)));return json({articles:await Promise.all(articles.map(a=>translatedArticle(env.HERALD_DB,a,lang)))});
  }catch(e){console.error('Public Pulse error',e);return json({error:'News service unavailable'},503)}
 }
 async function managePulse(req,env,url){
