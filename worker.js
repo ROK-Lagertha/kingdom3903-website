@@ -194,8 +194,18 @@ async function translateArticleFields(env,article,lang){
  const raw=typeof payload==='string'?payload:(payload?.response??payload?.text??payload?.output_text);
  if(typeof raw!=='string'||!raw.trim())throw Error('Workers AI returned empty article translation');
  let parsed;
- try{parsed=JSON.parse(raw.trim().replace(/^```(?:json)?\s*/i,'').replace(/\s*```$/,''))}
- catch{throw Error('Workers AI did not return valid translation JSON')}
+ const cleaned=raw.trim().replace(/^```(?:json)?\s*/i,'').replace(/\s*```$/,'');
+ try{parsed=JSON.parse(cleaned)}
+ catch{
+  // Some instruction models wrap JSON in explanatory prose. Recover a complete
+  // top-level JSON object without logging article content or caching malformed data.
+  const first=cleaned.indexOf('{'),last=cleaned.lastIndexOf('}');
+  if(first>=0&&last>first){try{parsed=JSON.parse(cleaned.slice(first,last+1))}catch{}}
+  if(!parsed){
+   console.warn('Herald AI JSON diagnostics',JSON.stringify({lang,model:HERALD_TRANSLATION_MODEL,responseLength:raw.length,startsWithObject:cleaned.startsWith('{'),endsWithObject:cleaned.endsWith('}'),hasCodeFence:raw.includes('```'),finishReason:payload?.finish_reason??response?.finish_reason??null,usage:payload?.usage??response?.usage??null,keys:payload&&typeof payload==='object'?Object.keys(payload).slice(0,12):[]}));
+   throw Error('Workers AI did not return valid translation JSON');
+  }
+ }
  if(!parsed||typeof parsed.title!=='string'||typeof parsed.summary!=='string'||typeof parsed.body_html!=='string'||!parsed.title.trim())throw Error('Workers AI returned incomplete translation JSON');
  const tags=s=>(s.match(/<[^>]*>/g)||[]);
  const oldTags=tags(source.body_html),newTags=tags(parsed.body_html);
