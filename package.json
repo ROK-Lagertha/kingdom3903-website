@@ -1,8 +1,5 @@
 {
   "name": "kingdom3903-website",
   "private": true,
-  "type": "module",
-  "dependencies": {
-    "@translated/lara": "^1.0.0"
-  }
+  "type": "module"
 }

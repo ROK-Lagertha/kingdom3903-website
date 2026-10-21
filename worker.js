@@ -1,4 +1,3 @@
-import { Credentials, Translator } from '@translated/lara';
 // The Citadel / Royal Herald — Cloudflare Worker OAuth2
 // Requires env.ASSETS and three Cloudflare secrets. Never commit credentials.
 const GUILD='1462581217722368074';
@@ -151,22 +150,74 @@ async function serveArticleImage(req,env,p){
  const obj=await env.HERALD_IMAGES.get(row.object_key);if(!obj)return json({error:'Not found'},404);
  return new Response(req.method==='HEAD'?null:obj.body,{headers:{'content-type':row.content_type,'content-disposition':'inline','x-content-type-options':'nosniff','cache-control':'public, max-age=300','content-security-policy':"default-src 'none'; sandbox"}});
 }
+// Cloudflare Workers AI translation pipeline. English remains the canonical source.
+const HERALD_LANGUAGES={de:'de',ru:'ru',tr:'tr',fr:'fr',ms:'ms',fi:'fi',uk:'uk',uz:'uz',id:'id',es:'es','pt-BR':'pt',pl:'pl'};
+const HERALD_MODEL='@cf/meta/m2m100-1.2b';
+function heraldLang(url){const code=url.searchParams.get('lang')||'en';return Object.hasOwn(HERALD_LANGUAGES,code)?code:'en'}
+async function translatedArticle(db,article,lang){
+ if(lang==='en'||!article)return article;
+ try{const t=await db.prepare('SELECT title,summary,body_html,source_updated_at FROM herald_article_translations_v2 WHERE article_id=? AND language_code=?').bind(article.id,lang).first();
+  if(t&&t.source_updated_at===article.updated_at)return {...article,title:t.title,summary:t.summary,body_html:t.body_html||article.body_html};
+ }catch(e){console.warn('Herald translation lookup unavailable',String(e?.message||e).slice(0,140))}
+ return article;
+}
+// Translate text nodes only; HTML tags, links, images and attributes are never sent to AI.
+async function translateText(env,text,lang){
+ if(!text||!text.trim())return text;
+ const result=await env.AI.run(HERALD_MODEL,{text,source_lang:'en',target_lang:HERALD_LANGUAGES[lang]});
+ const value=result?.translated_text??result?.translation;
+ if(typeof value!=='string'||!value.trim())throw Error('Workers AI returned no translation');
+ return value.trim();
+}
+async function translateHtml(env,html,lang){
+ const parts=html.split(/(<[^>]*>)/g);const translated=[];
+ for(const part of parts){
+  if(!part||part.startsWith('<')||!part.trim()){translated.push(part);continue}
+  // Keep HTML entities intact, and avoid requests for punctuation-only fragments.
+  if(!/[A-Za-z]/.test(part)){translated.push(part);continue}
+  const match=part.match(/^(\s*)([\s\S]*?)(\s*)$/);
+  translated.push(match[1]+await translateText(env,match[2],lang)+match[3]);
+ }
+ return translated.join('');
+}
+async function translatePublishedArticle(env,id){
+ if(!env.AI||!env.HERALD_DB){console.error('Herald AI or D1 binding missing');return}
+ const db=env.HERALD_DB;
+ const a=await db.prepare("SELECT id,title,summary,body_html,updated_at FROM herald_articles WHERE id=? AND status='published'").bind(id).first();
+ if(!a)return;
+ for(const lang of Object.keys(HERALD_LANGUAGES)){
+  try{
+   const existing=await db.prepare('SELECT source_updated_at FROM herald_article_translations_v2 WHERE article_id=? AND language_code=?').bind(id,lang).first();
+   if(existing?.source_updated_at===a.updated_at)continue;
+   const title=await translateText(env,a.title,lang);
+   const summary=a.summary?await translateText(env,a.summary,lang):'';
+   const body=await translateHtml(env,a.body_html||'',lang);
+   // Guard against stale jobs overwriting a newer article version.
+   const current=await db.prepare('SELECT updated_at,status FROM herald_articles WHERE id=?').bind(id).first();
+   if(!current||current.status!=='published'||current.updated_at!==a.updated_at)return;
+   await db.prepare(`INSERT INTO herald_article_translations_v2(article_id,language_code,title,summary,body_html,source_updated_at,translation_status,updated_at)
+    VALUES(?,?,?,?,?,?,'machine',strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+    ON CONFLICT(article_id,language_code) DO UPDATE SET title=excluded.title,summary=excluded.summary,body_html=excluded.body_html,source_updated_at=excluded.source_updated_at,translation_status='machine',updated_at=excluded.updated_at`)
+    .bind(id,lang,title,summary,body,a.updated_at).run();
+  }catch(e){console.error('Herald AI translation failed',lang,id,String(e?.message||e).slice(0,300))}
+ }
+}
 async function publicNews(req,env,url,p){
  if(req.method!=='GET')return json({error:'Method not allowed'},405);
  if(!env.HERALD_DB)return json({error:'News service unavailable'},503);
  try{
   const id=p.match(/^\/api\/herald\/public\/articles\/(\d+)$/);
-  if(id){const a=await env.HERALD_DB.prepare("SELECT a.id,a.slug,a.title,a.summary,a.category,a.body_html,a.author_display_name,a.published_at,CASE WHEN i.article_id IS NULL THEN 0 ELSE 1 END AS has_image FROM herald_articles a LEFT JOIN herald_article_images i ON i.article_id=a.id WHERE a.id=? AND a.status='published'").bind(Number(id[1])).first();return a?json({article:a}):json({error:'Not found'},404)}
-  const r=await env.HERALD_DB.prepare("SELECT id,slug,title,summary,category,author_display_name,published_at FROM herald_articles WHERE status='published' ORDER BY published_at DESC LIMIT 60").all();return json({articles:r.results||[]});
+  if(id){const a=await env.HERALD_DB.prepare("SELECT a.id,a.slug,a.title,a.summary,a.category,a.body_html,a.author_display_name,a.published_at,a.updated_at,CASE WHEN i.article_id IS NULL THEN 0 ELSE 1 END AS has_image FROM herald_articles a LEFT JOIN herald_article_images i ON i.article_id=a.id WHERE a.id=? AND a.status='published'").bind(Number(id[1])).first();return a?json({article:await translatedArticle(env.HERALD_DB,a,heraldLang(url))}):json({error:'Not found'},404)}
+  const r=await env.HERALD_DB.prepare("SELECT id,slug,title,summary,category,author_display_name,published_at,updated_at FROM herald_articles WHERE status='published' ORDER BY published_at DESC LIMIT 60").all();return json({articles:await Promise.all((r.results||[]).map(a=>translatedArticle(env.HERALD_DB,a,heraldLang(url))))});
  }catch(e){console.error('Public Herald D1 error',e);return json({error:'News service unavailable'},503)}
 }
 // Public, read-only carousel: selected published articles only, in slot order.
-async function publicPulse(req,env){
+async function publicPulse(req,env,url){
  if(req.method!=='GET')return json({error:'Method not allowed'},405);
  if(!env.HERALD_DB)return json({error:'News service unavailable'},503);
  try{
-  const r=await env.HERALD_DB.prepare("SELECT s.slot,a.id,a.slug,a.title,a.summary,a.category,a.published_at FROM herald_pulse_slots s JOIN herald_articles a ON a.id=s.article_id WHERE a.status='published' ORDER BY s.slot ASC LIMIT 4").all();
-  return json({articles:r.results||[]});
+  const r=await env.HERALD_DB.prepare("SELECT s.slot,a.id,a.slug,a.title,a.summary,a.category,a.published_at,a.updated_at FROM herald_pulse_slots s JOIN herald_articles a ON a.id=s.article_id WHERE a.status='published' ORDER BY s.slot ASC LIMIT 4").all();
+  return json({articles:await Promise.all((r.results||[]).map(a=>translatedArticle(env.HERALD_DB,a,heraldLang(url))))});
  }catch(e){console.error('Public Pulse error',e);return json({error:'News service unavailable'},503)}
 }
 async function managePulse(req,env,url){
@@ -195,7 +246,7 @@ async function managePulse(req,env,url){
   return json({ok:true,article_ids:ids});
  }catch(e){console.error('Pulse manager error',e);return json({error:'Could not save Pulse selection'},500)}
 }
-async function editorial(req,env,url,p){
+async function editorial(req,env,url,p,ctx){
  const session=await open(env,getCookie(req,SESS));if(!validSession(session))return json({error:'Reporter login required'},401);
  if(!env.HERALD_DB)return json({error:'D1 binding HERALD_DB missing'},503);
  const db=env.HERALD_DB,method=req.method;
@@ -226,7 +277,7 @@ async function editorial(req,env,url,p){
     await db.prepare("UPDATE herald_articles SET status='archived',updated_at=strftime('%Y-%m-%dT%H:%M:%fZ','now') WHERE id=?").bind(id).run();
     await db.prepare('DELETE FROM herald_pulse_slots WHERE article_id=?').bind(id).run();
    }
-   await audit(db,id,session.id,action);return json({ok:true,id,status:action==='publish'?'published':action==='unpublish'?'draft':'archived'});
+   await audit(db,id,session.id,action);if(action==='publish')ctx.waitUntil(translatePublishedArticle(env,id));return json({ok:true,id,status:action==='publish'?'published':action==='unpublish'?'draft':'archived',translations:action==='publish'?'processing':undefined});
   }
   if(match&&method==='GET'){
    const item=await db.prepare('SELECT a.*,CASE WHEN i.article_id IS NULL THEN 0 ELSE 1 END AS has_image FROM herald_articles a LEFT JOIN herald_article_images i ON i.article_id=a.id WHERE a.id=?').bind(Number(match[1])).first();return item?json({article:item}):json({error:'Not found'},404);
@@ -274,7 +325,7 @@ async function publicArticlePage(req,env,url,slug){
  return new Response(req.method==='HEAD'?null:page,{status:200,headers:h});
 }
 
-export default {async fetch(req,env){
+export default {async fetch(req,env,ctx){
  const url=new URL(req.url),p=url.pathname;
  // Dedicated article URLs: published slugs only, never admin/API paths.
  const match=p.match(/^\/news\/([a-z0-9][a-z0-9-]{0,199})\/?$/);
@@ -293,7 +344,7 @@ export default {async fetch(req,env){
  }
  if(!p.startsWith('/api/herald/'))return env.ASSETS.fetch(req);
  if(/^\/api\/herald\/images\/\d+$/.test(p))return serveArticleImage(req,env,p);
- if(p==='/api/herald/public/pulse')return publicPulse(req,env);
+ if(p==='/api/herald/public/pulse')return publicPulse(req,env,url);
  if(p==='/api/herald/public/articles'||/^\/api\/herald\/public\/articles\/\d+$/.test(p))return publicNews(req,env,url,p);
  if(!env.DISCORD_CLIENT_SECRET||!env.HERALD_SESSION_SECRET)return json({error:'Authentication is not configured'},503);
  if(p==='/api/herald/login'&&req.method==='GET'){
@@ -320,64 +371,14 @@ export default {async fetch(req,env){
   const origin=req.headers.get('origin');if(origin&&origin!==url.origin)return json({error:'Invalid origin'},403);
   return addCookies(json({ok:true}),[cookie(SESS,'',0)]);
  }
- // Reporter-only, read-only Lara integration readiness check. Never expose secret values.
- if(p==='/api/herald/lara/status'&&req.method==='GET'){
-  const session=await open(env,getCookie(req,SESS));
-  if(!validSession(session))return json({error:'Reporter login required'},401,{'cache-control':'no-store'});
-  const configured=!!(env.LARA_ACCESS_KEY_ID&&env.LARA_ACCESS_KEY_SECRET);
-  let databaseReady=false;
-  if(env.HERALD_DB){
-   try{const row=await env.HERALD_DB.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='herald_article_translations'").first();databaseReady=!!row}
-   catch(e){console.warn('Lara readiness database check failed')}
-  }
-  return json({integration:'preflight',credentialsConfigured:configured,translationTableReady:databaseReady,translationApiTested:false,automaticPublishingEnabled:false},200,{'cache-control':'no-store'});
- }
- // Reporter-only live translation smoke test. No database writes or article publication.
- if(p==='/api/herald/lara/test'&&req.method==='GET'){
-  const session=await open(env,getCookie(req,SESS));
-  if(!validSession(session))return json({error:'Reporter login required'},401);
-  if(!env.LARA_ACCESS_KEY_ID||!env.LARA_ACCESS_KEY_SECRET)return json({ok:false,stage:'configuration',error:'Lara credentials missing'},503);
-  try{
-   // Lara SDK BrowserCrypto expects window.crypto; Workers exposes Web Crypto globally.
-   // This compatibility shim is scoped to the authenticated smoke-test path only.
-   if(typeof globalThis.window==='undefined')globalThis.window={crypto:globalThis.crypto};
-   const lara=new Translator(new Credentials(env.LARA_ACCESS_KEY_ID,env.LARA_ACCESS_KEY_SECRET));
-   const result=await lara.translate('Welcome to Kingdom 3903.','en-US','de-DE');
-   const translated=result?.translation;
-   if(typeof translated!=='string'||!translated.trim())return json({ok:false,stage:'response',error:'Lara returned no text'},502);
-   return json({ok:true,sourceLanguage:'en-US',targetLanguage:'de-DE',source:'Welcome to Kingdom 3903.',translation:translated,articlesModified:false,automaticPublishingEnabled:false});
-  }catch(e){
-   console.warn('Lara test failed', JSON.stringify({name:String(e?.name||'Error'),message:String(e?.message||'Unknown error').slice(0,500),stack:String(e?.stack||'').split('\n').slice(0,5).join(' | ').slice(0,900)}));
-   return json({ok:false,stage:'lara_api',errorType:e?.name||'TranslationError',message:'Translation test failed; check Cloudflare Worker logs and Lara quota. No article was modified.'},502);
-  }
- }
- // Reporter-only, one-language-at-a-time Lara compatibility test. This endpoint incurs a small API request only when explicitly called.
- if(p==='/api/herald/lara/languages/test'&&req.method==='GET'){
-  const session=await open(env,getCookie(req,SESS));
-  if(!validSession(session))return json({error:'Reporter login required'},401,{'cache-control':'no-store'});
-  const targets={de:'de-DE',ru:'ru-RU',tr:'tr-TR',fr:'fr-FR',ms:'ms-MY',fi:'fi-FI',uk:'uk-UA',uz:'uz-UZ',id:'id-ID',es:'es-ES','pt-BR':'pt-BR',pl:'pl-PL'};
-  const lang=url.searchParams.get('lang');
-  if(!lang||!Object.prototype.hasOwnProperty.call(targets,lang))return json({ok:false,error:'Choose one valid target language',allowedLanguages:Object.keys(targets),requestsMade:0,articlesModified:false,automaticPublishingEnabled:false},400,{'cache-control':'no-store'});
-  if(!env.LARA_ACCESS_KEY_ID||!env.LARA_ACCESS_KEY_SECRET)return json({ok:false,stage:'configuration',error:'Lara credentials missing'},503,{'cache-control':'no-store'});
-  try{
-   if(typeof globalThis.window==='undefined')globalThis.window={crypto:globalThis.crypto};
-   const lara=new Translator(new Credentials(env.LARA_ACCESS_KEY_ID,env.LARA_ACCESS_KEY_SECRET));
-   const result=await lara.translate('Welcome to Kingdom 3903.','en-US',targets[lang]);
-   if(typeof result?.translation!=='string'||!result.translation.trim())return json({ok:false,language:lang,stage:'response',error:'Lara returned no translation',articlesModified:false},502,{'cache-control':'no-store'});
-   return json({ok:true,language:lang,sourceLanguage:'en-US',targetLanguage:targets[lang],translation:result.translation,requestsMade:1,articlesModified:false,automaticPublishingEnabled:false},200,{'cache-control':'no-store'});
-  }catch(e){
-   console.warn('Lara language compatibility test failed',JSON.stringify({language:lang,name:String(e?.name||'Error'),message:String(e?.message||'Unknown error').slice(0,350)}));
-   return json({ok:false,language:lang,stage:'lara_api',errorType:String(e?.name||'TranslationError'),message:'Translation test failed. Check Worker logs for the language and error; no articles were modified.',articlesModified:false},502,{'cache-control':'no-store'});
-  }
- }
  if(p==='/api/herald/me'&&req.method==='GET'){
   const session=await open(env,getCookie(req,SESS));if(!validSession(session))return json({authenticated:false,isAdmin:false},401);
   return json({authenticated:true,isAdmin:true,user:{id:session.id,username:session.username,global_name:session.global_name}});
  }
- if(p==='/api/herald/public/pulse')return publicPulse(req,env);
+ if(p==='/api/herald/public/pulse')return publicPulse(req,env,url);
  if(p==='/api/herald/public/articles'||/^\/api\/herald\/public\/articles\/\d+$/.test(p))return publicNews(req,env,url,p);
  if(/^\/api\/herald\/articles\/\d+\/image$/.test(p))return articleImage(req,env,url,p);
  if(p==='/api/herald/pulse')return managePulse(req,env,url);
- if(p==='/api/herald/articles'||/^\/api\/herald\/articles\/\d+$/.test(p))return editorial(req,env,url,p);
+ if(p==='/api/herald/articles'||/^\/api\/herald\/articles\/\d+$/.test(p))return editorial(req,env,url,p,ctx);
  return json({error:'Not found'},404);
 }};

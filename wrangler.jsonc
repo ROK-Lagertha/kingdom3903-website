@@ -1,6 +1,7 @@
 {
   "name": "kingdom3903-website",
   "main": "worker.js",
+  "ai": {"binding": "AI"},
   "compatibility_date": "2026-10-01",
   "assets": {
     "directory": "./public",
