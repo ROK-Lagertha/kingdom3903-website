@@ -881,6 +881,16 @@ header.citadel-nav-top{position:relative!important;top:auto!important}
   background-position:center,62% center;background-size:cover,cover;
  }
 }
+</style><style id="citizens-v31864-ios-swipe">
+/* iOS Safari: vertical page scroll remains native; horizontal gestures belong to carousel. */
+.citizens-v1 .cf-stage,.citizens-v1 .cf-stage .citizens-card{
+ touch-action:pan-y; -webkit-user-select:none;user-select:none;
+ -webkit-touch-callout:none;
+}
+.citizens-v1 .cf-stage img{-webkit-user-drag:none;user-select:none;pointer-events:none}
+@supports (-webkit-touch-callout:none){
+ .citizens-v1 .cf-stage .citizens-card{will-change:auto}
+}
 </style><script id="citizens-v1-script">(()=>{'use strict';const $=id=>document.getElementById(id),categories={fighter:'⚔ Fighters',builder:'🔨 Builders',strategist:'♟ Strategists',events:'📅 Event Lovers',supporter:'🤝 Supporters',farmer:'🌱 Farmers',rally:'⚔ Rally Leaders',garrison:'🛡 Garrison Leaders',field:'🏹 Field Fighters',infantry:'🛡 Infantry',cavalry:'🐎 Cavalry',archer:'🎯 Archers'};const alliances=["ON-F", "ON:S", "ON:C", "ON-M", "LW:D", "ON:P", "LOZ"];let profiles=[],active=[],me=null;const escape=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const api=async(url,opts)=>{const r=await fetch(url,{credentials:'same-origin',...opts});const j=await r.json();if(!r.ok)throw Error(j.error||'Request failed');return j};const filters=$('citizens-filters');const all=document.createElement('button');all.className='citizens-chip';all.textContent='All Citizens';all.onclick=()=>{active=[];drawFilters();render()};filters.append(all);for(const [id,label] of Object.entries(categories)){const b=document.createElement('button');b.className='citizens-chip';b.textContent=label;b.dataset.filter=id;b.onclick=()=>{active=active.includes(id)?active.filter(x=>x!==id):[...active,id];drawFilters();render()};filters.append(b)}function drawFilters(){all.setAttribute('aria-pressed',String(!active.length));filters.querySelectorAll('[data-filter]').forEach(b=>b.setAttribute('aria-pressed',String(active.includes(b.dataset.filter))))}let coverflowIndex=0,coverflowCards=[],coverflowPointer=null,coverflowMoved=false;
 const coverflow=$('citizens-carousel');
 const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
@@ -940,7 +950,7 @@ function render(){
   card.type='button';card.className='citizens-card';card.dataset.governor=p.name;
   card.innerHTML=(p.image?'<img loading="lazy" draggable="false" src="'+escape(p.image)+'" alt="">':'<div class="citizens-card-placeholder" aria-hidden="true">♜</div>')+
    '<div class="citizens-card-content"><span class="cf-card-ornament">✦ CITIZEN OF 3903 ✦</span><h3>'+escape(p.name)+'</h3><span class="cr-card-role">'+escape(({king:'King',council:'Council',officer:'Officer',citizen:'Citizen of 3903'})[p.role]||'Citizen of 3903')+'</span><p>'+escape(p.alliance||'Kingdom 3903')+'</p><p>'+p.categories.slice(0,3).map(x=>escape(categories[x]||x)).join(' · ')+'</p></div>';
-  card.onclick=()=>{if(coverflowMoved){coverflowMoved=false;return}const index=coverflowCards.indexOf(card);if(index!==coverflowIndex){coverflowIndex=index;coverflowPaint()}else show(p)};
+  card.onclick=()=>{if(Date.now()<cfSuppressClickUntil){return}if(coverflowMoved){coverflowMoved=false;return}const index=coverflowCards.indexOf(card);if(index!==coverflowIndex){coverflowIndex=index;coverflowPaint()}else show(p)};
   coverflow.append(card);coverflowCards.push(card);
  }
  coverflowPaint();
@@ -972,22 +982,43 @@ drawFilters();$('citizens-search').oninput=render;
 $('citizens-prev').onclick=()=>coverflowMove(-1);
 $('citizens-next').onclick=()=>coverflowMove(1);
 window.addEventListener('resize',()=>{if(coverflowCards.length)coverflowPaint()});
+// Safari/iOS: native touch gestures are handled separately from mouse pointers.
+// The touchend fallback works even if WebKit cancels pointer events during a gesture.
+let cfTouch=null,cfSuppressClickUntil=0;
+function cfSwipe(dx,dy){
+ if(Math.abs(dx)<30||Math.abs(dx)<Math.abs(dy)*1.15)return false;
+ coverflowMove(dx<0?1:-1);
+ cfSuppressClickUntil=Date.now()+650;
+ coverflowMoved=true;
+ return true;
+}
+coverflow.addEventListener('touchstart',e=>{
+ if(e.touches.length!==1){cfTouch=null;return}
+ const t=e.touches[0];cfTouch={x:t.clientX,y:t.clientY};
+},{passive:true});
+coverflow.addEventListener('touchend',e=>{
+ if(!cfTouch||!e.changedTouches.length)return;
+ const t=e.changedTouches[0];
+ cfSwipe(t.clientX-cfTouch.x,t.clientY-cfTouch.y);
+ cfTouch=null;
+},{passive:true});
+coverflow.addEventListener('touchcancel',()=>{cfTouch=null},{passive:true});
 coverflow.addEventListener('pointerdown',e=>{
- if(e.button!==0&&e.pointerType==='mouse')return;
- coverflowPointer={id:e.pointerId,x:e.clientX,y:e.clientY,start:Date.now()};
+ if(e.pointerType==='touch')return; // handled by touch events
+ if(e.button!==0)return;
+ coverflowPointer={id:e.pointerId,x:e.clientX,y:e.clientY};
  coverflowMoved=false;
 });
 coverflow.addEventListener('pointerup',e=>{
  if(!coverflowPointer||coverflowPointer.id!==e.pointerId)return;
- const dx=e.clientX-coverflowPointer.x,dy=e.clientY-coverflowPointer.y;
- if(Math.abs(dx)>42&&Math.abs(dx)>Math.abs(dy)*1.15){
-  coverflowMove(dx<0?1:-1);coverflowMoved=true;
-  // Suppress the click event produced by this swipe.
-  setTimeout(()=>{coverflowMoved=false},350);
- }
+ cfSwipe(e.clientX-coverflowPointer.x,e.clientY-coverflowPointer.y);
  coverflowPointer=null;
 });
 coverflow.addEventListener('pointercancel',()=>{coverflowPointer=null});
+// Capture synthetic clicks emitted by iOS after a swipe, so a swipe never opens a profile.
+coverflow.addEventListener('click',e=>{
+ if(Date.now()<cfSuppressClickUntil){e.preventDefault();e.stopImmediatePropagation()}
+},true);
 coverflow.addEventListener('keydown',e=>{
  if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();coverflowMove(e.key==='ArrowLeft'?-1:1);coverflowCards[coverflowIndex]?.focus()}
  if(e.key==='Home'||e.key==='End'){e.preventDefault();coverflowIndex=e.key==='Home'?0:coverflowCards.length-1;coverflowPaint();coverflowCards[coverflowIndex]?.focus()}
