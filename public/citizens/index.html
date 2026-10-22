@@ -868,6 +868,19 @@ header.citadel-nav-top{position:relative!important;top:auto!important}
 .citizens-v1 .citizens-login .citizens-account small{color:#e2d6c5;text-shadow:0 2px 7px #000;line-height:1.5}
 @media(max-width:720px){.citizens-v1 .citizens-login{grid-template-columns:1fr;gap:14px;min-height:0;padding:36px 25px;background-position:59% center}.citizens-v1 .citizens-login .citizens-account{width:100%;max-width:380px;justify-self:center}.citizens-v1 .citizens-login h2{font-size:clamp(27px,7vw,39px)}}
 @media(prefers-reduced-motion:reduce){.citizens-v1 .citizens-login .citizens-account{backdrop-filter:none}}
+</style><style id="citizens-v31863-clean-banner">
+/* Art-only image: no baked-in text or buttons. Live HTML is layered once. */
+.citizens-v1 .citizens-login{
+ background-image:linear-gradient(90deg,rgba(4,12,28,.91) 0%,rgba(5,13,29,.76) 39%,rgba(5,13,29,.43) 70%,rgba(5,13,29,.62) 100%),url('/assets/citizens-royal-landscape-v3.18.63.webp');
+ background-position:center,center 47%;background-size:cover,cover;
+ background-repeat:no-repeat;
+}
+@media(max-width:720px){
+ .citizens-v1 .citizens-login{
+  background-image:linear-gradient(180deg,rgba(4,12,28,.80),rgba(4,12,28,.66) 45%,rgba(4,12,28,.83)),url('/assets/citizens-royal-landscape-v3.18.63.webp');
+  background-position:center,62% center;background-size:cover,cover;
+ }
+}
 </style><script id="citizens-v1-script">(()=>{'use strict';const $=id=>document.getElementById(id),categories={fighter:'⚔ Fighters',builder:'🔨 Builders',strategist:'♟ Strategists',events:'📅 Event Lovers',supporter:'🤝 Supporters',farmer:'🌱 Farmers',rally:'⚔ Rally Leaders',garrison:'🛡 Garrison Leaders',field:'🏹 Field Fighters',infantry:'🛡 Infantry',cavalry:'🐎 Cavalry',archer:'🎯 Archers'};const alliances=["ON-F", "ON:S", "ON:C", "ON-M", "LW:D", "ON:P", "LOZ"];let profiles=[],active=[],me=null;const escape=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const api=async(url,opts)=>{const r=await fetch(url,{credentials:'same-origin',...opts});const j=await r.json();if(!r.ok)throw Error(j.error||'Request failed');return j};const filters=$('citizens-filters');const all=document.createElement('button');all.className='citizens-chip';all.textContent='All Citizens';all.onclick=()=>{active=[];drawFilters();render()};filters.append(all);for(const [id,label] of Object.entries(categories)){const b=document.createElement('button');b.className='citizens-chip';b.textContent=label;b.dataset.filter=id;b.onclick=()=>{active=active.includes(id)?active.filter(x=>x!==id):[...active,id];drawFilters();render()};filters.append(b)}function drawFilters(){all.setAttribute('aria-pressed',String(!active.length));filters.querySelectorAll('[data-filter]').forEach(b=>b.setAttribute('aria-pressed',String(active.includes(b.dataset.filter))))}let coverflowIndex=0,coverflowCards=[],coverflowPointer=null,coverflowMoved=false;
 const coverflow=$('citizens-carousel');
 const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
