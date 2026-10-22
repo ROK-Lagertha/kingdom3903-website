@@ -891,6 +891,54 @@ header.citadel-nav-top{position:relative!important;top:auto!important}
 @supports (-webkit-touch-callout:none){
  .citizens-v1 .cf-stage .citizens-card{will-change:auto}
 }
+</style><style id="citizens-v31865-royal-gallery">
+/* A second royal card: actual HTML controls over text-free illustration. */
+.citizens-v1 .citizens-gallery{
+ position:relative;isolation:isolate;overflow:hidden;
+ border:2px solid #c69a57;border-radius:20px;
+ padding:clamp(24px,4.2vw,52px);
+ background-color:#081629;
+ background-image:
+  linear-gradient(180deg,rgba(4,13,29,.79) 0%,rgba(5,15,32,.79) 28%,rgba(6,15,31,.93) 62%,#071429 93%),
+  linear-gradient(90deg,rgba(4,12,28,.82) 0%,rgba(4,12,28,.53) 52%,rgba(4,12,28,.12) 100%),
+  url('/assets/citizens-community-terrace-v3.18.65.webp');
+ background-position:center,center,center 35%;
+ background-size:cover,cover,cover;
+ background-repeat:no-repeat;
+ box-shadow:inset 0 0 0 5px #071429,inset 0 0 0 6px #b88d50,0 20px 55px #0008,0 0 25px #b78c3a19;
+}
+.citizens-v1 .citizens-gallery:before,
+.citizens-v1 .citizens-gallery:after{
+ position:absolute;z-index:1;left:50%;transform:translateX(-50%);
+ color:#ffe2a1;line-height:1;text-shadow:0 0 12px #e5a949;pointer-events:none;
+}
+.citizens-v1 .citizens-gallery:before{content:'✦';top:0;font-size:24px}
+.citizens-v1 .citizens-gallery:after{content:'✧';bottom:0;font-size:24px}
+.citizens-v1 .citizens-gallery>*{position:relative;z-index:2}
+.citizens-v1 .citizens-gallery .citizens-section-title h2{
+ color:#ffe0a1;text-shadow:0 3px 15px #000b;
+}
+.citizens-v1 .citizens-gallery .citizens-section-title p,
+.citizens-v1 .citizens-gallery .citizens-section-title span{text-shadow:0 2px 8px #000}
+.citizens-v1 .citizens-gallery .citizens-filters{position:relative;z-index:2}
+.citizens-v1 .citizens-gallery .citizens-search-label input{
+ background:rgba(5,15,32,.88);backdrop-filter:blur(5px);
+}
+@media(max-width:720px){
+ .citizens-v1 .citizens-gallery{
+  padding:26px 18px 30px;
+  background-image:
+   linear-gradient(180deg,rgba(4,13,29,.83) 0%,rgba(5,15,32,.87) 27%,rgba(6,15,31,.94) 55%,#071429 84%),
+   linear-gradient(90deg,rgba(4,12,28,.78),rgba(4,12,28,.3)),
+   url('/assets/citizens-community-terrace-v3.18.65.webp');
+  background-position:center,center,65% top;
+  background-size:cover,cover,auto 570px;
+ }
+}
+@media(max-width:440px){
+ .citizens-v1 .citizens-gallery{padding:24px 12px 30px;background-position:center,center,62% top}
+ .citizens-v1 .citizens-gallery .citizens-section-title{padding:0 8px}
+}
 </style><script id="citizens-v1-script">(()=>{'use strict';const $=id=>document.getElementById(id),categories={fighter:'⚔ Fighters',builder:'🔨 Builders',strategist:'♟ Strategists',events:'📅 Event Lovers',supporter:'🤝 Supporters',farmer:'🌱 Farmers',rally:'⚔ Rally Leaders',garrison:'🛡 Garrison Leaders',field:'🏹 Field Fighters',infantry:'🛡 Infantry',cavalry:'🐎 Cavalry',archer:'🎯 Archers'};const alliances=["ON-F", "ON:S", "ON:C", "ON-M", "LW:D", "ON:P", "LOZ"];let profiles=[],active=[],me=null;const escape=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const api=async(url,opts)=>{const r=await fetch(url,{credentials:'same-origin',...opts});const j=await r.json();if(!r.ok)throw Error(j.error||'Request failed');return j};const filters=$('citizens-filters');const all=document.createElement('button');all.className='citizens-chip';all.textContent='All Citizens';all.onclick=()=>{active=[];drawFilters();render()};filters.append(all);for(const [id,label] of Object.entries(categories)){const b=document.createElement('button');b.className='citizens-chip';b.textContent=label;b.dataset.filter=id;b.onclick=()=>{active=active.includes(id)?active.filter(x=>x!==id):[...active,id];drawFilters();render()};filters.append(b)}function drawFilters(){all.setAttribute('aria-pressed',String(!active.length));filters.querySelectorAll('[data-filter]').forEach(b=>b.setAttribute('aria-pressed',String(active.includes(b.dataset.filter))))}let coverflowIndex=0,coverflowCards=[],coverflowPointer=null,coverflowMoved=false;
 const coverflow=$('citizens-carousel');
 const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
