@@ -319,10 +319,15 @@ async function citizens(req,env,url,p){
  }
  if(/^\/api\/citizens\/images\/\d{16,22}$/.test(p)&&method==='GET'){
   if(!env.HERALD_DB||!env.HERALD_IMAGES)return json({error:'Unavailable'},503);
-  const id=p.split('/').pop(),row=await env.HERALD_DB.prepare("SELECT image_key FROM citizen_profiles WHERE discord_id=? AND status='published'").bind(id).first();
+  const id=p.split('/').pop();
+  const row=await env.HERALD_DB.prepare("SELECT image_key,status FROM citizen_profiles WHERE discord_id=?").bind(id).first();
   if(!row?.image_key)return json({error:'Not found'},404);
+  if(row.status!=='published'){
+   const viewer=await open(env,getCookie(req,CSESS));
+   if(!cValid(viewer)||viewer.id!==id)return json({error:'Not found'},404);
+  }
   const obj=await env.HERALD_IMAGES.get(row.image_key);if(!obj)return json({error:'Not found'},404);
-  return new Response(obj.body,{headers:{'content-type':obj.httpMetadata?.contentType||'image/webp','cache-control':'public,max-age=3600','x-content-type-options':'nosniff'}});
+  return new Response(obj.body,{headers:{'content-type':obj.httpMetadata?.contentType||'image/webp','cache-control':row.status==='published'?'public,max-age=300':'private,no-store','x-content-type-options':'nosniff'}});
  }
  const session=await open(env,getCookie(req,CSESS));
  if(!cValid(session))return json({authenticated:false,error:'Discord login required'},401);
