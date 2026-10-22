@@ -283,9 +283,10 @@ const cValid=s=>!!(s&&s.kind==='citizens'&&s.id&&s.exp>Date.now()&&s.verifiedUnt
 const cCallback=(req,env)=>new URL('/api/citizens/callback',req.url).toString();
 const cError=(message)=>new Response('<!doctype html><html><meta charset="utf-8"><title>Citizens Login</title><body style="background:#071322;color:#e8c47b;font:18px Arial;text-align:center;padding:10vh 20px"><h1>Citizens of 3903</h1><p>'+message+'</p><a style="color:#e8c47b" href="/citizens/">Return to Citizens</a></body></html>',{status:403,headers:{'content-type':'text/html; charset=utf-8','cache-control':'no-store'}});
 const cRoleList=roles=>Object.keys(CITIZEN_ROLES).filter(k=>roles.includes(CITIZEN_ROLES[k]));
+const cHighestRole=roles=>['king','council','officer','citizen'].find(r=>roles?.includes(r))||'citizen';
 const cModerator=s=>s.roles?.some(r=>['king','council','officer'].includes(r));
 const C_ALLIANCES=["ON-F", "ON:S", "ON:C", "ON-M", "LW:D", "ON:P", "LOZ"];
-const cPublic=row=>({id:row.discord_id,name:row.governor_name,alliance:row.alliance,managedAlliances:JSON.parse(row.managed_alliances||'[]'),about:row.about,language:row.languages,responsibilities:row.responsibilities,categories:JSON.parse(row.categories||'[]'),image:row.image_key?'/api/citizens/images/'+row.discord_id:null});
+const cPublic=row=>({id:row.discord_id,name:row.governor_name,role:row.discord_role||'citizen',alliance:row.alliance,managedAlliances:JSON.parse(row.managed_alliances||'[]'),about:row.about,language:row.languages,responsibilities:row.responsibilities,categories:JSON.parse(row.categories||'[]'),image:row.image_key?'/api/citizens/images/'+row.discord_id:null});
 async function citizens(req,env,url,p){
  const method=req.method;
  if(p==='/api/citizens/login'&&method==='GET'){
@@ -333,6 +334,7 @@ async function citizens(req,env,url,p){
  if(!cValid(session))return json({authenticated:false,error:'Discord login required'},401);
  if(p==='/api/citizens/me'&&method==='GET'){
   let profile=null;if(env.HERALD_DB){try{profile=await env.HERALD_DB.prepare('SELECT * FROM citizen_profiles WHERE discord_id=?').bind(session.id).first()}catch{}}
+  if(env.HERALD_DB&&profile&&profile.discord_role!==cHighestRole(session.roles)){try{await env.HERALD_DB.prepare('UPDATE citizen_profiles SET discord_role=? WHERE discord_id=?').bind(cHighestRole(session.roles),session.id).run();profile.discord_role=cHighestRole(session.roles)}catch{}}
   return json({authenticated:true,user:{name:session.display,roles:session.roles,moderator:cModerator(session)},profile:profile?{...cPublic(profile),status:profile.status}:null});
  }
  if(p==='/api/citizens/profile'&&method==='PUT'){
@@ -347,7 +349,7 @@ async function citizens(req,env,url,p){
   const categories=Array.isArray(data.categories)?[...new Set(data.categories.filter(x=>CATEGORIES.includes(x)))].slice(0,12):[];
   if(!name)return json({error:'Governor name is required'},400);
   try{
-   await env.HERALD_DB.prepare("INSERT INTO citizen_profiles(discord_id,governor_name,alliance,about,languages,responsibilities,categories,managed_alliances,status,updated_at) VALUES(?,?,?,?,?,?,?,?,'draft',CURRENT_TIMESTAMP) ON CONFLICT(discord_id) DO UPDATE SET governor_name=excluded.governor_name,alliance=excluded.alliance,about=excluded.about,languages=excluded.languages,responsibilities=excluded.responsibilities,categories=excluded.categories,managed_alliances=excluded.managed_alliances,status='draft',updated_at=CURRENT_TIMESTAMP").bind(session.id,name,alliance,about,languages,responsibilities,JSON.stringify(categories),JSON.stringify(managedAlliances)).run();
+   await env.HERALD_DB.prepare("INSERT INTO citizen_profiles(discord_id,governor_name,alliance,about,languages,responsibilities,categories,managed_alliances,discord_role,status,updated_at) VALUES(?,?,?,?,?,?,?,?,?,'draft',CURRENT_TIMESTAMP) ON CONFLICT(discord_id) DO UPDATE SET governor_name=excluded.governor_name,alliance=excluded.alliance,about=excluded.about,languages=excluded.languages,responsibilities=excluded.responsibilities,categories=excluded.categories,managed_alliances=excluded.managed_alliances,discord_role=excluded.discord_role,status='draft',updated_at=CURRENT_TIMESTAMP").bind(session.id,name,alliance,about,languages,responsibilities,JSON.stringify(categories),JSON.stringify(managedAlliances),cHighestRole(session.roles)).run();
    return json({ok:true,status:'draft',message:'Saved as draft. A moderator must approve publication.'});
   }catch{return json({error:'Citizens migration not installed'},503)}
  }
