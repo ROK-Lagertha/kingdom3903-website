@@ -859,7 +859,7 @@ header.citadel-nav-top{position:relative!important;top:auto!important}
 <a class="directory-back" href="/" data-t="back">← Back to The Citadel</a></main>
 <footer class="citadel-footer" aria-label="Kingdom 3903 community footer">
 <img class="footer-cappy" src="/assets/footer-cappy-strategy.png" alt="Royal capybara with strategy books and a globe" loading="lazy" width="675" height="580">
-<div class="footer-center"><div class="footer-divider" aria-hidden="true"></div><p class="footer-motto">Strategy. People.<br>Progress. <span class="footer-heart">❤️</span></p><p class="footer-note">Independent fan-made community website for Kingdom 3903. Not affiliated with, endorsed by, or sponsored by Lilith Games.</p><div class="citadel-help-link"><a href="/support/" aria-label="Help and frequently asked questions">✦ Help &amp; FAQ ✦</a></div><div class="footer-bottom" aria-hidden="true"></div></div>
+<div class="footer-center"><div class="footer-divider" aria-hidden="true"></div><p class="footer-motto">Strategy. People.<br>Progress. <span class="footer-heart">❤️</span></p><p class="footer-note">Independent fan-made community website for Kingdom 3903. Not affiliated with, endorsed by, or sponsored by Lilith Games.</p><div class="citadel-help-link"><a href="/support/" data-support-link>✦ Help &amp; FAQ ✦</a></div><div class="footer-bottom" aria-hidden="true"></div></div>
 <img class="footer-cappy" src="/assets/footer-cappy-progress.png" alt="Royal capybara resting on maps and scrolls" loading="lazy" width="662" height="580">
 </footer><script defer src="/assets/citadel-language.js"></script>
 <script>
@@ -898,4 +898,4 @@ detect();
 new MutationObserver(()=>{const lang=document.documentElement.lang;if(COPY[lang]&&lang!==current)setLanguage(lang)}).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
 window.addEventListener('storage',detect);document.addEventListener('citadel:languagechange',detect);
 })();
-</script></body></html>
+</script><script defer src="/assets/citadel-support-i18n.js"></script></body></html>

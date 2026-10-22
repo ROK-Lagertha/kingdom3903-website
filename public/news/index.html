@@ -288,7 +288,7 @@ main>.herald-login-row+.rule{margin-top:12px;margin-bottom:20px}
 <div id="herald-article-modal" hidden style="position:fixed;inset:0;z-index:99;background:#030810ed;overflow:auto;padding:6vh 20px"><article class="feature-card" style="max-width:780px;margin:auto"><button id="close-herald" type="button" style="float:right;background:#182c44;color:#f5d58d;border:1px solid #c18b39;padding:8px 13px;cursor:pointer">CLOSE ✕</button><div id="herald-article-content"></div></article></div>
 </main><footer class="citadel-footer" aria-label="Kingdom 3903 community footer">
 <img class="footer-cappy" src="/assets/footer-cappy-strategy.png" alt="Royal capybara with strategy books and a globe" loading="lazy" width="675" height="580">
-<div class="footer-center"><div class="footer-divider" aria-hidden="true"></div><p class="footer-motto">Strategy. People.<br>Progress. <span class="footer-heart">❤️</span></p><p class="footer-note">Independent fan-made community website for Kingdom 3903. Not affiliated with, endorsed by, or sponsored by Lilith Games.</p><div class="footer-bottom" aria-hidden="true"></div></div>
+<div class="footer-center"><div class="footer-divider" aria-hidden="true"></div><p class="footer-motto">Strategy. People.<br>Progress. <span class="footer-heart">❤️</span></p><p class="footer-note">Independent fan-made community website for Kingdom 3903. Not affiliated with, endorsed by, or sponsored by Lilith Games.</p><div class="citadel-help-link"><a href="/support/" data-support-link>✦ Help &amp; FAQ ✦</a></div><div class="footer-bottom" aria-hidden="true"></div></div>
 <img class="footer-cappy" src="/assets/footer-cappy-progress.png" alt="Royal capybara resting on maps and scrolls" loading="lazy" width="662" height="580">
 </footer>
 <script>
@@ -303,4 +303,4 @@ async function openSlug(slug){try{const r=await fetch('/api/herald/public/articl
 const directSlug=location.pathname.match(/^\/news\/([a-z0-9-]+)\/?$/)?.[1];if(directSlug)openSlug(directSlug);
 
 </script><script>window.addEventListener('citadel-language-change',()=>location.reload());</script><script defer src="/assets/citadel-language.js"></script>
-</body></html>
+<script defer src="/assets/citadel-support-i18n.js"></script></body></html>
