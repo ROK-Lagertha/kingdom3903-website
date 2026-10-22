@@ -353,6 +353,25 @@ async function citizens(req,env,url,p){
    return json({ok:true,status:'draft',message:'Saved as draft. A moderator must approve publication.'});
   }catch{return json({error:'Citizens migration not installed'},503)}
  }
+ if(p==='/api/citizens/profile'&&method==='DELETE'){
+  if(!citizenSameOrigin(req))return json({error:'Invalid origin'},403);
+  if(!env.HERALD_DB)return json({error:'Database unavailable'},503);
+  let payload;try{payload=await req.json()}catch{return json({error:'Invalid request'},400)}
+  if(payload?.confirmation!=='DELETE')return json({error:'Type DELETE to confirm removal'},400);
+  try{
+   const existing=await env.HERALD_DB.prepare('SELECT image_key FROM citizen_profiles WHERE discord_id=?').bind(session.id).first();
+   if(!existing)return json({error:'No profile found'},404);
+   const result=await env.HERALD_DB.prepare('DELETE FROM citizen_profiles WHERE discord_id=?').bind(session.id).run();
+   if(!result.meta?.changes)return json({error:'Profile could not be deleted'},409);
+   // Remove image after the database record is gone; failure cannot re-expose the deleted profile.
+   let imageRemoved=true;
+   if(existing.image_key){
+    try{if(!env.HERALD_IMAGES)throw Error('R2 unavailable');await env.HERALD_IMAGES.delete(existing.image_key)}
+    catch(err){imageRemoved=false;console.error('Citizen image cleanup failed',session.id,String(err))}
+   }
+   return json({ok:true,deleted:true,imageRemoved});
+  }catch(err){console.error('Citizen profile deletion failed',String(err));return json({error:'Could not delete profile. Please try again.'},500)}
+ }
  if(p==='/api/citizens/image'&&method==='POST'){
   if(!citizenSameOrigin(req))return json({error:'Invalid origin'},403);
   if(!env.HERALD_IMAGES||!env.HERALD_DB)return json({error:'Image storage unavailable'},503);
