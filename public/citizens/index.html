@@ -814,35 +814,84 @@ header.citadel-nav-top{position:relative!important;top:auto!important}
  .citizens-v1 .cf-stage .citizens-card{transition:none}
  .citizens-v1 .cf-stage .citizens-card:hover{transform:translate3d(var(--cf-x,0px),0,var(--cf-z,0px)) rotateY(var(--cf-rotate,0deg)) scale(var(--cf-scale,1))}
 }
+</style><style id="citizens-v31861-infinite-coverflow">
+/* V3.18.61: Correct pixel-based transforms and circular navigation. */
+.citizens-v1 .cf-stage{
+ height:545px;perspective:1000px;perspective-origin:50% 48%;
+ overflow:hidden;touch-action:pan-y;cursor:grab;
+}
+.citizens-v1 .cf-stage:active{cursor:grabbing}
+.citizens-v1 .cf-stage .citizens-card{
+ top:20px;width:280px;height:475px;margin-left:-140px;
+ transform:translate3d(var(--cf-x,0px),0,var(--cf-z,0px)) rotateY(var(--cf-rotate,0deg)) scale(var(--cf-scale,1));
+ transition:transform .7s cubic-bezier(.2,.8,.18,1),opacity .65s ease,box-shadow .55s ease;
+}
+.citizens-v1 .cf-stage .citizens-card:hover{
+ transform:translate3d(var(--cf-x,0px),-5px,var(--cf-z,0px)) rotateY(var(--cf-rotate,0deg)) scale(var(--cf-scale,1));
+}
+.citizens-v1 .cf-stage .citizens-card img,
+.citizens-v1 .cf-stage .citizens-card-placeholder{height:315px}
+.citizens-v1 .cf-stage .citizens-card-content{padding:15px 16px 18px}
+.citizens-v1 .cf-stage .citizens-card h3{margin:0 0 7px}
+.citizens-v1 .cf-stage .citizens-card p{margin:5px 0}
+.citizens-v1 .citizens-carousel-controls button:disabled{opacity:.35}
+@media(max-width:750px){
+ .citizens-v1 .cf-stage{height:500px;perspective:800px}
+ .citizens-v1 .cf-stage .citizens-card{width:248px;height:445px;margin-left:-124px}
+ .citizens-v1 .cf-stage .citizens-card img,.citizens-v1 .cf-stage .citizens-card-placeholder{height:290px}
+}
+@media(max-width:520px){
+ .citizens-v1 .cf-stage{height:465px;perspective:690px}
+ .citizens-v1 .cf-stage .citizens-card{width:216px;height:410px;margin-left:-108px;top:15px}
+ .citizens-v1 .cf-stage .citizens-card img,.citizens-v1 .cf-stage .citizens-card-placeholder{height:260px}
+ .citizens-v1 .cf-stage .citizens-card-content{padding:12px}
+ .citizens-v1 .cf-stage .citizens-card h3{font-size:17px}
+}
+@media(prefers-reduced-motion:reduce){.citizens-v1 .cf-stage .citizens-card{transition:none}}
 </style><script id="citizens-v1-script">(()=>{'use strict';const $=id=>document.getElementById(id),categories={fighter:'⚔ Fighters',builder:'🔨 Builders',strategist:'♟ Strategists',events:'📅 Event Lovers',supporter:'🤝 Supporters',farmer:'🌱 Farmers',rally:'⚔ Rally Leaders',garrison:'🛡 Garrison Leaders',field:'🏹 Field Fighters',infantry:'🛡 Infantry',cavalry:'🐎 Cavalry',archer:'🎯 Archers'};const alliances=["ON-F", "ON:S", "ON:C", "ON-M", "LW:D", "ON:P", "LOZ"];let profiles=[],active=[],me=null;const escape=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const api=async(url,opts)=>{const r=await fetch(url,{credentials:'same-origin',...opts});const j=await r.json();if(!r.ok)throw Error(j.error||'Request failed');return j};const filters=$('citizens-filters');const all=document.createElement('button');all.className='citizens-chip';all.textContent='All Citizens';all.onclick=()=>{active=[];drawFilters();render()};filters.append(all);for(const [id,label] of Object.entries(categories)){const b=document.createElement('button');b.className='citizens-chip';b.textContent=label;b.dataset.filter=id;b.onclick=()=>{active=active.includes(id)?active.filter(x=>x!==id):[...active,id];drawFilters();render()};filters.append(b)}function drawFilters(){all.setAttribute('aria-pressed',String(!active.length));filters.querySelectorAll('[data-filter]').forEach(b=>b.setAttribute('aria-pressed',String(active.includes(b.dataset.filter))))}let coverflowIndex=0,coverflowCards=[],coverflowPointer=null,coverflowMoved=false;
 const coverflow=$('citizens-carousel');
 const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
 function coverflowPaint(){
  const count=coverflowCards.length;
- coverflowIndex=clamp(coverflowIndex,0,Math.max(0,count-1));
+ if(!count){
+  $('citizens-prev').disabled=true;$('citizens-next').disabled=true;
+  $('citizens-coverflow-position').textContent='';return;
+ }
+ coverflowIndex=((coverflowIndex%count)+count)%count;
+ const stageWidth=coverflow.clientWidth||680;
+ const cardWidth=stageWidth<=520?216:stageWidth<=750?248:280;
+ const sideShift=Math.max(72,Math.min(stageWidth*.285,cardWidth*.70));
  coverflowCards.forEach((card,i)=>{
-  const d=i-coverflowIndex,abs=Math.abs(d),visible=abs<=3;
-  card.style.setProperty('--cf-offset',String(d));
-  card.style.setProperty('--cf-abs',String(abs));
-  card.style.setProperty('--cf-x',Math.sign(d)*Math.min(abs,3)*'min(23vw, 170px)');
-  card.style.setProperty('--cf-rotate',(-Math.sign(d)*Math.min(abs,3)*49)+'deg');
-  card.style.setProperty('--cf-scale',String(Math.max(.62,1-abs*.14)));
-  card.style.setProperty('--cf-z',String(-abs*125)+'px');
-  card.style.opacity=visible?String(Math.max(.22,1-abs*.24)):'0';
-  card.style.zIndex=String(100-abs);
-  card.style.pointerEvents=visible?'auto':'none';
+  // Wrap around the ring. For an even number of profiles the opposite
+  // card is placed behind the center rather than on top of its neighbors.
+  let d=((i-coverflowIndex)%count+count)%count;
+  if(d>count/2)d-=count;
+  const opposite=count%2===0&&d===count/2;
+  const abs=Math.abs(d);
+  const side=opposite?0:Math.sign(d);
+  const x=opposite?0:side*sideShift*Math.min(abs,2);
+  const rotate=opposite?0:-side*(abs===1?55:68);
+  const depth=opposite?-390:-Math.min(abs,2)*170;
+  const scale=opposite?.62:Math.max(.64,1-abs*.16);
+  card.style.setProperty('--cf-x',x+'px');
+  card.style.setProperty('--cf-rotate',rotate+'deg');
+  card.style.setProperty('--cf-scale',String(scale));
+  card.style.setProperty('--cf-z',depth+'px');
+  card.style.opacity=opposite?'.32':String(Math.max(.48,1-abs*.22));
+  card.style.zIndex=String(opposite?1:100-abs);
+  card.style.pointerEvents='auto';
   card.tabIndex=i===coverflowIndex?0:-1;
-  card.setAttribute('aria-hidden',i===coverflowIndex?'false':'true');
+  card.setAttribute('aria-label',i===coverflowIndex?'Open '+card.dataset.governor:'Show '+card.dataset.governor);
   card.classList.toggle('cf-active',d===0);
  });
- $('citizens-prev').disabled=coverflowIndex===0;
- $('citizens-next').disabled=coverflowIndex>=count-1;
- const status=$('citizens-coverflow-position');
- if(status)status.textContent=count?(coverflowIndex+1)+' / '+count:'';
+ $('citizens-prev').disabled=count<2;
+ $('citizens-next').disabled=count<2;
+ $('citizens-coverflow-position').textContent=(coverflowIndex+1)+' / '+count;
 }
 function coverflowMove(step){
- if(!coverflowCards.length)return;
- coverflowIndex=clamp(coverflowIndex+step,0,coverflowCards.length-1);
+ const count=coverflowCards.length;
+ if(count<2)return;
+ coverflowIndex=((coverflowIndex+step)%count+count)%count;
  coverflowPaint();
 }
 function render(){
@@ -855,7 +904,7 @@ function render(){
  if(!list.length){coverflow.innerHTML='<p class="citizens-empty">No published profiles match your selection yet.</p>';coverflowPaint();return}
  for(const p of list){
   const card=document.createElement('button');
-  card.type='button';card.className='citizens-card';
+  card.type='button';card.className='citizens-card';card.dataset.governor=p.name;
   card.innerHTML=(p.image?'<img loading="lazy" draggable="false" src="'+escape(p.image)+'" alt="">':'<div class="citizens-card-placeholder" aria-hidden="true">♜</div>')+
    '<div class="citizens-card-content"><span class="cf-card-ornament">✦ CITIZEN OF 3903 ✦</span><h3>'+escape(p.name)+'</h3><span class="cr-card-role">'+escape(({king:'King',council:'Council',officer:'Officer',citizen:'Citizen of 3903'})[p.role]||'Citizen of 3903')+'</span><p>'+escape(p.alliance||'Kingdom 3903')+'</p><p>'+p.categories.slice(0,3).map(x=>escape(categories[x]||x)).join(' · ')+'</p></div>';
   card.onclick=()=>{if(coverflowMoved){coverflowMoved=false;return}const index=coverflowCards.indexOf(card);if(index!==coverflowIndex){coverflowIndex=index;coverflowPaint()}else show(p)};
@@ -889,6 +938,7 @@ function show(p){
 drawFilters();$('citizens-search').oninput=render;
 $('citizens-prev').onclick=()=>coverflowMove(-1);
 $('citizens-next').onclick=()=>coverflowMove(1);
+window.addEventListener('resize',()=>{if(coverflowCards.length)coverflowPaint()});
 coverflow.addEventListener('pointerdown',e=>{
  if(e.button!==0&&e.pointerType==='mouse')return;
  coverflowPointer={id:e.pointerId,x:e.clientX,y:e.clientY,start:Date.now()};
