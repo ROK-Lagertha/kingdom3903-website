@@ -999,7 +999,89 @@ document.addEventListener('DOMContentLoaded',apply);
 apply();
 })();
 </script>
-<script id="citizens-v1-script">(()=>{'use strict';const $=id=>document.getElementById(id),t=key=>window.CitizenI18n?.t(key)||key,categories={fighter:'⚔ Fighters',builder:'🔨 Builders',strategist:'♟ Strategists',events:'📅 Event Lovers',supporter:'🤝 Supporters',farmer:'🌱 Farmers',rally:'⚔ Rally Leaders',garrison:'🛡 Garrison Leaders',field:'🏹 Field Fighters',infantry:'🛡 Infantry',cavalry:'🐎 Cavalry',archer:'🎯 Archers'};const alliances=["ON-F", "ON:S", "ON:C", "ON-M", "LW:D", "ON:P", "LOZ"];let profiles=[],active=[],me=null;const escape=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const api=async(url,opts)=>{const r=await fetch(url,{credentials:'same-origin',...opts});const j=await r.json();if(!r.ok)throw Error(j.error||'Request failed');return j};const filters=$('citizens-filters');const all=document.createElement('button');all.className='citizens-chip';all.textContent=t('all');all.onclick=()=>{active=[];drawFilters();render()};filters.append(all);for(const [id,label] of Object.entries(categories)){const b=document.createElement('button');b.className='citizens-chip';b.textContent=label.split(' ')[0]+' '+t('cat_'+id);b.dataset.filter=id;b.onclick=()=>{active=active.includes(id)?active.filter(x=>x!==id):[...active,id];drawFilters();render()};filters.append(b)}function drawFilters(){all.setAttribute('aria-pressed',String(!active.length));filters.querySelectorAll('[data-filter]').forEach(b=>b.setAttribute('aria-pressed',String(active.includes(b.dataset.filter))))}let coverflowIndex=0,coverflowCards=[],coverflowPointer=null,coverflowMoved=false;
+<style id="citizens-v31868-royal-editor">
+/* Royal Profile Editor: pure illustration at right; all text and controls are live HTML. */
+.citizens-v1 .citizens-editor{
+ position:relative;isolation:isolate;overflow:hidden;
+ border:2px solid #d8a54d;border-radius:22px;
+ box-shadow:0 0 0 5px #071324,0 0 0 6px #8b6333,0 18px 55px #0009,inset 0 0 30px #c29a3620;
+ background:linear-gradient(90deg,#081629 0%,#0a1a30 53%,#0b1930 100%);
+ padding:clamp(25px,4.5vw,54px);
+}
+.citizens-v1 .citizens-editor:before{
+ content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+ background:linear-gradient(90deg,#071629 0%,rgba(7,22,41,.98) 35%,rgba(7,22,41,.91) 57%,rgba(7,22,41,.25) 100%),
+ url('/assets/citizens-editor-art-v3.18.68.webp') right center / auto 100% no-repeat;
+}
+.citizens-v1 .citizens-editor:after{
+ content:"✦";position:absolute;top:0;left:50%;transform:translate(-50%,-30%);
+ color:#f8d48e;font-size:29px;text-shadow:0 0 14px #d2a25c;pointer-events:none;
+}
+.citizens-v1 .citizens-editor .citizens-section-title,
+.citizens-v1 .citizens-editor #citizens-form,
+.citizens-v1 .citizens-editor .citizens-upload,
+.citizens-v1 .citizens-editor .citizens-delete-zone{position:relative;z-index:1}
+.citizens-v1 .citizens-editor .citizens-section-title{max-width:690px;margin-bottom:30px}
+.citizens-v1 .citizens-editor .citizens-section-title h2{font-size:clamp(28px,3.2vw,41px);text-shadow:0 2px 15px #000b}
+.citizens-v1 .citizens-editor #citizens-form{max-width:min(72%,690px)}
+.citizens-v1 .citizens-editor .citizens-form-grid{grid-template-columns:1fr;gap:10px}
+.citizens-v1 .citizens-editor .citizens-form-grid label{margin:4px 0 12px;font-size:14px;color:#f3cf8b}
+.citizens-v1 .citizens-editor form>label{font-size:14px;color:#f3cf8b}
+.citizens-v1 .citizens-editor input:not([type=checkbox]):not([type=file]),
+.citizens-v1 .citizens-editor textarea,
+.citizens-v1 .citizens-editor select{
+ background:rgba(5,18,35,.91);border:1px solid #647d9d;
+ box-shadow:inset 0 1px 4px #0006;color:#f5f5fb;
+}
+.citizens-v1 .citizens-editor input:focus-visible,
+.citizens-v1 .citizens-editor select:focus-visible,
+.citizens-v1 .citizens-editor textarea:focus-visible{outline:2px solid #edc77b;outline-offset:2px}
+.citizens-v1 .citizens-editor .citizens-managed-block{margin:25px 0 24px;padding:0;border:0;max-width:100%}
+.citizens-v1 .citizens-editor .citizens-managed-block>strong{display:block;font-family:Georgia,serif;font-size:19px;color:#f2cc87}
+.citizens-v1 .citizens-editor .citizens-managed-block>p{line-height:1.65;margin:9px 0 15px;color:#b9c9db}
+.citizens-v1 .citizens-editor #citizens-managed-alliances{
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+ gap:10px;margin:0;align-items:stretch;
+}
+.citizens-v1 .citizens-editor #citizens-managed-alliances .citizens-chip{
+ box-sizing:border-box;min-width:0;min-height:47px;width:100%;margin:0;
+ display:flex;align-items:center;justify-content:flex-start;gap:9px;
+ padding:10px 11px;border:1px solid #7183a0;border-radius:12px;
+ background:rgba(6,20,39,.92);font-size:13px;line-height:1.35;
+ color:#dce7f7;cursor:pointer;white-space:normal;overflow-wrap:anywhere;
+}
+.citizens-v1 .citizens-editor #citizens-managed-alliances .citizens-chip[hidden]{display:none!important}
+.citizens-v1 .citizens-editor #citizens-managed-alliances .citizens-chip:has(input:checked){
+ background:linear-gradient(125deg,#a77c39,#d1a85a);
+ border-color:#f9d992;color:#091629;font-weight:700;
+ box-shadow:0 0 12px #e5b65b38;
+}
+.citizens-v1 .citizens-editor #citizens-managed-alliances .citizens-chip input{
+ margin:0;flex:0 0 16px;width:16px;height:16px;accent-color:#f3dca7;
+}
+.citizens-v1 .citizens-editor .citizens-form-label{margin-top:24px;font-family:Georgia,serif;font-size:17px;color:#e9c589}
+.citizens-v1 .citizens-editor .citizens-category-choices{margin-top:13px}
+.citizens-v1 .citizens-editor .citizens-upload{max-width:min(72%,690px);border-top:1px solid #7c684a;margin-top:30px}
+.citizens-v1 .citizens-editor .citizens-delete-zone{max-width:min(72%,690px)}
+@media(max-width:950px){
+ .citizens-v1 .citizens-editor #citizens-form,
+ .citizens-v1 .citizens-editor .citizens-upload,
+ .citizens-v1 .citizens-editor .citizens-delete-zone{max-width:80%}
+ .citizens-v1 .citizens-editor:before{background:linear-gradient(90deg,#071629 0%,rgba(7,22,41,.97) 60%,rgba(7,22,41,.56) 100%),url('/assets/citizens-editor-art-v3.18.68.webp') right center / auto 100% no-repeat}
+}
+@media(max-width:720px){
+ .citizens-v1 .citizens-editor{padding:26px 19px 30px}
+ .citizens-v1 .citizens-editor:before{background:linear-gradient(180deg,rgba(7,22,41,.88),rgba(7,22,41,.94) 28%,#071629 75%),url('/assets/citizens-editor-art-v3.18.68.webp') center top / 100% auto no-repeat}
+ .citizens-v1 .citizens-editor #citizens-form,
+ .citizens-v1 .citizens-editor .citizens-upload,
+ .citizens-v1 .citizens-editor .citizens-delete-zone{max-width:100%}
+ .citizens-v1 .citizens-editor #citizens-managed-alliances{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .citizens-v1 .citizens-editor .citizens-section-title{margin-bottom:20px}
+}
+@media(max-width:365px){
+ .citizens-v1 .citizens-editor #citizens-managed-alliances{grid-template-columns:1fr}
+}
+</style><script id="citizens-v1-script">(()=>{'use strict';const $=id=>document.getElementById(id),t=key=>window.CitizenI18n?.t(key)||key,categories={fighter:'⚔ Fighters',builder:'🔨 Builders',strategist:'♟ Strategists',events:'📅 Event Lovers',supporter:'🤝 Supporters',farmer:'🌱 Farmers',rally:'⚔ Rally Leaders',garrison:'🛡 Garrison Leaders',field:'🏹 Field Fighters',infantry:'🛡 Infantry',cavalry:'🐎 Cavalry',archer:'🎯 Archers'};const alliances=["ON-F", "ON:S", "ON:C", "ON-M", "LW:D", "ON:P", "LOZ"];let profiles=[],active=[],me=null;const escape=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const api=async(url,opts)=>{const r=await fetch(url,{credentials:'same-origin',...opts});const j=await r.json();if(!r.ok)throw Error(j.error||'Request failed');return j};const filters=$('citizens-filters');const all=document.createElement('button');all.className='citizens-chip';all.textContent=t('all');all.onclick=()=>{active=[];drawFilters();render()};filters.append(all);for(const [id,label] of Object.entries(categories)){const b=document.createElement('button');b.className='citizens-chip';b.textContent=label.split(' ')[0]+' '+t('cat_'+id);b.dataset.filter=id;b.onclick=()=>{active=active.includes(id)?active.filter(x=>x!==id):[...active,id];drawFilters();render()};filters.append(b)}function drawFilters(){all.setAttribute('aria-pressed',String(!active.length));filters.querySelectorAll('[data-filter]').forEach(b=>b.setAttribute('aria-pressed',String(active.includes(b.dataset.filter))))}let coverflowIndex=0,coverflowCards=[],coverflowPointer=null,coverflowMoved=false;
 const coverflow=$('citizens-carousel');
 const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
 function coverflowPaint(){
