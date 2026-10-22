@@ -273,9 +273,109 @@ async function publicArticlePage(req,env,url,slug){
  return new Response(req.method==='HEAD'?null:page,{status:200,headers:h});
 }
 
+
+// Citizens of 3903 — independent OAuth session, preserving Herald reporter access.
+const CITIZEN_ROLES={king:'1462835654793756893',council:'1462835782992527446',officer:'1462837066227519663',citizen:'1462839466283630684'};
+const CSESS='__Host-citizens_session',CSTATE='__Host-citizens_state';
+const CATEGORIES=['fighter','builder','strategist','events','supporter','farmer','rally','garrison','field','infantry','cavalry','archer'];
+const citizenSameOrigin=req=>{const o=req.headers.get('origin');return o===new URL(req.url).origin};
+const cValid=s=>!!(s&&s.kind==='citizens'&&s.id&&s.exp>Date.now()&&s.verifiedUntil>Date.now());
+const cCallback=(req,env)=>new URL('/api/citizens/callback',req.url).toString();
+const cError=(message)=>new Response('<!doctype html><html><meta charset="utf-8"><title>Citizens Login</title><body style="background:#071322;color:#e8c47b;font:18px Arial;text-align:center;padding:10vh 20px"><h1>Citizens of 3903</h1><p>'+message+'</p><a style="color:#e8c47b" href="/citizens/">Return to Citizens</a></body></html>',{status:403,headers:{'content-type':'text/html; charset=utf-8','cache-control':'no-store'}});
+const cRoleList=roles=>Object.keys(CITIZEN_ROLES).filter(k=>roles.includes(CITIZEN_ROLES[k]));
+const cModerator=s=>s.roles?.some(r=>['king','council','officer'].includes(r));
+const cPublic=row=>({id:row.discord_id,name:row.governor_name,alliance:row.alliance,about:row.about,language:row.languages,responsibilities:row.responsibilities,categories:JSON.parse(row.categories||'[]'),image:row.image_key?'/api/citizens/images/'+row.discord_id:null});
+async function citizens(req,env,url,p){
+ const method=req.method;
+ if(p==='/api/citizens/login'&&method==='GET'){
+  if(!env.DISCORD_CLIENT_SECRET||!env.HERALD_SESSION_SECRET)return json({error:'Discord login not configured'},503);
+  const nonce=rand(),state=await seal(env,{nonce,exp:Date.now()+600000});
+  const q=new URLSearchParams({client_id:CLIENT,response_type:'code',redirect_uri:cCallback(req,env),scope:'identify guilds.members.read',state:nonce});
+  return redirect('https://discord.com/oauth2/authorize?'+q,302,{'set-cookie':cookie(CSTATE,state,600)});
+ }
+ if(p==='/api/citizens/callback'&&method==='GET'){
+  const state=await open(env,getCookie(req,CSTATE));
+  if(!state||state.exp<Date.now()||state.nonce!==url.searchParams.get('state'))return cError('Login state invalid or expired.');
+  const code=url.searchParams.get('code');if(!code)return cError('Authorization cancelled.');
+  const params=new URLSearchParams({client_id:CLIENT,client_secret:env.DISCORD_CLIENT_SECRET,grant_type:'authorization_code',code,redirect_uri:cCallback(req,env)});
+  let tokenRes;try{tokenRes=await fetch('https://discord.com/api/v10/oauth2/token',{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded'},body:params})}catch{return cError('Discord is temporarily unavailable.')}
+  if(!tokenRes.ok)return cError('Discord authorization failed. Verify the Citizens redirect URI in the Discord Developer Portal.');
+  const token=await tokenRes.json(),member=token.access_token?await discord('/users/@me/guilds/'+GUILD+'/member',token.access_token):null;
+  if(!member?.ok||!member.data?.user?.id||!Array.isArray(member.data.roles))return cError('Could not verify Discord server membership.');
+  const roles=cRoleList(member.data.roles);if(!roles.length)return cError('A Citizens, Officer, Council or King role is required.');
+  const ttl=Math.max(60,Math.min(900,(token.expires_in||3600)-60)),expires=Date.now()+ttl*1000;
+  const u=member.data.user;
+  const session=await seal(env,{kind:'citizens',id:u.id,username:u.username,display:u.global_name||u.username,avatar:u.avatar,roles,exp:expires,verifiedUntil:expires});
+  return addCookies(redirect('/citizens/'),[cookie(CSESS,session,ttl),cookie(CSTATE,'',0)]);
+ }
+ if(p==='/api/citizens/logout'&&method==='POST'){
+  if(!citizenSameOrigin(req))return json({error:'Invalid origin'},403);
+  return addCookies(json({ok:true}),[cookie(CSESS,'',0)]);
+ }
+ if(p==='/api/citizens/public'&&method==='GET'){
+  if(!env.HERALD_DB)return json({error:'Database unavailable'},503);
+  try{const rows=await env.HERALD_DB.prepare("SELECT * FROM citizen_profiles WHERE status='published' ORDER BY updated_at DESC LIMIT 500").all();return json({profiles:(rows.results||[]).map(cPublic)})}catch{return json({error:'Citizens migration not installed'},503)}
+ }
+ if(/^\/api\/citizens\/images\/\d{16,22}$/.test(p)&&method==='GET'){
+  if(!env.HERALD_DB||!env.HERALD_IMAGES)return json({error:'Unavailable'},503);
+  const id=p.split('/').pop(),row=await env.HERALD_DB.prepare("SELECT image_key FROM citizen_profiles WHERE discord_id=? AND status='published'").bind(id).first();
+  if(!row?.image_key)return json({error:'Not found'},404);
+  const obj=await env.HERALD_IMAGES.get(row.image_key);if(!obj)return json({error:'Not found'},404);
+  return new Response(obj.body,{headers:{'content-type':obj.httpMetadata?.contentType||'image/webp','cache-control':'public,max-age=3600','x-content-type-options':'nosniff'}});
+ }
+ const session=await open(env,getCookie(req,CSESS));
+ if(!cValid(session))return json({authenticated:false,error:'Discord login required'},401);
+ if(p==='/api/citizens/me'&&method==='GET'){
+  let profile=null;if(env.HERALD_DB){try{profile=await env.HERALD_DB.prepare('SELECT * FROM citizen_profiles WHERE discord_id=?').bind(session.id).first()}catch{}}
+  return json({authenticated:true,user:{name:session.display,roles:session.roles,moderator:cModerator(session)},profile:profile?{...cPublic(profile),status:profile.status}:null});
+ }
+ if(p==='/api/citizens/profile'&&method==='PUT'){
+  if(!citizenSameOrigin(req))return json({error:'Invalid origin'},403);
+  if(!env.HERALD_DB)return json({error:'Database unavailable'},503);
+  if(Number(req.headers.get('content-length')||0)>12000)return json({error:'Profile too large'},413);
+  let data;try{data=await req.json()}catch{return json({error:'Invalid JSON'},400)}
+  const clean=(v,max)=>typeof v==='string'?v.trim().slice(0,max):'';
+  const name=clean(data.name,64),alliance=clean(data.alliance,30),about=clean(data.about,1200),languages=clean(data.languages,150),responsibilities=cModerator(session)?clean(data.responsibilities,500):'';
+  const categories=Array.isArray(data.categories)?[...new Set(data.categories.filter(x=>CATEGORIES.includes(x)))].slice(0,12):[];
+  if(!name)return json({error:'Governor name is required'},400);
+  try{
+   await env.HERALD_DB.prepare("INSERT INTO citizen_profiles(discord_id,governor_name,alliance,about,languages,responsibilities,categories,status,updated_at) VALUES(?,?,?,?,?,?,?,'draft',CURRENT_TIMESTAMP) ON CONFLICT(discord_id) DO UPDATE SET governor_name=excluded.governor_name,alliance=excluded.alliance,about=excluded.about,languages=excluded.languages,responsibilities=excluded.responsibilities,categories=excluded.categories,status='draft',updated_at=CURRENT_TIMESTAMP").bind(session.id,name,alliance,about,languages,responsibilities,JSON.stringify(categories)).run();
+   return json({ok:true,status:'draft',message:'Saved as draft. A moderator must approve publication.'});
+  }catch{return json({error:'Citizens migration not installed'},503)}
+ }
+ if(p==='/api/citizens/image'&&method==='POST'){
+  if(!citizenSameOrigin(req))return json({error:'Invalid origin'},403);
+  if(!env.HERALD_IMAGES||!env.HERALD_DB)return json({error:'Image storage unavailable'},503);
+  const row=await env.HERALD_DB.prepare('SELECT discord_id FROM citizen_profiles WHERE discord_id=?').bind(session.id).first();if(!row)return json({error:'Save a profile first'},400);
+  const type=req.headers.get('content-type')||'';if(!['image/png','image/jpeg','image/webp'].includes(type))return json({error:'Use PNG, JPEG or WebP'},415);
+  const bytes=await req.arrayBuffer();if(bytes.byteLength>2*1024*1024||bytes.byteLength<20)return json({error:'Image must be under 2 MB'},413);
+  const b=new Uint8Array(bytes);if(!(type==='image/png'&&b[0]===137&&b[1]===80&&b[2]===78&&b[3]===71||type==='image/jpeg'&&b[0]===255&&b[1]===216||type==='image/webp'&&String.fromCharCode(...b.slice(0,4))==='RIFF'&&String.fromCharCode(...b.slice(8,12))==='WEBP'))return json({error:'Invalid image'},415);
+  const ext={'image/png':'png','image/jpeg':'jpg','image/webp':'webp'}[type],imageKey=`citizens/${session.id}/${crypto.randomUUID()}.${ext}`;
+  await env.HERALD_IMAGES.put(imageKey,bytes,{httpMetadata:{contentType:type}});
+  const old=await env.HERALD_DB.prepare('SELECT image_key FROM citizen_profiles WHERE discord_id=?').bind(session.id).first();
+  await env.HERALD_DB.prepare("UPDATE citizen_profiles SET image_key=?,status='draft',updated_at=CURRENT_TIMESTAMP WHERE discord_id=?").bind(imageKey,session.id).run();
+  if(old?.image_key)await env.HERALD_IMAGES.delete(old.image_key);
+  return json({ok:true,status:'draft'});
+ }
+ if(p==='/api/citizens/moderation'&&method==='GET'){
+  if(!cModerator(session))return json({error:'Moderator access required'},403);
+  const rows=await env.HERALD_DB.prepare("SELECT discord_id,governor_name,alliance,about,languages,responsibilities,categories,status FROM citizen_profiles WHERE status='draft' ORDER BY updated_at DESC LIMIT 100").all();return json({profiles:rows.results||[]});
+ }
+ if(p==='/api/citizens/moderation'&&method==='POST'){
+  if(!citizenSameOrigin(req)||!cModerator(session))return json({error:'Forbidden'},403);
+  const body=await req.json().catch(()=>null),id=String(body?.id||''),action=body?.action;
+  if(!/^\d{16,22}$/.test(id)||!['publish','reject'].includes(action))return json({error:'Invalid request'},400);
+  const status=action==='publish'?'published':'rejected';
+  const result=await env.HERALD_DB.prepare("UPDATE citizen_profiles SET status=?,updated_at=CURRENT_TIMESTAMP WHERE discord_id=? AND status='draft'").bind(status,id).run();
+  return json({ok:true,updated:result.meta.changes||0});
+ }
+ return json({error:'Not found'},404);
+}
+
 export default {
  async fetch(req,env,ctx){
  const url=new URL(req.url),p=url.pathname;
+ if(p.startsWith('/api/citizens/'))return citizens(req,env,url,p);
  // Dedicated article URLs: published slugs only, never admin/API paths.
  const match=p.match(/^\/news\/([a-z0-9][a-z0-9-]{0,199})\/?$/);
  if(match&&match[1]!=='admin')return publicArticlePage(req,env,url,match[1]);
